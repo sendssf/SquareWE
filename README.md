@@ -21,6 +21,13 @@
     * ……
   * Scenes文件夹用来存储游戏场景
     * SampleScene: 示例场景
+  * Fonts文件夹用来存储字体
+  * Cursor文件夹用来存储光标
+  * MessageContainer文件夹用来存储制作好的信息框预制体
+  * Buttons文件夹用来存储制作好的按钮预制体
+  * Partical文件夹用来存储粒子系统
+  * TextMeshPro和UI Toolkit文件夹是文本框的库文件
+  * Animator用来存储动画控制器和动画
   * 如果发现分类不足，可以自行加入文件夹，并在此处进行说明
   * ……
 

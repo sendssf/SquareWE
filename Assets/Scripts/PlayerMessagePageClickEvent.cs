@@ -1,0 +1,37 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+//此脚本用来管理玩家信息页面的鼠标点击事件
+public class PlayerMessagePageClickEvent : MonoBehaviour
+{
+    // Start is called before the first frame update
+    AsyncOperation operation;		//异步对象控制器
+    void Start()
+    {
+        
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+
+    public void returnMainPage()    //返回主页
+    {
+        StartCoroutine(loadScene("BeginUI"));	//调用协程
+    }
+
+    private IEnumerator loadScene(string which) //加载场景
+    {
+        operation=SceneManager.LoadSceneAsync(which);
+        yield return operation;
+    }
+
+    public void GotoSettings()  //前往设置
+    {
+        transform.Find("Settings").gameObject.SetActive(true);
+    }
+}
