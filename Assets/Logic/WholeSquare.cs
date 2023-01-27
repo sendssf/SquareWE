@@ -1,11 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Random;
 
 public class WholeSquare : MonoBehaviour
 {
-    public static char alphabet[26] = { A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z };
+    public static char[] alphabet =new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
     
     Square[] all_square = new Square[27];//所有小立方体
 
@@ -16,13 +15,13 @@ public class WholeSquare : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Random r = new Random();//产生随机数对象
+        //System.Random r = new System.Random();//产生随机数对象
         for (int i = 0; i < 27; i++)
         {
             all_square[i] = new Square();
             for(int j = 0; j < 6; j++)
             {
-                all_square[i].faces[j] = alphabet[r.Next(0, 26)];//给每个面随机赋字母
+                all_square[i].faces[j] = alphabet[Random.Range(0, 26)];//给每个面随机赋字母
             }
         }
 
@@ -120,10 +119,10 @@ public class WholeSquare : MonoBehaviour
 
     public void MouseClick()
     {
-        screenPosition = Camera.main.WorldToScreenPoint(targetPos.transform.position);
+        screenPosition = Camera.main.WorldToScreenPoint(all_square[13].transform.position);
         mousePositionOnScreen = Input.mousePosition;
         mousePositionOnScreen.z = screenPosition.z;
-        mousePositionInWorld = Camera.main.ScreentoWorldPoint(mousePositionOnScreen);
+        mousePositionInWorld = Camera.main.ScreenToWorldPoint(mousePositionOnScreen);
 
         for(int i = 0;i < 27; i++)
         {
@@ -135,6 +134,6 @@ public class WholeSquare : MonoBehaviour
                 && mousePositionInWorld.z < all_square[i].z + 2)
                 break;
         }
-        all_square[i]
+        //all_square[i]
     }
 }
