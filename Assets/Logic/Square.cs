@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class Square : MonoBehaviour
 {
-    char faces[6];//六个面的字母
-    double x;
-    double y;
-    double z;//坐标
+    public char[] faces = new char[6];//六个面的字母
+    public double x;
+    public double y;
+    public double z;//坐标
 
     // Start is called before the first frame update
     void Start()
