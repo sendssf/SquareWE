@@ -31,6 +31,17 @@ public class SignUpPageClickEvent : MonoBehaviour
     public void PressOK()
     {
         //Add something to operate the input data
+        //µÇÂ½²Ù×÷
         transform.gameObject.SetActive(false);
+    }
+
+    public void GetNickname(string nickname)
+    {
+        AllMessageContainer.loginInfo.nickname=nickname;
+    }
+
+    public void GetPassword(string password)
+    {
+        AllMessageContainer.loginInfo.password=password;
     }
 }

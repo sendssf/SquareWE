@@ -14,6 +14,20 @@ public struct PlayerInfo
     public int rank;
 }
 
+public struct RegistInfo
+{
+    public string nickname;
+    public string password;
+    public string emailaddr;
+    public string account;
+}
+
+public struct LoginInfo
+{
+    public string nickname;
+    public string password;
+}
+
 public struct SettingsInfo
 {
     public bool totalSoundOpen;
@@ -27,7 +41,10 @@ public struct SettingsInfo
 public class AllMessageContainer : MonoBehaviour
 {
     // Start is called before the first frame update
-    public PlayerInfo playerInfo = new PlayerInfo();
+    public static PlayerInfo playerInfo = new PlayerInfo();
+    public static RegistInfo registInfo = new RegistInfo();         //注册时用到的信息
+    public static SettingsInfo settingsInfo = new SettingsInfo();
+    public static LoginInfo loginInfo=new LoginInfo();              //登录时用到的信息
 
     void Start()
     {
