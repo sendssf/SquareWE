@@ -16,14 +16,14 @@ public class Face : MonoBehaviour
         times = 0;
         coll = GetComponent<Collider>();
 
-        for(int i = 0; i < 27; i++)
-        {
-            if (GameObject.Find("square" + i.ToString()).transform.childCount < 6)
-            {
-                this.transform.parent = GameObject.Find("square" + i.ToString()).transform;//设置父物体
-                break;
-            }
-        }
+        //for(int i = 0; i < 27; i++)
+        //{
+        //    if (GameObject.Find("square" + i.ToString()).transform.childCount < 6)
+        //    {
+        //        this.transform.parent = GameObject.Find("square" + i.ToString()).transform;//设置父物体
+        //        break;
+        //    }
+        //}
     }
 
 
