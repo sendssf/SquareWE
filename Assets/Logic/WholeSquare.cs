@@ -134,6 +134,6 @@ public class WholeSquare : MonoBehaviour
                 && mousePositionInWorld.z < all_square[i].z + 2)
                 break;
         }
-        //all_square[i]
+        all_square[i]
     }
 }
