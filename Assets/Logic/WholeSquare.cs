@@ -4,28 +4,18 @@ using UnityEngine;
 
 public class WholeSquare : MonoBehaviour
 {
-    public static char[] alphabet =new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
     
     Square[] all_square = new Square[27];//所有小立方体
-
-    Vector3 screenPosition;//游戏对象的屏幕坐标
-    Vector3 mousePositionOnScreen;//鼠标的屏幕坐标
-    Vector3 mousePositionInWorld;//鼠标的世界坐标
-    
-    // Start is called before the first frame update
+   
     void Start()
-    {
-        //System.Random r = new System.Random();//产生随机数对象
+    { 
         for (int i = 0; i < 27; i++)
         {
             all_square[i] = new Square();
-            for(int j = 0; j < 6; j++)
-            {
-                all_square[i].faces[j] = alphabet[Random.Range(0, 26)];//给每个面随机赋字母
-            }
+            all_square[i].name = "square" + i.ToString();
         }
 
-        all_square[0].x = 5;
+        /* all_square[0].x = 5;
         all_square[0].y = 5;
         all_square[0].z = -5;
         all_square[1].x = 5;
@@ -105,35 +95,11 @@ public class WholeSquare : MonoBehaviour
         all_square[25].z = 0;
         all_square[26].x = -5;
         all_square[26].y = -5;
-        all_square[26].z = 5;
+        all_square[26].z = 5;*/
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if(Input.GetMouseButtonDown(0)) 
-        {
-            MouseClick();
-        }
     }
 
-    public void MouseClick()
-    {
-        screenPosition = Camera.main.WorldToScreenPoint(all_square[13].transform.position);
-        mousePositionOnScreen = Input.mousePosition;
-        mousePositionOnScreen.z = screenPosition.z;
-        mousePositionInWorld = Camera.main.ScreenToWorldPoint(mousePositionOnScreen);
-
-        for(int i = 0;i < 27; i++)
-        {
-            if (mousePositionInWorld.x > all_square[i].x - 2
-                && mousePositionInWorld.x < all_square[i].x + 2
-                && mousePositionInWorld.y > all_square[i].y - 2
-                && mousePositionInWorld.y < all_square[i].y + 2
-                && mousePositionInWorld.z > all_square[i].z - 2
-                && mousePositionInWorld.z < all_square[i].z + 2)
-                break;
-        }
-        all_square[i]
-    }
 }
