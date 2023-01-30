@@ -30,16 +30,19 @@ public class SignInPageClickEvent : MonoBehaviour
     public void GetNickname(string nickname)
     {
         AllMessageContainer.registInfo.nickname = nickname;
+        AllMessageContainer.registInfo.nickname = nickname;
     }
 
     public void GetEmail(string email)
     {
         AllMessageContainer.registInfo.emailaddr = email;
+        AllMessageContainer.playerInfo.email= email;
     }
 
     public void GetPassword(string password)
     {
         AllMessageContainer.registInfo.password = password;
+        AllMessageContainer.playerInfo.password = password;
     }
 
     void GenerateAccount()
@@ -48,6 +51,7 @@ public class SignInPageClickEvent : MonoBehaviour
         string secondpara = Random.Range(10000000,999999999).ToString();
         string account=firstpara+secondpara;
         AllMessageContainer.registInfo.account = account;
+        AllMessageContainer.playerInfo.playerAccount= account;
         transform.Find("Contain").Find("Viewport").Find("Content").Find("Account")
             .gameObject.GetComponent<Text>().text=$"Account:{account}";
         transform.Find("Contain").Find("Viewport").Find("Content").Find("Remember")

@@ -8,15 +8,23 @@ public class PlayerMessagePageClickEvent : MonoBehaviour
 {
     // Start is called before the first frame update
     AsyncOperation operation;		//异步对象控制器
+    Transform logintrans;
     void Start()
     {
-        
+        logintrans=transform.Find("Login");
+        if (!AllMessageContainer.gameStatus.iflogin)
+        {
+            if (!logintrans.gameObject.activeSelf)
+            {
+                logintrans.gameObject.SetActive(true);
+            }
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        
     }
 
     public void returnMainPage()    //返回主页
