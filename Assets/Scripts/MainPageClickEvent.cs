@@ -28,6 +28,7 @@ public class MainPageClickEvent : MonoBehaviour
 
     public void Exit()
     {
+        AllMessageContainer.WriteInfoToFile(AllMessageContainer.playerInfo.playerName+".json");
         Application.Quit();
     }
 

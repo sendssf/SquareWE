@@ -30,19 +30,16 @@ public class SignInPageClickEvent : MonoBehaviour
     public void GetNickname(string nickname)
     {
         AllMessageContainer.registInfo.nickname = nickname;
-        AllMessageContainer.registInfo.nickname = nickname;
     }
 
     public void GetEmail(string email)
     {
         AllMessageContainer.registInfo.emailaddr = email;
-        AllMessageContainer.playerInfo.email= email;
     }
 
     public void GetPassword(string password)
     {
         AllMessageContainer.registInfo.password = password;
-        AllMessageContainer.playerInfo.password = password;
     }
 
     void GenerateAccount()
@@ -60,7 +57,31 @@ public class SignInPageClickEvent : MonoBehaviour
 
     public void SignInOk()
     {
+        //add: check message is ok
         GenerateAccount();
+        //add: server Options
+        InitPlayerInfo();
+        AllMessageContainer.WriteInfoToFile(AllMessageContainer.playerInfo.playerName+".json");
+        if (transform.parent.name=="PlayerMessage")
+        {
+            transform.parent.gameObject.GetComponent<PlayerMessagePageClickEvent>().LoadPage();
+        }
+        AllMessageContainer.gameStatus.iflogin= true;
         transform.Find("OK").gameObject.SetActive(false);
+    }
+
+    void InitPlayerInfo()
+    {
+        AllMessageContainer.playerInfo.playerName=AllMessageContainer.registInfo.nickname;
+        AllMessageContainer.playerInfo.password=AllMessageContainer.registInfo.password;
+        AllMessageContainer.playerInfo.email=AllMessageContainer.registInfo.emailaddr;
+        AllMessageContainer.playerInfo.playerAccount= AllMessageContainer.registInfo.account;
+
+        AllMessageContainer.playerInfo.level=1;
+        AllMessageContainer.playerInfo.experience=0;
+        AllMessageContainer.playerInfo.crystal=0;
+        AllMessageContainer.playerInfo.coin=0;
+        AllMessageContainer.playerInfo.worldList=new Dictionary<string, string>();
+        AllMessageContainer.playerInfo.objectList=new Dictionary<string, string>();
     }
 }

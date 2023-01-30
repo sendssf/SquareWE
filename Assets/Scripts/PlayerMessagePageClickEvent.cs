@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 //此脚本用来管理玩家信息页面的鼠标点击事件
 public class PlayerMessagePageClickEvent : MonoBehaviour
@@ -18,6 +19,10 @@ public class PlayerMessagePageClickEvent : MonoBehaviour
             {
                 logintrans.gameObject.SetActive(true);
             }
+        }
+        if(AllMessageContainer.playerInfo.playerName!= null)
+        {
+            LoadPage();
         }
     }
 
@@ -41,5 +46,17 @@ public class PlayerMessagePageClickEvent : MonoBehaviour
     public void GotoSettings()  //前往设置
     {
         transform.Find("Settings").gameObject.SetActive(true);
+    }
+
+    public void LoadPage()
+    {
+        transform.Find("Upleft").Find("BasicInfo").gameObject.GetComponent<Text>().text=
+            $"{AllMessageContainer.playerInfo.playerName}\n{AllMessageContainer.playerInfo.playerAccount}";
+        transform.Find("Upleft").Find("Level").Find("Num").gameObject.GetComponent<Text>().text=
+            AllMessageContainer.playerInfo.level.ToString();
+        transform.Find("Upleft").Find("Level").Find("FullExp").gameObject.GetComponent<Image>().fillAmount=
+            ((float)AllMessageContainer.playerInfo.experience)/AllMessageContainer.fullExp[AllMessageContainer.playerInfo.level];
+        transform.Find("Upleft").Find("Level").Find("ExpValue").gameObject.GetComponent<Text>().text=
+            $"{AllMessageContainer.playerInfo.experience}/{AllMessageContainer.fullExp[AllMessageContainer.playerInfo.level]}";
     }
 }
