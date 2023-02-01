@@ -135,7 +135,11 @@ public class SettingsPageClickEvent : MonoBehaviour
 
     public void AccountCheckout()   //ÍË³öµÇÂ¼
     {
-        //add 
+        AllMessageContainer.ResetPlayerInfo();
+        if (transform.parent.name=="PlayerMessage")
+        {
+            transform.parent.gameObject.GetComponent<PlayerMessagePageClickEvent>().LoadPage();
+        }
         AllMessageContainer.gameStatus.iflogin=false;
         transform.gameObject.SetActive(false);
 

@@ -106,11 +106,10 @@ public class AllMessageContainer : MonoBehaviour
         fullExp[24]=(int)LevelFullExp.Level24; fullExp[25]=(int)LevelFullExp.Level25; fullExp[26]=(int)LevelFullExp.Level26;
         fullExp[27]=(int)LevelFullExp.Level27; fullExp[28]=(int)LevelFullExp.Level28; fullExp[29]=(int)LevelFullExp.Level29;
         fullExp[30]=(int)LevelFullExp.Level30;
-        playerInfo.playerName="NickName"; //函数结束后依然为这个说明载入失败或没有文件
-        playerInfo.playerAccount="Account";
+        ResetPlayerInfo();
         playerInfo.worldList=new Dictionary<string, string>();
         playerInfo.objectList=new Dictionary<string, string>();
-        var files = new DirectoryInfo(Application.persistentDataPath).GetFiles();
+        var files = new DirectoryInfo(Application.persistentDataPath).GetFiles("*.json");
         if (files.Length==0)    //如果没保存用户的数据
         {
             gameStatus.iflogin=false;
@@ -240,5 +239,16 @@ public class AllMessageContainer : MonoBehaviour
         settingsInfo.effectSoundOpen=Convert.ToBoolean(info["settingsInfo"]["effectSoundOpen"]);
 
         return ReadInfoState.Success;
+    }
+
+    public static void ResetPlayerInfo()
+    {
+        playerInfo.playerName="NickName"; //函数结束后依然为这个说明载入失败或没有文件
+        playerInfo.playerAccount="Account";
+        playerInfo.coin=0;
+        playerInfo.crystal=0;
+        playerInfo.experience=0;
+        playerInfo.rank=0;
+        playerInfo.level=1;
     }
 }
