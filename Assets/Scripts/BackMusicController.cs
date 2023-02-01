@@ -14,13 +14,39 @@ public class BackMusicController : MonoBehaviour
         player= GetComponent<AudioSource>();
         player.clip = mainpage;
         player.loop = true;
-        player.volume = 0.25f;
+        player.volume = AllMessageContainer.settingsInfo.backSoundValue
+            *AllMessageContainer.settingsInfo.totalSoundValue;
         player.Play();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        player.volume = AllMessageContainer.settingsInfo.backSoundValue
+            *AllMessageContainer.settingsInfo.totalSoundValue;
+        if (AllMessageContainer.settingsInfo.totalSoundOpen)
+        {
+            if (AllMessageContainer.settingsInfo.backSoundOpen)
+            {
+                if (!player.isPlaying)
+                {
+                    player.Play();
+                }
+            }
+            else
+            {
+                if (player.isPlaying)
+                {
+                    player.Pause();
+                }
+            }
+        }
+        else
+        {
+            if(player.isPlaying)
+            {
+                player.Pause();
+            }
+        }
     }
 }

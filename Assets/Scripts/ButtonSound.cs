@@ -16,8 +16,11 @@ public class ButtonSound : MonoBehaviour
     }
     private void OnEnable()
     {
-        player.volume=0.25f;
-        player.PlayOneShot(HighlightMusic);
+        player.volume=AllMessageContainer.settingsInfo.effectSoundValue*AllMessageContainer.settingsInfo.totalSoundValue;
+        if (AllMessageContainer.settingsInfo.totalSoundOpen && AllMessageContainer.settingsInfo.effectSoundOpen)
+        {
+            player.PlayOneShot(HighlightMusic);
+        } 
     }
 
     // Update is called once per frame
@@ -25,7 +28,10 @@ public class ButtonSound : MonoBehaviour
     {
         if(Input.GetMouseButtonDown(0))
         {
-            player.PlayOneShot(PressMusic);
+            if (AllMessageContainer.settingsInfo.totalSoundOpen && AllMessageContainer.settingsInfo.effectSoundOpen)
+            {
+                player.PlayOneShot(PressMusic);
+            }
         }
     }
 }
