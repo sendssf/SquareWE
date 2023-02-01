@@ -100,7 +100,28 @@ public class WholeSquare : MonoBehaviour
 
     void Update()
     {
+        if (Input.GetMouseButtonDown(0))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit, 100.0F))//检测到碰撞
+            {
+                Face face = hit.collider.gameObject.GetComponent<Face>();
+                
+                //此处需要补充检查点击的字母是否组成单词：是否可以以回车表示结束？
 
+                face.times++;
+                if (face.times == 3)//销毁小立方体
+                {
+                    GameObject father = this.transform.parent.gameObject;//获取父物体
+                    for (int i = 0; i < 6; i++)
+                    {
+                        Destroy(father.transform.GetChild(i).gameObject);
+                    }
+                    Destroy(father);
+                }
+            }
+        }
     }
 
 }
