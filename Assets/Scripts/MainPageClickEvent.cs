@@ -8,6 +8,13 @@ public class MainPageClickEvent : MonoBehaviour
 {
     // Start is called before the first frame update
     AsyncOperation operation;
+    private void Awake()
+    {
+        if (!AllMessageContainer.gameStatus.ifInit)
+        {
+            AllMessageContainer.MessageInitial();
+        }
+    }
     void Start()
     {
         
@@ -21,6 +28,7 @@ public class MainPageClickEvent : MonoBehaviour
 
     public void Exit()
     {
+        AllMessageContainer.WriteInfoToFile(AllMessageContainer.playerInfo.playerName+".json");
         Application.Quit();
     }
 
@@ -49,6 +57,25 @@ public class MainPageClickEvent : MonoBehaviour
 
     public void GotoChooseMode()
     {
-        StartCoroutine(loadScene("ChooseModeUI"));
+        if (AllMessageContainer.gameStatus.iflogin)
+        {
+            AllMessageContainer.gameStatus.ifStartGame=true;
+            StartCoroutine(loadScene("ChooseModeUI"));
+        }
+        else
+        {
+            transform.Find("NoLoginTips").gameObject.SetActive(true);
+        }
+    }
+
+    public void QuitNoLoginTips()
+    {
+        transform.Find("NoLoginTips").gameObject.SetActive(false);
+    }
+
+    public void SignUpNow()
+    {
+        transform.Find("NoLoginTips").gameObject.SetActive(false);
+        StartCoroutine(loadScene("PlayerMessageUI"));
     }
 }

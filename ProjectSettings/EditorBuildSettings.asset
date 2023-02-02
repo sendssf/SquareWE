@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/ChooseModeUI.unity
     guid: 971687309a23fbd4594d42ec26c9c598
+  - enabled: 1
+    path: Assets/Scenes/BreakThrough.unity
+    guid: c3d794881e44f6c49a8ee22a73678999
   m_configObjects: {}

@@ -26,11 +26,17 @@ public class ChooseModePageClickEvent : MonoBehaviour
 
     public void GotoHome()
     {
+        AllMessageContainer.gameStatus.ifStartGame=false;
         StartCoroutine(loadScene("BeginUI"));
     }
     private IEnumerator loadScene(string which) //º”‘ÿ≥°æ∞
     {
         operation=SceneManager.LoadSceneAsync(which);
         yield return operation;
+    }
+
+    public void GotoBreakThrough()
+    {
+        StartCoroutine(loadScene("BreakThrough"));
     }
 }
