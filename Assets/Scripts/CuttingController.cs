@@ -31,8 +31,9 @@ public class CuttingController : MonoBehaviour
     Vector3 mousePos;
     Vector3 mousePosNow;
     static Texture2D finalimage;
+    static Texture2D originImage;
 
-    void Start()
+    private void Awake()
     {
         maxHeight=800;
         maxWidth=1200;
@@ -49,7 +50,17 @@ public class CuttingController : MonoBehaviour
         upImage = rowImage.transform.Find("Select").Find("Image").gameObject;
         xoffset=rowImage.GetComponent<RectTransform>().position.x;
         yoffset=rowImage.GetComponent<RectTransform>().position.y;
+    }
 
+    void Start()
+    {
+        
+    }
+
+    private void OnEnable()
+    {
+        select.GetComponent<RectTransform>().anchoredPosition=new Vector2(0f,0f);
+        upImage.GetComponent<RectTransform>().anchoredPosition=new Vector2(0f, 0f);
         Cut(finalimage);
     }
 
@@ -160,6 +171,7 @@ public class CuttingController : MonoBehaviour
                 Vector2 sizeNow = new Vector2(rowImage.transform.Find("Select").gameObject.GetComponent<RectTransform>().sizeDelta.x,
                     rowImage.transform.Find("Select").gameObject.GetComponent<RectTransform>().sizeDelta.y);
                 select.GetComponent<RectTransform>().sizeDelta=new Vector2(sizeNow.x+mouseMovex, sizeNow.y);
+    
             }
             else if (Midup.gameObject.GetComponent<ButtonPressListener>().press)
             {
@@ -184,7 +196,6 @@ public class CuttingController : MonoBehaviour
     {
         //加载原始图像
         //finalimage= texture2D;
-        Debug.Log(texture2D);
         if (texture2D.width<=maxWidth)
         {
             if (texture2D.height<=maxHeight)
@@ -231,38 +242,36 @@ public class CuttingController : MonoBehaviour
                 }
             }
         }
-        rowImage.GetComponent<Image>().sprite=Sprite.Create(texture2D, new Rect(0, 0, texture2D.width, texture2D.height), new Vector2(0.5f, 0.5f));
+        rowImage.GetComponent<Image>().sprite=Sprite.Create(texture2D, new Rect(0, 0, texture2D.width, texture2D.height), new Vector2(0f, 0f));
         upImage.GetComponent<Image>().sprite=rowImage.GetComponent<Image>().sprite;
     }
 
     public void CutFinish()
     {
         //删除旧头像文件
-        FileInfo[] df = new DirectoryInfo(Application.persistentDataPath).GetFiles($"{AllMessageContainer.playerInfo.playerName}Head.*");
-        if (df.Length!=0)
+        FileInfo df = new FileInfo($"{Application.persistentDataPath}\\{AllMessageContainer.playerInfo.playerName}.png");
+        if (df.Exists)
         {
-            foreach (FileInfo file in df)
-            {
-                file.Delete();
-            }
+            df.Delete();
         }
         //写入新头像
         byte[] data = finalimage.EncodeToPNG();
-        File.WriteAllBytes($"{Application.persistentDataPath}\\{AllMessageContainer.playerInfo.playerName}Head.png", data);
+        File.WriteAllBytes($"{Application.persistentDataPath}\\{AllMessageContainer.playerInfo.playerName}.png", data);
         transform.parent.gameObject.GetComponent<PlayerMessagePageClickEvent>().LoadHeadImage(false);
         transform.gameObject.SetActive(false);
     }
 
     public void CutPreview()        //裁剪预览
     {
-        finalimage=ScaleTextureCutOut(finalimage, Mathf.CeilToInt(select.GetComponent<RectTransform>().anchoredPosition.x*scale),
-            -Mathf.CeilToInt(select.GetComponent<RectTransform>().anchoredPosition.y*scale),
+        finalimage=ScaleTextureCutOut(originImage, Mathf.CeilToInt(select.GetComponent<RectTransform>().anchoredPosition.x*scale),
+            Mathf.CeilToInt(select.GetComponent<RectTransform>().anchoredPosition.y*scale),
             select.GetComponent<RectTransform>().sizeDelta.x*scale,select.GetComponent<RectTransform>().sizeDelta.y * scale); 
         transform.Find("Head").Find("Mask").Find("HeadImage").gameObject.GetComponent<Image>().sprite=
             Sprite.Create(finalimage, new Rect(0, 0, finalimage.width, finalimage.height), new Vector2(0f, 0f));
     }
     public Texture2D ScaleTextureCutOut(Texture2D originalTexture, int offsetX, int offsetY, float targetWidth,float targetHeight)
     {
+        offsetY=originalTexture.height-offsetY-Mathf.CeilToInt(targetHeight);
         Texture2D newTexture = new Texture2D(Mathf.CeilToInt(targetWidth), Mathf.CeilToInt(targetHeight));
         for (int y = 0; y < newTexture.height; y++)
         {
@@ -279,5 +288,7 @@ public class CuttingController : MonoBehaviour
     public static void LoadImage(Texture2D texture)
     {
         finalimage=texture;
+        originImage=new Texture2D(finalimage.width, finalimage.height);
+        originImage.SetPixels32(finalimage.GetPixels32());
     }
 }
