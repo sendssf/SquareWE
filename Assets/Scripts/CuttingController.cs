@@ -105,7 +105,7 @@ public class CuttingController : MonoBehaviour
                     select.GetComponent<RectTransform>().anchoredPosition.y);
                 Vector2 uppos = new Vector2(upImage.GetComponent<RectTransform>().anchoredPosition.x,
                     upImage.GetComponent<RectTransform>().anchoredPosition.y);
-                if (position.y+mouseMovey<=0 && select.GetComponent<RectTransform>().rect.xMax<=upImage.GetComponent<RectTransform>().rect.xMax) 
+                if (position.y+mouseMovey<=0 && position.x+select.GetComponent<RectTransform>().sizeDelta.x+mouseMovex<=rowImage.GetComponent<RectTransform>().sizeDelta.x) 
                 {
                     select.GetComponent<RectTransform>().sizeDelta=new Vector2(sizeNow.x+mouseMovex, sizeNow.y + mouseMovey);
                     select.GetComponent<RectTransform>().anchoredPosition=new Vector2(position.x, position.y + mouseMovey);
@@ -124,9 +124,12 @@ public class CuttingController : MonoBehaviour
                     select.GetComponent<RectTransform>().anchoredPosition.y);
                 Vector2 uppos = new Vector2(upImage.GetComponent<RectTransform>().anchoredPosition.x,
                     upImage.GetComponent<RectTransform>().anchoredPosition.y);
-                select.GetComponent<RectTransform>().sizeDelta=new Vector2(sizeNow.x-mouseMovex, sizeNow.y-mouseMovey);
-                select.GetComponent<RectTransform>().anchoredPosition=new Vector2(position.x+mouseMovex, position.y);
-                upImage.GetComponent<RectTransform>().anchoredPosition=new Vector2(uppos.x-mouseMovex, uppos.y);
+                if (position.x + mouseMovex>=0 && select.GetComponent<RectTransform>().sizeDelta.y-position.y-mouseMovey<=rowImage.GetComponent<RectTransform>().sizeDelta.y) 
+                {
+                    select.GetComponent<RectTransform>().sizeDelta=new Vector2(sizeNow.x-mouseMovex, sizeNow.y-mouseMovey);
+                    select.GetComponent<RectTransform>().anchoredPosition=new Vector2(position.x+mouseMovex, position.y);
+                    upImage.GetComponent<RectTransform>().anchoredPosition=new Vector2(uppos.x-mouseMovex, uppos.y); 
+                }
             }
             else if (Bottomright.gameObject.GetComponent<ButtonPressListener>().press)
             {
@@ -140,7 +143,11 @@ public class CuttingController : MonoBehaviour
                     select.GetComponent<RectTransform>().anchoredPosition.y);
                 Vector2 uppos = new Vector2(upImage.GetComponent<RectTransform>().anchoredPosition.x,
                     upImage.GetComponent<RectTransform>().anchoredPosition.y);
-                select.GetComponent<RectTransform>().sizeDelta=new Vector2(sizeNow.x+mouseMovex, sizeNow.y - mouseMovey);
+                if (position.x+sizeNow.x+mouseMovex<=rowImage.GetComponent<RectTransform>().sizeDelta.x && 
+                    position.y+sizeNow.y-mouseMovey<=rowImage.GetComponent<RectTransform>().sizeDelta.y)
+                {
+                    select.GetComponent<RectTransform>().sizeDelta=new Vector2(sizeNow.x+mouseMovex, sizeNow.y - mouseMovey);
+                }
             }
             else if (Midbottom.gameObject.GetComponent<ButtonPressListener>().press)
             {
@@ -148,9 +155,14 @@ public class CuttingController : MonoBehaviour
                 mouseMovex=mousePosNow.x-mousePos.x;
                 mouseMovey=mousePosNow.y-mousePos.y;
                 mousePos=mousePosNow;
+                Vector2 position = new Vector2(select.GetComponent<RectTransform>().anchoredPosition.x,
+                    select.GetComponent<RectTransform>().anchoredPosition.y);
                 Vector2 sizeNow = new Vector2(select.GetComponent<RectTransform>().sizeDelta.x,
                     select.GetComponent<RectTransform>().sizeDelta.y);
-                select.GetComponent<RectTransform>().sizeDelta=new Vector2(sizeNow.x, sizeNow.y-mouseMovey);
+                if (position.y+sizeNow.y-mouseMovey<=rowImage.GetComponent<RectTransform>().sizeDelta.y)
+                {
+                    select.GetComponent<RectTransform>().sizeDelta=new Vector2(sizeNow.x, sizeNow.y-mouseMovey);
+                }
             }
             else if (Midleft.gameObject.GetComponent<ButtonPressListener>().press)
             {
@@ -164,9 +176,12 @@ public class CuttingController : MonoBehaviour
                     select.GetComponent<RectTransform>().anchoredPosition.y);
                 Vector2 uppos = new Vector2(upImage.GetComponent<RectTransform>().anchoredPosition.x,
                     upImage.GetComponent<RectTransform>().anchoredPosition.y);
-                select.GetComponent<RectTransform>().sizeDelta=new Vector2(sizeNow.x-mouseMovex, sizeNow.y);
-                select.GetComponent<RectTransform>().anchoredPosition=new Vector2(position.x+mouseMovex, position.y);
-                upImage.GetComponent<RectTransform>().anchoredPosition=new Vector2(uppos.x-mouseMovex, uppos.y);
+                if (position.x+mouseMovex>=0)
+                {
+                    select.GetComponent<RectTransform>().sizeDelta=new Vector2(sizeNow.x-mouseMovex, sizeNow.y);
+                    select.GetComponent<RectTransform>().anchoredPosition=new Vector2(position.x+mouseMovex, position.y);
+                    upImage.GetComponent<RectTransform>().anchoredPosition=new Vector2(uppos.x-mouseMovex, uppos.y);
+                }
             }
             else if (Midright.gameObject.GetComponent<ButtonPressListener>().press)
             {
@@ -174,10 +189,14 @@ public class CuttingController : MonoBehaviour
                 mouseMovex=mousePosNow.x-mousePos.x;
                 mouseMovey=mousePosNow.y-mousePos.y;
                 mousePos=mousePosNow;
+                Vector2 position = new Vector2(select.GetComponent<RectTransform>().anchoredPosition.x,
+                    select.GetComponent<RectTransform>().anchoredPosition.y);
                 Vector2 sizeNow = new Vector2(rowImage.transform.Find("Select").gameObject.GetComponent<RectTransform>().sizeDelta.x,
                     rowImage.transform.Find("Select").gameObject.GetComponent<RectTransform>().sizeDelta.y);
-                select.GetComponent<RectTransform>().sizeDelta=new Vector2(sizeNow.x+mouseMovex, sizeNow.y);
-    
+                if (position.x+select.GetComponent<RectTransform>().sizeDelta.x+mouseMovex<=rowImage.GetComponent<RectTransform>().sizeDelta.x)
+                {
+                    select.GetComponent<RectTransform>().sizeDelta=new Vector2(sizeNow.x+mouseMovex, sizeNow.y);
+                }
             }
             else if (Midup.gameObject.GetComponent<ButtonPressListener>().press)
             {
@@ -191,9 +210,12 @@ public class CuttingController : MonoBehaviour
                     select.GetComponent<RectTransform>().anchoredPosition.y);
                 Vector2 uppos = new Vector2(upImage.GetComponent<RectTransform>().anchoredPosition.x,
                     upImage.GetComponent<RectTransform>().anchoredPosition.y);
-                select.GetComponent<RectTransform>().sizeDelta=new Vector2(sizeNow.x, sizeNow.y+mouseMovey);
-                select.GetComponent<RectTransform>().anchoredPosition=new Vector2(position.x, position.y+mouseMovey);
-                upImage.GetComponent<RectTransform>().anchoredPosition=new Vector2(uppos.x, uppos.y - mouseMovey);
+                if (position.y+mouseMovey<=0) 
+                {
+                    select.GetComponent<RectTransform>().sizeDelta=new Vector2(sizeNow.x, sizeNow.y+mouseMovey);
+                    select.GetComponent<RectTransform>().anchoredPosition=new Vector2(position.x, position.y+mouseMovey);
+                    upImage.GetComponent<RectTransform>().anchoredPosition=new Vector2(uppos.x, uppos.y - mouseMovey); 
+                }
             }
         }
     }
@@ -254,6 +276,9 @@ public class CuttingController : MonoBehaviour
 
     public void CutFinish()
     {
+        finalimage=ScaleTextureCutOut(originImage, Mathf.CeilToInt(select.GetComponent<RectTransform>().anchoredPosition.x*scale),
+            -Mathf.CeilToInt(select.GetComponent<RectTransform>().anchoredPosition.y*scale),
+            select.GetComponent<RectTransform>().sizeDelta.x*scale, select.GetComponent<RectTransform>().sizeDelta.y * scale);
         //É¾³ý¾ÉÍ·ÏñÎÄ¼þ
         FileInfo df = new FileInfo($"{Application.persistentDataPath}\\{AllMessageContainer.playerInfo.playerName}.png");
         if (df.Exists)
@@ -270,7 +295,7 @@ public class CuttingController : MonoBehaviour
     public void CutPreview()        //²Ã¼ôÔ¤ÀÀ
     {
         finalimage=ScaleTextureCutOut(originImage, Mathf.CeilToInt(select.GetComponent<RectTransform>().anchoredPosition.x*scale),
-            Mathf.CeilToInt(select.GetComponent<RectTransform>().anchoredPosition.y*scale),
+            -Mathf.CeilToInt(select.GetComponent<RectTransform>().anchoredPosition.y*scale),
             select.GetComponent<RectTransform>().sizeDelta.x*scale,select.GetComponent<RectTransform>().sizeDelta.y * scale); 
         transform.Find("Head").Find("Mask").Find("HeadImage").gameObject.GetComponent<Image>().sprite=
             Sprite.Create(finalimage, new Rect(0, 0, finalimage.width, finalimage.height), new Vector2(0f, 0f));
@@ -278,6 +303,7 @@ public class CuttingController : MonoBehaviour
     public Texture2D ScaleTextureCutOut(Texture2D originalTexture, int offsetX, int offsetY, float targetWidth,float targetHeight)
     {
         offsetY=originalTexture.height-offsetY-Mathf.CeilToInt(targetHeight);
+        Debug.Log($"{offsetX},{offsetY}");
         Texture2D newTexture = new Texture2D(Mathf.CeilToInt(targetWidth), Mathf.CeilToInt(targetHeight));
         for (int y = 0; y < newTexture.height; y++)
         {

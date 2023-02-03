@@ -20,4 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/BreakThrough.unity
     guid: c3d794881e44f6c49a8ee22a73678999
+  - enabled: 1
+    path: Assets/Scenes/GamePage.unity
+    guid: 680a2f775ee2e5449adcb9246345c532
   m_configObjects: {}
