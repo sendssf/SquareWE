@@ -86,9 +86,12 @@ public class CuttingController : MonoBehaviour
                     select.GetComponent<RectTransform>().anchoredPosition.y);
                 Vector2 uppos = new Vector2(upImage.GetComponent<RectTransform>().anchoredPosition.x,
                     upImage.GetComponent<RectTransform>().anchoredPosition.y);
-                select.GetComponent<RectTransform>().sizeDelta=new Vector2(sizeNow.x-mouseMovex, sizeNow.y+mouseMovey);
-                select.GetComponent<RectTransform>().anchoredPosition=new Vector2(position.x+mouseMovex, position.y+mouseMovey);
-                upImage.GetComponent<RectTransform>().anchoredPosition=new Vector2(uppos.x-mouseMovex, uppos.y-mouseMovey);
+                if (position.x+mouseMovex>=0 && position.y+mouseMovey<=0)
+                {
+                    select.GetComponent<RectTransform>().sizeDelta=new Vector2(sizeNow.x-mouseMovex, sizeNow.y+mouseMovey);
+                    select.GetComponent<RectTransform>().anchoredPosition=new Vector2(position.x+mouseMovex, position.y+mouseMovey);
+                    upImage.GetComponent<RectTransform>().anchoredPosition=new Vector2(uppos.x-mouseMovex, uppos.y-mouseMovey);
+                }
             }
             else if (Upright.gameObject.GetComponent<ButtonPressListener>().press)
             {
@@ -102,9 +105,12 @@ public class CuttingController : MonoBehaviour
                     select.GetComponent<RectTransform>().anchoredPosition.y);
                 Vector2 uppos = new Vector2(upImage.GetComponent<RectTransform>().anchoredPosition.x,
                     upImage.GetComponent<RectTransform>().anchoredPosition.y);
-                select.GetComponent<RectTransform>().sizeDelta=new Vector2(sizeNow.x+mouseMovex, sizeNow.y + mouseMovey);
-                select.GetComponent<RectTransform>().anchoredPosition=new Vector2(position.x, position.y + mouseMovey);
-                upImage.GetComponent<RectTransform>().anchoredPosition=new Vector2(uppos.x, uppos.y-mouseMovey);
+                if (position.y+mouseMovey<=0 && select.GetComponent<RectTransform>().rect.xMax<=upImage.GetComponent<RectTransform>().rect.xMax) 
+                {
+                    select.GetComponent<RectTransform>().sizeDelta=new Vector2(sizeNow.x+mouseMovex, sizeNow.y + mouseMovey);
+                    select.GetComponent<RectTransform>().anchoredPosition=new Vector2(position.x, position.y + mouseMovey);
+                    upImage.GetComponent<RectTransform>().anchoredPosition=new Vector2(uppos.x, uppos.y-mouseMovey); 
+                }
             }
             else if (Bottomleft.gameObject.GetComponent<ButtonPressListener>().press)
             {
