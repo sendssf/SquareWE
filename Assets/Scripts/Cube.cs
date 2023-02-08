@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CubeMaker : MonoBehaviour
+public class Cube : MonoBehaviour
 {
     //将六个面组成一个立方体
     void Start()
