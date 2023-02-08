@@ -1,8 +1,10 @@
+using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 //此脚本用来管理登陆界面的鼠标点击事件
 public class SignUpPageClickEvent : MonoBehaviour
@@ -34,31 +36,20 @@ public class SignUpPageClickEvent : MonoBehaviour
     {
         //Add something to operate the input data
         //登陆操作
-        if(AllMessageContainer.playerInfo.playerName!="NickName" && 
-            AllMessageContainer.playerInfo.playerName==AllMessageContainer.loginInfo.nickname)
+        var json = new Dictionary<string, string>
         {
-            if(AllMessageContainer.playerInfo.password==AllMessageContainer.loginInfo.password)
-            {
-                //登陆成功
-                AllMessageContainer.gameStatus.iflogin=true;
-            }
-            else
-            {
-                transform.Find("Contain").Find("Viewport").Find("Content").Find("ErrorTips")
-                    .gameObject.GetComponent<Text>().text="The password is error! Try again!";
-                return;
-            }
-        }
-        else
+            { "nickname",AllMessageContainer.loginInfo.nickname},
+            { "password",AllMessageContainer.loginInfo.password}
+        };
+        string response=transform.parent.gameObject.GetComponent<WebController>().Post("http://127.0.0.1:8080/api/login/", JsonConvert.SerializeObject(json));
+        switch (response)
         {
-            //确认输入的用户是否存在，目前只在本地确认
-            if (File.Exists(Application.persistentDataPath+@"\\"+AllMessageContainer.loginInfo.nickname+".json"))
-            {
-                AllMessageContainer.ReadInfoFromFile(AllMessageContainer.loginInfo.nickname+".json");
-                //判断密码是否正确
-                if (AllMessageContainer.playerInfo.password==AllMessageContainer.loginInfo.password)
+            case WebController.Success:
+                if (AllMessageContainer.playerInfo.playerName==AllMessageContainer.loginInfo.nickname)
                 {
+                    //登录成功且已加载玩家与登陆玩家一致
                     AllMessageContainer.gameStatus.iflogin=true;
+                    transform.gameObject.SetActive(false);
                     if (transform.parent.name=="PlayerMessage")
                     {
                         transform.parent.gameObject.GetComponent<PlayerMessagePageClickEvent>().LoadPage();
@@ -66,19 +57,91 @@ public class SignUpPageClickEvent : MonoBehaviour
                 }
                 else
                 {
-                    transform.Find("Contain").Find("Viewport").Find("Content").Find("ErrorTips")
-                    .gameObject.GetComponent<Text>().text="The password is error! Try again!";
-                    return;
+                    if (File.Exists($"{Application.persistentDataPath}\\{AllMessageContainer.loginInfo.nickname}.json"))    //玩家信息文件存在
+                    {
+                        ReadInfoState res = AllMessageContainer.ReadInfoFromFile($"{AllMessageContainer.loginInfo.nickname}.json");
+                        if (res == ReadInfoState.Success)
+                        {
+                            AllMessageContainer.gameStatus.iflogin=true;
+                            transform.gameObject.SetActive(false);
+                            if (transform.parent.name=="PlayerMessage")
+                            {
+                                transform.parent.gameObject.GetComponent<PlayerMessagePageClickEvent>().LoadPage();
+                            }
+                        }
+                        else if (res==ReadInfoState.FileCannotRead)
+                        {
+                            transform.Find("Contain").Find("Viewport").Find("Content").Find("ErrorTips")
+                                .gameObject.GetComponent<Text>().text="The player file cannot read. Please check if the file has been occupied by other applications";
+                        }
+                    }
+                    else
+                    {
+                        //从server拉取文件
+                        string resp2 = transform.parent.gameObject.GetComponent<WebController>().Post("http://127.0.0.1:8080/api/all_info/",
+                            JsonConvert.SerializeObject(new Dictionary<string, string>
+                            {
+                                { "nickname",AllMessageContainer.loginInfo.nickname}
+                            }));
+                        switch (resp2)
+                        {
+                            case WebController.PlayerNotExist:
+                                transform.Find("Contain").Find("Viewport").Find("Content").Find("ErrorTips")
+                                    .gameObject.GetComponent<Text>().text="The player is not exist. Please check your nickname";
+                                break;
+                            case WebController.ServerNotFound:
+                                transform.Find("Contain").Find("Viewport").Find("Content").Find("ErrorTips")
+                                    .gameObject.GetComponent<Text>().text="Load Information failed becuase your network or the server have some problems.";
+                                break;
+                            default://下载成功
+
+                                File.WriteAllText($"{Application.persistentDataPath}\\{AllMessageContainer.loginInfo.nickname}.json", resp2);
+                                AllMessageContainer.ReadInfoFromFile($"{AllMessageContainer.loginInfo.nickname}.json");
+                                AllMessageContainer.gameStatus.iflogin=true;
+                                transform.gameObject.SetActive(false);
+                                break;
+                        }
+                    }
                 }
-            }
-            else    //用户不存在
-            {
+                break;
+            case WebController.PasswordError:
                 transform.Find("Contain").Find("Viewport").Find("Content").Find("ErrorTips")
-                    .gameObject.GetComponent<Text>().text="The user is not exist! You can create a new account!";
-                return;
-            }
+                    .gameObject.GetComponent<Text>().text="The password is error! Please check the nickname and the password. ";
+                break;
+            case WebController.PlayerNotExist:
+                transform.Find("Contain").Find("Viewport").Find("Content").Find("ErrorTips")
+                    .gameObject.GetComponent<Text>().text="The player is not exist. Please check your nickname";
+                break;
+            case WebController.ServerNotFound:
+                if (File.Exists($"{Application.persistentDataPath}\\{AllMessageContainer.loginInfo.nickname}.json"))
+                {
+                    var info = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, string>>>
+                        (File.ReadAllText($"{Application.persistentDataPath}\\{AllMessageContainer.loginInfo.nickname}.json"));
+                    if (info["playerInfo"]["password"]==AllMessageContainer.loginInfo.password)
+                    {
+                        transform.Find("Contain").Find("Viewport").Find("Content").Find("ErrorTips")
+                            .gameObject.GetComponent<Text>().text="Log in success! But the server connection is error. " +
+                            "You can play the game normally and we will try to upload your data later";
+                        AllMessageContainer.gameStatus.iflogin=true;
+                        if (transform.parent.name=="PlayerMessage")
+                        {
+                            transform.parent.gameObject.GetComponent<PlayerMessagePageClickEvent>().LoadPage();
+                        }
+                    }
+                    else
+                    {
+                        transform.Find("Contain").Find("Viewport").Find("Content").Find("ErrorTips")
+                            .gameObject.GetComponent<Text>().text="The password is error! Please check the nickname and the password. ";
+                    }
+                }
+                else
+                {
+                    transform.Find("Contain").Find("Viewport").Find("Content").Find("ErrorTips")
+                        .gameObject.GetComponent<Text>().text="Server connection error, and the player has no local record. " +
+                        "So you cannot log in this account";
+                }
+                break;
         }
-        transform.gameObject.SetActive(false);
     }
 
     public void GetNickname(string nickname)
@@ -89,5 +152,10 @@ public class SignUpPageClickEvent : MonoBehaviour
     public void GetPassword(string password)
     {
         AllMessageContainer.loginInfo.password=password;
+    }
+
+    private void ShowTips(string message)
+    {
+
     }
 }

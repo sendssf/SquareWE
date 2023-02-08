@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -5,6 +6,8 @@ using System.Transactions;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
+using UnityEngine.Networking;
 
 public class CuttingController : MonoBehaviour
 {
@@ -86,9 +89,12 @@ public class CuttingController : MonoBehaviour
                     select.GetComponent<RectTransform>().anchoredPosition.y);
                 Vector2 uppos = new Vector2(upImage.GetComponent<RectTransform>().anchoredPosition.x,
                     upImage.GetComponent<RectTransform>().anchoredPosition.y);
-                select.GetComponent<RectTransform>().sizeDelta=new Vector2(sizeNow.x-mouseMovex, sizeNow.y+mouseMovey);
-                select.GetComponent<RectTransform>().anchoredPosition=new Vector2(position.x+mouseMovex, position.y+mouseMovey);
-                upImage.GetComponent<RectTransform>().anchoredPosition=new Vector2(uppos.x-mouseMovex, uppos.y-mouseMovey);
+                if (position.x+mouseMovex>=0 && position.y+mouseMovey<=0)
+                {
+                    select.GetComponent<RectTransform>().sizeDelta=new Vector2(sizeNow.x-mouseMovex, sizeNow.y+mouseMovey);
+                    select.GetComponent<RectTransform>().anchoredPosition=new Vector2(position.x+mouseMovex, position.y+mouseMovey);
+                    upImage.GetComponent<RectTransform>().anchoredPosition=new Vector2(uppos.x-mouseMovex, uppos.y-mouseMovey);
+                }
             }
             else if (Upright.gameObject.GetComponent<ButtonPressListener>().press)
             {
@@ -102,9 +108,12 @@ public class CuttingController : MonoBehaviour
                     select.GetComponent<RectTransform>().anchoredPosition.y);
                 Vector2 uppos = new Vector2(upImage.GetComponent<RectTransform>().anchoredPosition.x,
                     upImage.GetComponent<RectTransform>().anchoredPosition.y);
-                select.GetComponent<RectTransform>().sizeDelta=new Vector2(sizeNow.x+mouseMovex, sizeNow.y + mouseMovey);
-                select.GetComponent<RectTransform>().anchoredPosition=new Vector2(position.x, position.y + mouseMovey);
-                upImage.GetComponent<RectTransform>().anchoredPosition=new Vector2(uppos.x, uppos.y-mouseMovey);
+                if (position.y+mouseMovey<=0 && position.x+select.GetComponent<RectTransform>().sizeDelta.x+mouseMovex<=rowImage.GetComponent<RectTransform>().sizeDelta.x) 
+                {
+                    select.GetComponent<RectTransform>().sizeDelta=new Vector2(sizeNow.x+mouseMovex, sizeNow.y + mouseMovey);
+                    select.GetComponent<RectTransform>().anchoredPosition=new Vector2(position.x, position.y + mouseMovey);
+                    upImage.GetComponent<RectTransform>().anchoredPosition=new Vector2(uppos.x, uppos.y-mouseMovey); 
+                }
             }
             else if (Bottomleft.gameObject.GetComponent<ButtonPressListener>().press)
             {
@@ -118,9 +127,12 @@ public class CuttingController : MonoBehaviour
                     select.GetComponent<RectTransform>().anchoredPosition.y);
                 Vector2 uppos = new Vector2(upImage.GetComponent<RectTransform>().anchoredPosition.x,
                     upImage.GetComponent<RectTransform>().anchoredPosition.y);
-                select.GetComponent<RectTransform>().sizeDelta=new Vector2(sizeNow.x-mouseMovex, sizeNow.y-mouseMovey);
-                select.GetComponent<RectTransform>().anchoredPosition=new Vector2(position.x+mouseMovex, position.y);
-                upImage.GetComponent<RectTransform>().anchoredPosition=new Vector2(uppos.x-mouseMovex, uppos.y);
+                if (position.x + mouseMovex>=0 && select.GetComponent<RectTransform>().sizeDelta.y-position.y-mouseMovey<=rowImage.GetComponent<RectTransform>().sizeDelta.y) 
+                {
+                    select.GetComponent<RectTransform>().sizeDelta=new Vector2(sizeNow.x-mouseMovex, sizeNow.y-mouseMovey);
+                    select.GetComponent<RectTransform>().anchoredPosition=new Vector2(position.x+mouseMovex, position.y);
+                    upImage.GetComponent<RectTransform>().anchoredPosition=new Vector2(uppos.x-mouseMovex, uppos.y); 
+                }
             }
             else if (Bottomright.gameObject.GetComponent<ButtonPressListener>().press)
             {
@@ -134,7 +146,11 @@ public class CuttingController : MonoBehaviour
                     select.GetComponent<RectTransform>().anchoredPosition.y);
                 Vector2 uppos = new Vector2(upImage.GetComponent<RectTransform>().anchoredPosition.x,
                     upImage.GetComponent<RectTransform>().anchoredPosition.y);
-                select.GetComponent<RectTransform>().sizeDelta=new Vector2(sizeNow.x+mouseMovex, sizeNow.y - mouseMovey);
+                if (position.x+sizeNow.x+mouseMovex<=rowImage.GetComponent<RectTransform>().sizeDelta.x && 
+                    position.y+sizeNow.y-mouseMovey<=rowImage.GetComponent<RectTransform>().sizeDelta.y)
+                {
+                    select.GetComponent<RectTransform>().sizeDelta=new Vector2(sizeNow.x+mouseMovex, sizeNow.y - mouseMovey);
+                }
             }
             else if (Midbottom.gameObject.GetComponent<ButtonPressListener>().press)
             {
@@ -142,9 +158,14 @@ public class CuttingController : MonoBehaviour
                 mouseMovex=mousePosNow.x-mousePos.x;
                 mouseMovey=mousePosNow.y-mousePos.y;
                 mousePos=mousePosNow;
+                Vector2 position = new Vector2(select.GetComponent<RectTransform>().anchoredPosition.x,
+                    select.GetComponent<RectTransform>().anchoredPosition.y);
                 Vector2 sizeNow = new Vector2(select.GetComponent<RectTransform>().sizeDelta.x,
                     select.GetComponent<RectTransform>().sizeDelta.y);
-                select.GetComponent<RectTransform>().sizeDelta=new Vector2(sizeNow.x, sizeNow.y-mouseMovey);
+                if (position.y+sizeNow.y-mouseMovey<=rowImage.GetComponent<RectTransform>().sizeDelta.y)
+                {
+                    select.GetComponent<RectTransform>().sizeDelta=new Vector2(sizeNow.x, sizeNow.y-mouseMovey);
+                }
             }
             else if (Midleft.gameObject.GetComponent<ButtonPressListener>().press)
             {
@@ -158,9 +179,12 @@ public class CuttingController : MonoBehaviour
                     select.GetComponent<RectTransform>().anchoredPosition.y);
                 Vector2 uppos = new Vector2(upImage.GetComponent<RectTransform>().anchoredPosition.x,
                     upImage.GetComponent<RectTransform>().anchoredPosition.y);
-                select.GetComponent<RectTransform>().sizeDelta=new Vector2(sizeNow.x-mouseMovex, sizeNow.y);
-                select.GetComponent<RectTransform>().anchoredPosition=new Vector2(position.x+mouseMovex, position.y);
-                upImage.GetComponent<RectTransform>().anchoredPosition=new Vector2(uppos.x-mouseMovex, uppos.y);
+                if (position.x+mouseMovex>=0)
+                {
+                    select.GetComponent<RectTransform>().sizeDelta=new Vector2(sizeNow.x-mouseMovex, sizeNow.y);
+                    select.GetComponent<RectTransform>().anchoredPosition=new Vector2(position.x+mouseMovex, position.y);
+                    upImage.GetComponent<RectTransform>().anchoredPosition=new Vector2(uppos.x-mouseMovex, uppos.y);
+                }
             }
             else if (Midright.gameObject.GetComponent<ButtonPressListener>().press)
             {
@@ -168,10 +192,14 @@ public class CuttingController : MonoBehaviour
                 mouseMovex=mousePosNow.x-mousePos.x;
                 mouseMovey=mousePosNow.y-mousePos.y;
                 mousePos=mousePosNow;
+                Vector2 position = new Vector2(select.GetComponent<RectTransform>().anchoredPosition.x,
+                    select.GetComponent<RectTransform>().anchoredPosition.y);
                 Vector2 sizeNow = new Vector2(rowImage.transform.Find("Select").gameObject.GetComponent<RectTransform>().sizeDelta.x,
                     rowImage.transform.Find("Select").gameObject.GetComponent<RectTransform>().sizeDelta.y);
-                select.GetComponent<RectTransform>().sizeDelta=new Vector2(sizeNow.x+mouseMovex, sizeNow.y);
-    
+                if (position.x+select.GetComponent<RectTransform>().sizeDelta.x+mouseMovex<=rowImage.GetComponent<RectTransform>().sizeDelta.x)
+                {
+                    select.GetComponent<RectTransform>().sizeDelta=new Vector2(sizeNow.x+mouseMovex, sizeNow.y);
+                }
             }
             else if (Midup.gameObject.GetComponent<ButtonPressListener>().press)
             {
@@ -185,9 +213,12 @@ public class CuttingController : MonoBehaviour
                     select.GetComponent<RectTransform>().anchoredPosition.y);
                 Vector2 uppos = new Vector2(upImage.GetComponent<RectTransform>().anchoredPosition.x,
                     upImage.GetComponent<RectTransform>().anchoredPosition.y);
-                select.GetComponent<RectTransform>().sizeDelta=new Vector2(sizeNow.x, sizeNow.y+mouseMovey);
-                select.GetComponent<RectTransform>().anchoredPosition=new Vector2(position.x, position.y+mouseMovey);
-                upImage.GetComponent<RectTransform>().anchoredPosition=new Vector2(uppos.x, uppos.y - mouseMovey);
+                if (position.y+mouseMovey<=0) 
+                {
+                    select.GetComponent<RectTransform>().sizeDelta=new Vector2(sizeNow.x, sizeNow.y+mouseMovey);
+                    select.GetComponent<RectTransform>().anchoredPosition=new Vector2(position.x, position.y+mouseMovey);
+                    upImage.GetComponent<RectTransform>().anchoredPosition=new Vector2(uppos.x, uppos.y - mouseMovey); 
+                }
             }
         }
     }
@@ -248,6 +279,9 @@ public class CuttingController : MonoBehaviour
 
     public void CutFinish()
     {
+        finalimage=ScaleTextureCutOut(originImage, Mathf.CeilToInt(select.GetComponent<RectTransform>().anchoredPosition.x*scale),
+            -Mathf.CeilToInt(select.GetComponent<RectTransform>().anchoredPosition.y*scale),
+            select.GetComponent<RectTransform>().sizeDelta.x*scale, select.GetComponent<RectTransform>().sizeDelta.y * scale);
         //É¾³ý¾ÉÍ·ÏñÎÄ¼þ
         FileInfo df = new FileInfo($"{Application.persistentDataPath}\\{AllMessageContainer.playerInfo.playerName}.png");
         if (df.Exists)
@@ -257,6 +291,10 @@ public class CuttingController : MonoBehaviour
         //Ð´ÈëÐÂÍ·Ïñ
         byte[] data = finalimage.EncodeToPNG();
         File.WriteAllBytes($"{Application.persistentDataPath}\\{AllMessageContainer.playerInfo.playerName}.png", data);
+
+        //WebController.PostPicture("http://127.0.0.1:8080/api/post_avatar/", $"{Application.persistentDataPath}\\{AllMessageContainer.playerInfo.playerName}.png");
+        PostPicture("http://127.0.0.1:8080/api/post_avatar/", $"{Application.persistentDataPath}\\{AllMessageContainer.playerInfo.playerName}.png");
+
         transform.parent.gameObject.GetComponent<PlayerMessagePageClickEvent>().LoadHeadImage(false);
         transform.gameObject.SetActive(false);
     }
@@ -264,7 +302,7 @@ public class CuttingController : MonoBehaviour
     public void CutPreview()        //²Ã¼ôÔ¤ÀÀ
     {
         finalimage=ScaleTextureCutOut(originImage, Mathf.CeilToInt(select.GetComponent<RectTransform>().anchoredPosition.x*scale),
-            Mathf.CeilToInt(select.GetComponent<RectTransform>().anchoredPosition.y*scale),
+            -Mathf.CeilToInt(select.GetComponent<RectTransform>().anchoredPosition.y*scale),
             select.GetComponent<RectTransform>().sizeDelta.x*scale,select.GetComponent<RectTransform>().sizeDelta.y * scale); 
         transform.Find("Head").Find("Mask").Find("HeadImage").gameObject.GetComponent<Image>().sprite=
             Sprite.Create(finalimage, new Rect(0, 0, finalimage.width, finalimage.height), new Vector2(0f, 0f));
@@ -272,6 +310,7 @@ public class CuttingController : MonoBehaviour
     public Texture2D ScaleTextureCutOut(Texture2D originalTexture, int offsetX, int offsetY, float targetWidth,float targetHeight)
     {
         offsetY=originalTexture.height-offsetY-Mathf.CeilToInt(targetHeight);
+        Debug.Log($"{offsetX},{offsetY}");
         Texture2D newTexture = new Texture2D(Mathf.CeilToInt(targetWidth), Mathf.CeilToInt(targetHeight));
         for (int y = 0; y < newTexture.height; y++)
         {
@@ -290,5 +329,111 @@ public class CuttingController : MonoBehaviour
         finalimage=texture;
         originImage=new Texture2D(finalimage.width, finalimage.height);
         originImage.SetPixels32(finalimage.GetPixels32());
+    }
+
+    public void ShowTips(string message)
+    {
+        transform.parent.Find("Tips").Find("Contain").Find("Viewport")
+            .Find("Content").Find("Tip").gameObject.GetComponent<Text>().text=message;
+    }
+
+    public void PostPicture(string url, string path)
+    {
+        byte[] image = File.ReadAllBytes(path);
+        string imagestring = Convert.ToBase64String(image);
+        Dictionary<string, string> file = new Dictionary<string, string>
+        {
+            {"pic","begin"},
+            {"nickname",AllMessageContainer.playerInfo.playerName}
+        };
+        using (UnityWebRequest webRequest = new UnityWebRequest(url, UnityWebRequest.kHttpVerbPOST))
+        {
+            UploadHandler upload = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(file)));
+            webRequest.uploadHandler= upload;
+            webRequest.uploadHandler.contentType= "application/json";
+            DownloadHandler download = new DownloadHandlerBuffer();
+            webRequest.downloadHandler= download;
+            UnityWebRequestAsyncOperation operation = webRequest.SendWebRequest();
+            while (!operation.isDone) { }
+            if (webRequest.result==UnityWebRequest.Result.Success)
+            {
+                if(webRequest.downloadHandler.text=="Player does not exist")
+                {
+                    ShowTips("Player does not exist!");
+                }
+            }
+            else
+            {
+                ShowTips("Server or your network error, we cannot upload your head image now. ");
+            }
+        }
+
+
+        for (int i = 0; ; i+=2000000)
+        {
+            int len = 2000000;
+            bool exit = false;
+            if (i+len>imagestring.Length)
+            {
+                len=imagestring.Length-i;
+                exit=true;
+            }
+            Dictionary<string, string> data = new Dictionary<string, string>
+            {
+                { "pic",imagestring.Substring(i,len) },
+                { "nickname",AllMessageContainer.playerInfo.playerName}
+            };
+            using (UnityWebRequest webRequest = new UnityWebRequest(url, UnityWebRequest.kHttpVerbPOST))
+            {
+                UploadHandler uploadHandler = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data)));
+                webRequest.uploadHandler=uploadHandler;
+                webRequest.uploadHandler.contentType="application/json";
+                DownloadHandler downloadHandler = new DownloadHandlerBuffer();
+                webRequest.downloadHandler=downloadHandler;
+                UnityWebRequestAsyncOperation operation1 = webRequest.SendWebRequest();
+                while(!operation1.isDone) { }
+                if (webRequest.result==UnityWebRequest.Result.Success)
+                {
+                    if (webRequest.downloadHandler.text=="Player does not exist")
+                    {
+                        ShowTips("Player does not exist!");
+                    }
+                }
+                else
+                {
+                    ShowTips("Server or your network error, we cannot upload your head image now. ");
+                }
+            }
+            if (exit)
+            {
+                break;
+            }
+        }
+
+        file["pic"]="end";
+        using (UnityWebRequest webRequest = new UnityWebRequest(url, UnityWebRequest.kHttpVerbPOST))
+        {
+            webRequest.uploadHandler=new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(file)));
+            webRequest.uploadHandler.contentType= "application/json";
+            webRequest.downloadHandler=new DownloadHandlerBuffer();
+            UnityWebRequestAsyncOperation operation = webRequest.SendWebRequest();
+            while(!operation.isDone) { }
+            if (webRequest.result==UnityWebRequest.Result.Success)
+            {
+                if (webRequest.downloadHandler.text=="Player does not exist")
+                {
+                    ShowTips("Player does not exist!");
+                }
+            }
+            else
+            {
+                ShowTips("Server or your network error, we cannot upload your head image now. ");
+            }
+        }
+    }
+
+    private void PostErrorSolver(string text)
+    {
+
     }
 }

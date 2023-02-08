@@ -1,7 +1,10 @@
+using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -69,10 +72,18 @@ public class PlayerMessagePageClickEvent : MonoBehaviour
     {
         Texture2D image = new Texture2D(290, 290);
         FileInfo fileInfo = new FileInfo($"{Application.persistentDataPath}\\{AllMessageContainer.playerInfo.playerName}.png");
-        if(!fileInfo.Exists)      //没有头像文件就加载默认头像
+        if(!fileInfo.Exists)      //没有头像文件就从服务器拉取
         {
-            transform.Find("Upleft").Find("Head").Find("Mask").Find("HeadImage").gameObject.GetComponent<Image>().sprite=pubImageHead;
-            return;
+            string res = WebController.GetHeadImage("http://127.0.0.1:8080/api/send_avatar/", AllMessageContainer.playerInfo.playerName);
+            if (res==WebController.Success)
+            {
+                fileInfo=new FileInfo($"{Application.persistentDataPath}\\{AllMessageContainer.playerInfo.playerName}.png");
+            }
+            else
+            {
+                transform.Find("Upleft").Find("Head").Find("Mask").Find("HeadImage").gameObject.GetComponent<Image>().sprite=pubImageHead;
+                return;
+            }
         }
         image.LoadImage(GetImageByte(fileInfo.FullName));
         if (isnew)
@@ -85,7 +96,7 @@ public class PlayerMessagePageClickEvent : MonoBehaviour
         transform.Find("Upleft").Find("Head").Find("Mask").Find("HeadImage").gameObject.GetComponent<Image>().sprite= sprite;
     }
 
-    static byte[] GetImageByte(string imagePath)
+    public static byte[] GetImageByte(string imagePath)
     {
         using (FileStream fs = new FileStream(imagePath, FileMode.Open))
         {
