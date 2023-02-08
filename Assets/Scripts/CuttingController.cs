@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -5,6 +6,8 @@ using System.Transactions;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
+using UnityEngine.Networking;
 
 public class CuttingController : MonoBehaviour
 {
@@ -288,6 +291,10 @@ public class CuttingController : MonoBehaviour
         //Ð´ÈëÐÂÍ·Ïñ
         byte[] data = finalimage.EncodeToPNG();
         File.WriteAllBytes($"{Application.persistentDataPath}\\{AllMessageContainer.playerInfo.playerName}.png", data);
+
+        //WebController.PostPicture("http://127.0.0.1:8080/api/post_avatar/", $"{Application.persistentDataPath}\\{AllMessageContainer.playerInfo.playerName}.png");
+        PostPicture("http://127.0.0.1:8080/api/post_avatar/", $"{Application.persistentDataPath}\\{AllMessageContainer.playerInfo.playerName}.png");
+
         transform.parent.gameObject.GetComponent<PlayerMessagePageClickEvent>().LoadHeadImage(false);
         transform.gameObject.SetActive(false);
     }
@@ -322,5 +329,111 @@ public class CuttingController : MonoBehaviour
         finalimage=texture;
         originImage=new Texture2D(finalimage.width, finalimage.height);
         originImage.SetPixels32(finalimage.GetPixels32());
+    }
+
+    public void ShowTips(string message)
+    {
+        transform.parent.Find("Tips").Find("Contain").Find("Viewport")
+            .Find("Content").Find("Tip").gameObject.GetComponent<Text>().text=message;
+    }
+
+    public void PostPicture(string url, string path)
+    {
+        byte[] image = File.ReadAllBytes(path);
+        string imagestring = Convert.ToBase64String(image);
+        Dictionary<string, string> file = new Dictionary<string, string>
+        {
+            {"pic","begin"},
+            {"nickname",AllMessageContainer.playerInfo.playerName}
+        };
+        using (UnityWebRequest webRequest = new UnityWebRequest(url, UnityWebRequest.kHttpVerbPOST))
+        {
+            UploadHandler upload = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(file)));
+            webRequest.uploadHandler= upload;
+            webRequest.uploadHandler.contentType= "application/json";
+            DownloadHandler download = new DownloadHandlerBuffer();
+            webRequest.downloadHandler= download;
+            UnityWebRequestAsyncOperation operation = webRequest.SendWebRequest();
+            while (!operation.isDone) { }
+            if (webRequest.result==UnityWebRequest.Result.Success)
+            {
+                if(webRequest.downloadHandler.text=="Player does not exist")
+                {
+                    ShowTips("Player does not exist!");
+                }
+            }
+            else
+            {
+                ShowTips("Server or your network error, we cannot upload your head image now. ");
+            }
+        }
+
+
+        for (int i = 0; ; i+=2000000)
+        {
+            int len = 2000000;
+            bool exit = false;
+            if (i+len>imagestring.Length)
+            {
+                len=imagestring.Length-i;
+                exit=true;
+            }
+            Dictionary<string, string> data = new Dictionary<string, string>
+            {
+                { "pic",imagestring.Substring(i,len) },
+                { "nickname",AllMessageContainer.playerInfo.playerName}
+            };
+            using (UnityWebRequest webRequest = new UnityWebRequest(url, UnityWebRequest.kHttpVerbPOST))
+            {
+                UploadHandler uploadHandler = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data)));
+                webRequest.uploadHandler=uploadHandler;
+                webRequest.uploadHandler.contentType="application/json";
+                DownloadHandler downloadHandler = new DownloadHandlerBuffer();
+                webRequest.downloadHandler=downloadHandler;
+                UnityWebRequestAsyncOperation operation1 = webRequest.SendWebRequest();
+                while(!operation1.isDone) { }
+                if (webRequest.result==UnityWebRequest.Result.Success)
+                {
+                    if (webRequest.downloadHandler.text=="Player does not exist")
+                    {
+                        ShowTips("Player does not exist!");
+                    }
+                }
+                else
+                {
+                    ShowTips("Server or your network error, we cannot upload your head image now. ");
+                }
+            }
+            if (exit)
+            {
+                break;
+            }
+        }
+
+        file["pic"]="end";
+        using (UnityWebRequest webRequest = new UnityWebRequest(url, UnityWebRequest.kHttpVerbPOST))
+        {
+            webRequest.uploadHandler=new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(file)));
+            webRequest.uploadHandler.contentType= "application/json";
+            webRequest.downloadHandler=new DownloadHandlerBuffer();
+            UnityWebRequestAsyncOperation operation = webRequest.SendWebRequest();
+            while(!operation.isDone) { }
+            if (webRequest.result==UnityWebRequest.Result.Success)
+            {
+                if (webRequest.downloadHandler.text=="Player does not exist")
+                {
+                    ShowTips("Player does not exist!");
+                }
+            }
+            else
+            {
+                ShowTips("Server or your network error, we cannot upload your head image now. ");
+            }
+        }
+    }
+
+    private void PostErrorSolver(string text)
+    {
+
     }
 }

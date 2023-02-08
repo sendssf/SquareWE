@@ -111,6 +111,9 @@ public class AllMessageContainer : MonoBehaviour
 
     public static void MessageInitial()
     {
+        gameStatus.iflogin=false;
+        gameStatus.ifStartGame=false;
+        gameStatus.ifInit=true;
         fullExp=new int[31];
         fullExp[0]=0; fullExp[1]=(int)LevelFullExp.Level1; fullExp[2]=(int)LevelFullExp.Level2;
         fullExp[3]=(int)LevelFullExp.Level3; fullExp[4]=(int)LevelFullExp.Level4; fullExp[5]=(int)LevelFullExp.Level5;
@@ -129,9 +132,6 @@ public class AllMessageContainer : MonoBehaviour
         var files = new DirectoryInfo(Application.persistentDataPath).GetFiles("*.json");
         if (files.Length==0)    //如果没保存用户的数据
         {
-            gameStatus.iflogin=false;
-            gameStatus.ifStartGame=false;
-            gameStatus.ifInit=true;
             settingsInfo.totalSoundValue=1.0f;
             settingsInfo.backSoundValue=0.25f;
             settingsInfo.effectSoundValue=0.25f;

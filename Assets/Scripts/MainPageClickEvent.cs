@@ -64,18 +64,18 @@ public class MainPageClickEvent : MonoBehaviour
         }
         else
         {
-            transform.Find("NoLoginTips").gameObject.SetActive(true);
+            transform.Find("Tips").gameObject.SetActive(true);
         }
     }
 
     public void QuitNoLoginTips()
     {
-        transform.Find("NoLoginTips").gameObject.SetActive(false);
+        transform.Find("Tips").gameObject.SetActive(false);
     }
 
     public void SignUpNow()
     {
-        transform.Find("NoLoginTips").gameObject.SetActive(false);
+        transform.Find("Tips").gameObject.SetActive(false);
         StartCoroutine(loadScene("PlayerMessageUI"));
     }
 }
