@@ -63,11 +63,11 @@ public class SignUpPageClickEvent : MonoBehaviour
                         if (res == ReadInfoState.Success)
                         {
                             AllMessageContainer.gameStatus.iflogin=true;
-                            transform.gameObject.SetActive(false);
                             if (transform.parent.name=="PlayerMessage")
                             {
                                 transform.parent.gameObject.GetComponent<PlayerMessagePageClickEvent>().LoadPage();
                             }
+                            transform.gameObject.SetActive(false);
                         }
                         else if (res==ReadInfoState.FileCannotRead)
                         {
@@ -94,10 +94,13 @@ public class SignUpPageClickEvent : MonoBehaviour
                                     .gameObject.GetComponent<Text>().text="Load Information failed becuase your network or the server have some problems.";
                                 break;
                             default://œ¬‘ÿ≥…π¶
-
                                 File.WriteAllText($"{Application.persistentDataPath}\\{AllMessageContainer.loginInfo.nickname}.json", resp2);
                                 AllMessageContainer.ReadInfoFromFile($"{AllMessageContainer.loginInfo.nickname}.json");
                                 AllMessageContainer.gameStatus.iflogin=true;
+                                if (transform.parent.name=="PlayerMessage")
+                                {
+                                    transform.parent.gameObject.GetComponent<PlayerMessagePageClickEvent>().LoadPage();
+                                }
                                 transform.gameObject.SetActive(false);
                                 break;
                         }

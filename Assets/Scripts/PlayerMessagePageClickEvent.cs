@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
@@ -15,10 +16,26 @@ public class PlayerMessagePageClickEvent : MonoBehaviour
     AsyncOperation operation;		//异步对象控制器
     Transform logintrans;
     public Sprite pubImageHead;     //默认头像
+    public GameObject objItem;
+    GameObject objContainer;        //游戏物品容器
+    //ArrayList objs;              //已经显示的物品
+
+    public Sprite PerspectiveCamera;
+    public Sprite SmartPotion;
+    public Sprite Hammer;
+    public Sprite SuperiorHammer;
+    public Sprite AddTimeClock;
+    public Sprite SuperiorAddTimeClock;
+    public Sprite ForgetPotion;
+    public Sprite SuperiorForgetPotion;
+    public Sprite Dictionary;
+    public Sprite Eraser;
+    public Sprite SuperiorEraser;
 
     void Start()
     {
         //imageType="png";
+        objContainer=transform.Find("Body").Find("ObjectList").Find("RankContainer").Find("Viewport").Find("Content").gameObject;
         logintrans=transform.Find("Login");
         if (!AllMessageContainer.gameStatus.iflogin)
         {
@@ -65,6 +82,7 @@ public class PlayerMessagePageClickEvent : MonoBehaviour
             ((float)AllMessageContainer.playerInfo.experience)/AllMessageContainer.fullExp[AllMessageContainer.playerInfo.level];
         transform.Find("Upleft").Find("Level").Find("ExpValue").gameObject.GetComponent<Text>().text=
             $"{AllMessageContainer.playerInfo.experience}/{AllMessageContainer.fullExp[AllMessageContainer.playerInfo.level]}";
+        ShowObject();
         LoadHeadImage(false);
     }
 
@@ -194,5 +212,81 @@ public class PlayerMessagePageClickEvent : MonoBehaviour
     public void QuitTips()
     {
         transform.Find("Tips").gameObject.SetActive(false);
+    }
+
+    public void GotoFriend()
+    {
+        transform.Find("Friends").gameObject.SetActive(true) ;
+    }
+
+    public void QuitFriend()
+    {
+        transform.Find("Friends").gameObject.SetActive(false) ;
+    }
+
+    public void ShowObject()
+    {
+        int all = objContainer.transform.childCount;
+        for(int i = 0; i<all; i++)
+        {
+            Destroy(objContainer.transform.GetChild(i).gameObject);
+        }
+        foreach(KeyValuePair<string,string> obj in AllMessageContainer.playerInfo.objectList)
+        {
+            if (obj.Key=="0")
+            {
+                continue;
+            }
+            var item=Instantiate(objItem, objContainer.transform);
+            switch (obj.Key)
+            {
+                case "PerspectiveCamera":
+                    item.transform.Find("Image").gameObject.GetComponent<Image>().sprite=PerspectiveCamera;
+                    item.transform.Find("Name").gameObject.GetComponent<Text>().text="Perspective Camera";
+                    break;
+                case "SmartPotion":
+                    item.transform.Find("Image").gameObject.GetComponent<Image>().sprite=SmartPotion;
+                    item.transform.Find("Name").gameObject.GetComponent<Text>().text="Smart Potion";
+                    break;
+                case "Hammer":
+                    item.transform.Find("Image").gameObject.GetComponent<Image>().sprite=Hammer;
+                    item.transform.Find("Name").gameObject.GetComponent<Text>().text="Hammer";
+                    break;
+                case "SuperiorHammer":
+                    item.transform.Find("Image").gameObject.GetComponent<Image>().sprite=SuperiorHammer;
+                    item.transform.Find("Name").gameObject.GetComponent<Text>().text="Superior Hammer";
+                    break;
+                case "AddTimeClock":
+                    item.transform.Find("Image").gameObject.GetComponent<Image>().sprite=AddTimeClock;
+                    item.transform.Find("Name").gameObject.GetComponent<Text>().text="Add Time Clock";
+                    break;
+                case "SuperiorAddTimeClock":
+                    item.transform.Find("Image").gameObject.GetComponent<Image>().sprite=SuperiorAddTimeClock;
+                    item.transform.Find("Name").gameObject.GetComponent<Text>().text="Superior Add Time Clock";
+                    break;
+                case "ForgetPotion":
+                    item.transform.Find("Image").gameObject.GetComponent<Image>().sprite=ForgetPotion;
+                    item.transform.Find("Name").gameObject.GetComponent<Text>().text="Forget Potion";
+                    break;
+                case "SuperiorForgetPotion":
+                    item.transform.Find("Image").gameObject.GetComponent<Image>().sprite=SuperiorForgetPotion;
+                    item.transform.Find("Name").gameObject.GetComponent<Text>().text="Superior Forget Potion";
+                    break;
+                case "Dictionary":
+                    item.transform.Find("Image").gameObject.GetComponent<Image>().sprite=Dictionary;
+                    item.transform.Find("Name").gameObject.GetComponent<Text>().text="Dictionary";
+                    break;
+                case "Eraser":
+                    item.transform.Find("Image").gameObject.GetComponent<Image>().sprite=Eraser;
+                    item.transform.Find("Name").gameObject.GetComponent<Text>().text="Eraser";
+                    break;
+                case "SuperiorEraser":
+                    item.transform.Find("Image").gameObject.GetComponent<Image>().sprite=SuperiorEraser;
+                    item.transform.Find("Name").gameObject.GetComponent<Text>().text="Superior Eraser";
+                    break;
+            }
+
+            item.transform.Find("Number").gameObject.GetComponent<Text>().text="Number:"+obj.Value;
+        }
     }
 }

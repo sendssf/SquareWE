@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -53,7 +54,7 @@ public class ShopPageClickEvent : MonoBehaviour
 
     private void ShowTips(string message)
     {
-        transform.Find("Tips").Find("Contain").Find("Viewport").Find("Content").Find("Tips")
+        transform.Find("Tips").Find("Contain").Find("Viewport").Find("Content").Find("Tip")
             .gameObject.GetComponent<Text>().text=message;
     }
 
@@ -355,6 +356,24 @@ public class ShopPageClickEvent : MonoBehaviour
                 Debug.Log(AllMessageContainer.playerInfo.objectList.Count);
                 transform.Find("Confirm").gameObject.SetActive(false);
                 UpdateRemainMoney();
+
+                for (int i = 0; i<number; i++)
+                {
+                    string response=transform.gameObject.GetComponent<WebController>().Post("http://127.0.0.1:8080/api/post_object/",
+                        JsonConvert.SerializeObject(new Dictionary<string, string>
+                        {
+                            { "nickname",AllMessageContainer.playerInfo.playerName},
+                            { "object",objName }
+                        }));
+                    if (response==WebController.PlayerNotExist)
+                    {
+                        ShowTips("The player is not exist! ");
+                    }
+                    else if (response==WebController.ServerNotFound)
+                    {
+                        ShowTips("The server or the network error! We will save your purchasing data locally and upload to server later. ");
+                    }
+                }
             }
         }
         else

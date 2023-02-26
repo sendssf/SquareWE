@@ -49,6 +49,7 @@ public struct PlayerInfo
     public string email;
     public Dictionary<string,string> worldList;
     public Dictionary<string, string> objectList;
+    public Dictionary<string, Dictionary<string,string>> friendList;   //键为昵称，值为info字典
     public int level;
     public int experience;
     public int rank;
@@ -129,6 +130,7 @@ public class AllMessageContainer : MonoBehaviour
         ResetPlayerInfo();
         playerInfo.worldList=new Dictionary<string, string>();
         playerInfo.objectList=new Dictionary<string, string>();
+        playerInfo.friendList=new Dictionary<string,Dictionary<string,string>>();
         var files = new DirectoryInfo(Application.persistentDataPath).GetFiles("*.json");
         if (files.Length==0)    //如果没保存用户的数据
         {
@@ -157,6 +159,7 @@ public class AllMessageContainer : MonoBehaviour
         Dictionary<string, Dictionary<string, string>> info=new Dictionary<string, Dictionary<string, string>>();
         Dictionary<string,string> playerInfo=new Dictionary<string,string>();
         Dictionary<string,string> settingsInfo=new Dictionary<string,string>();
+        Dictionary<string, string> friendInfo = new Dictionary<string, string>();
 
         playerInfo.Add("playerName", AllMessageContainer.playerInfo.playerName);
         playerInfo.Add("password", AllMessageContainer.playerInfo.password);
@@ -183,11 +186,21 @@ public class AllMessageContainer : MonoBehaviour
         {
             AllMessageContainer.playerInfo.objectList.Add("0", "0");
         }
+        if (AllMessageContainer.playerInfo.friendList.Count==0)
+        {
+            AllMessageContainer.playerInfo.friendList.Add("0", new Dictionary<string, string>() { { "0","0"} });
+        }
+
+        foreach (KeyValuePair<string, Dictionary<string, string>> frd in AllMessageContainer.playerInfo.friendList)
+        {
+            friendInfo.Add(frd.Key, JsonConvert.SerializeObject(frd.Value));
+        }
 
         info.Add("playerInfo", playerInfo);
         info.Add("settingsInfo", settingsInfo);
         info.Add("wordList", AllMessageContainer.playerInfo.worldList);
         info.Add("objectList", AllMessageContainer.playerInfo.objectList);
+        info.Add("friendList", friendInfo);
 
         using(FileStream fs=new FileStream(Application.persistentDataPath + @"\\" + filename, FileMode.OpenOrCreate)) 
         { 
@@ -237,6 +250,10 @@ public class AllMessageContainer : MonoBehaviour
         {
             playerInfo.objectList.Add(obj.Key, obj.Value);
         }
+        //foreach(KeyValuePair<string,string> frd in info["friendList"])
+        //{
+        //    playerInfo.friendList.Add(frd.Key, JsonConvert.DeserializeObject<Dictionary<string, string>>(frd.Value));
+        //}
 
         playerInfo.playerName=info["playerInfo"]["playerName"];
         playerInfo.password=info["playerInfo"]["password"];
