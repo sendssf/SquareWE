@@ -83,7 +83,7 @@ public class MainPageClickEvent : MonoBehaviour
 
     public void SendInfoToServer()
     {
-        transform.gameObject.GetComponent<WebController>().Post("http://127.0.0.1:8080/api/post_settings/", 
+        WebController.Post("http://127.0.0.1:8080/api/post_settings/", 
             JsonConvert.SerializeObject(new Dictionary<string, string>
             {
                 {"nickname",AllMessageContainer.playerInfo.playerName },
@@ -94,7 +94,7 @@ public class MainPageClickEvent : MonoBehaviour
                 {"backSoundValue",AllMessageContainer.settingsInfo.backSoundValue.ToString()},
                 {"effectSoundValue",AllMessageContainer.settingsInfo.effectSoundValue.ToString()}
             }));
-        transform.gameObject.GetComponent<WebController>().Post("http://127.0.0.1:8080/api/post_info/",
+        WebController.Post("http://127.0.0.1:8080/api/post_info/",
             JsonConvert.SerializeObject(new Dictionary<string, string>
             {
                 {"nickname",AllMessageContainer.playerInfo.playerName },

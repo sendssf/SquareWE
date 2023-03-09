@@ -49,7 +49,7 @@ public struct PlayerInfo
     public string email;
     public Dictionary<string,string> worldList;
     public Dictionary<string, string> objectList;
-    public Dictionary<string, Dictionary<string,string>> friendList;   //键为昵称，值为info字典
+    public List<string> friendList;   //键为昵称，值为info字典
     public int level;
     public int experience;
     public int rank;
@@ -88,6 +88,7 @@ public struct GameStatus
     public bool ifStartGame;
     public bool ifInit;
     public GameMode gameMode;
+    public bool ifUpdateFriendImage;
 }
 
 public class AllMessageContainer : MonoBehaviour
@@ -115,6 +116,7 @@ public class AllMessageContainer : MonoBehaviour
         gameStatus.iflogin=false;
         gameStatus.ifStartGame=false;
         gameStatus.ifInit=true;
+        gameStatus.ifUpdateFriendImage=false;
         fullExp=new int[31];
         fullExp[0]=0; fullExp[1]=(int)LevelFullExp.Level1; fullExp[2]=(int)LevelFullExp.Level2;
         fullExp[3]=(int)LevelFullExp.Level3; fullExp[4]=(int)LevelFullExp.Level4; fullExp[5]=(int)LevelFullExp.Level5;
@@ -130,7 +132,7 @@ public class AllMessageContainer : MonoBehaviour
         ResetPlayerInfo();
         playerInfo.worldList=new Dictionary<string, string>();
         playerInfo.objectList=new Dictionary<string, string>();
-        playerInfo.friendList=new Dictionary<string,Dictionary<string,string>>();
+        playerInfo.friendList=new List<string>();
         var files = new DirectoryInfo(Application.persistentDataPath).GetFiles("*.json");
         if (files.Length==0)    //如果没保存用户的数据
         {
@@ -156,10 +158,10 @@ public class AllMessageContainer : MonoBehaviour
 
     public static void WriteInfoToFile(string filename)
     {
-        Dictionary<string, Dictionary<string, string>> info=new Dictionary<string, Dictionary<string, string>>();
+        Dictionary<string, object> info=new Dictionary<string, object>();
         Dictionary<string,string> playerInfo=new Dictionary<string,string>();
         Dictionary<string,string> settingsInfo=new Dictionary<string,string>();
-        Dictionary<string, string> friendInfo = new Dictionary<string, string>();
+        List<string> friendInfo = new List<string>();
 
         playerInfo.Add("playerName", AllMessageContainer.playerInfo.playerName);
         playerInfo.Add("password", AllMessageContainer.playerInfo.password);
@@ -188,12 +190,12 @@ public class AllMessageContainer : MonoBehaviour
         }
         if (AllMessageContainer.playerInfo.friendList.Count==0)
         {
-            AllMessageContainer.playerInfo.friendList.Add("0", new Dictionary<string, string>() { { "0","0"} });
+            AllMessageContainer.playerInfo.friendList.Add("0");
         }
 
-        foreach (KeyValuePair<string, Dictionary<string, string>> frd in AllMessageContainer.playerInfo.friendList)
+        foreach (string frd in AllMessageContainer.playerInfo.friendList)
         {
-            friendInfo.Add(frd.Key, JsonConvert.SerializeObject(frd.Value));
+            friendInfo.Add(frd);
         }
 
         info.Add("playerInfo", playerInfo);
@@ -203,7 +205,9 @@ public class AllMessageContainer : MonoBehaviour
         info.Add("friendList", friendInfo);
 
         using(FileStream fs=new FileStream(Application.persistentDataPath + @"\\" + filename, FileMode.OpenOrCreate)) 
-        { 
+        {
+            fs.Seek(0, SeekOrigin.Begin);
+            fs.SetLength(0);
             using(StreamWriter sw=new StreamWriter(fs))
             {
                 sw.Write(JsonConvert.SerializeObject(info));
@@ -222,6 +226,10 @@ public class AllMessageContainer : MonoBehaviour
         {
             playerInfo.objectList.Clear();
         }
+        if (playerInfo.friendList.Count!=0)
+        {
+            playerInfo.friendList.Clear();
+        }
 
         string content;
         using (FileStream fs = new FileStream(Application.persistentDataPath+@"\\"+filename, FileMode.Open))
@@ -239,39 +247,41 @@ public class AllMessageContainer : MonoBehaviour
                 content= sr.ReadToEnd();
             }
         }
-
-        Dictionary<string, Dictionary<string, string>> info =
-            JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, string>>>(content);
-        foreach (KeyValuePair<string, string> word in info["wordList"])
+        Dictionary<string, object> info =
+            JsonConvert.DeserializeObject<Dictionary<string, object>>(content);
+        Dictionary<string, string> wordlst = JsonConvert.DeserializeObject<Dictionary<string,string>>(info["wordList"].ToString());
+        Dictionary<string, string> objectlst = JsonConvert.DeserializeObject<Dictionary<string, string>>(info["objectList"].ToString());
+        Dictionary<string, string> plrInfo = JsonConvert.DeserializeObject<Dictionary<string, string>>(info["playerInfo"].ToString());
+        Dictionary<string, string> setInfo = JsonConvert.DeserializeObject<Dictionary<string, string>>(info["settingsInfo"].ToString());
+        List<string> friendlst = JsonConvert.DeserializeObject<List<string>>(info["friendList"].ToString());
+        foreach (KeyValuePair<string, string> word in wordlst)
         {
             playerInfo.worldList.Add(word.Key, word.Value);
         }
-        foreach (KeyValuePair<string, string> obj in info["objectList"])
+        foreach (KeyValuePair<string, string> obj in objectlst)
         {
             playerInfo.objectList.Add(obj.Key, obj.Value);
         }
-        //foreach(KeyValuePair<string,string> frd in info["friendList"])
-        //{
-        //    playerInfo.friendList.Add(frd.Key, JsonConvert.DeserializeObject<Dictionary<string, string>>(frd.Value));
-        //}
+        foreach(string frd in friendlst)
+        {
+            playerInfo.friendList.Add(frd);
+        }
+        playerInfo.playerName=plrInfo["playerName"];
+        playerInfo.password=plrInfo["password"];
+        playerInfo.playerAccount=plrInfo["playerAccount"];
+        playerInfo.email=plrInfo["email"];
+        playerInfo.level=Convert.ToInt32(plrInfo["level"]);
+        playerInfo.coin=Convert.ToInt32(plrInfo["coin"]);
+        playerInfo.crystal=Convert.ToInt32(plrInfo["crystal"]);
+        playerInfo.experience=Convert.ToInt32(plrInfo["experience"]);
+        playerInfo.rank=Convert.ToInt32(plrInfo["rank"]);
 
-        playerInfo.playerName=info["playerInfo"]["playerName"];
-        playerInfo.password=info["playerInfo"]["password"];
-        playerInfo.playerAccount=info["playerInfo"]["playerAccount"];
-        playerInfo.email=info["playerInfo"]["email"];
-        playerInfo.level=Convert.ToInt32(info["playerInfo"]["level"]);
-        playerInfo.coin=Convert.ToInt32(info["playerInfo"]["coin"]);
-        playerInfo.crystal=Convert.ToInt32(info["playerInfo"]["crystal"]);
-        playerInfo.experience=Convert.ToInt32(info["playerInfo"]["experience"]);
-        playerInfo.rank=Convert.ToInt32(info["playerInfo"]["rank"]);
-
-        settingsInfo.totalSoundValue=(float)Convert.ToDouble(info["settingsInfo"]["totalSoundValue"]);
-        settingsInfo.totalSoundOpen=Convert.ToBoolean(info["settingsInfo"]["totalSoundOpen"]);
-        settingsInfo.backSoundValue=(float)Convert.ToDouble(info["settingsInfo"]["backSoundValue"]);
-        settingsInfo.backSoundOpen=Convert.ToBoolean(info["settingsInfo"]["backSoundOpen"]);
-        settingsInfo.effectSoundValue=(float)Convert.ToDouble(info["settingsInfo"]["effectSoundValue"]);
-        settingsInfo.effectSoundOpen=Convert.ToBoolean(info["settingsInfo"]["effectSoundOpen"]);
-
+        settingsInfo.totalSoundValue=(float)Convert.ToDouble(setInfo["totalSoundValue"]);
+        settingsInfo.totalSoundOpen=Convert.ToBoolean(setInfo["totalSoundOpen"]);
+        settingsInfo.backSoundValue=(float)Convert.ToDouble(setInfo["backSoundValue"]);
+        settingsInfo.backSoundOpen=Convert.ToBoolean(setInfo["backSoundOpen"]);
+        settingsInfo.effectSoundValue=(float)Convert.ToDouble(setInfo["effectSoundValue"]);
+        settingsInfo.effectSoundOpen=Convert.ToBoolean(setInfo["effectSoundOpen"]);
         return ReadInfoState.Success;
     }
 
@@ -284,5 +294,30 @@ public class AllMessageContainer : MonoBehaviour
         playerInfo.experience=0;
         playerInfo.rank=0;
         playerInfo.level=1;
+    }
+
+    public static Dictionary<string,string> GetFriendsInfoFromServer(string nickname)
+    {
+        var res=new Dictionary<string,string>();
+        string result = WebController.Post("http://127.0.0.1:8080/api/all_info/",
+            JsonConvert.SerializeObject(new Dictionary<string, string>
+            {
+                {"nickname",nickname }
+            }));
+        if (result==WebController.ServerNotFound||result==WebController.PlayerNotExist)
+        {
+            return null;
+        }
+        else
+        {
+            var allinfo=JsonConvert.DeserializeObject<Dictionary<string,object>>(result);
+            var plyInfo = JsonConvert.DeserializeObject<Dictionary<string, string>>(allinfo["playerInfo"].ToString());
+            var wordlst = JsonConvert.DeserializeObject<Dictionary<string, string>>(allinfo["wordList"].ToString());
+
+            res.Add("level", plyInfo["level"]);
+            res.Add("rank", plyInfo["rank"]);
+            res.Add("wordnumber", wordlst.Count.ToString());
+        }
+        return res;
     }
 }

@@ -65,7 +65,7 @@ public class SignInPageClickEvent : MonoBehaviour
             { "account", AllMessageContainer.registInfo.account }
         };
         //WebController.Post("http://127.0.0.1:8080/api/signup/", JsonConvert.SerializeObject(json));
-        string response = transform.parent.gameObject.GetComponent<WebController>().Post("http://127.0.0.1:8080/api/signup/", JsonConvert.SerializeObject(json));
+        string response = WebController.Post("http://127.0.0.1:8080/api/signup/", JsonConvert.SerializeObject(json));
         switch (response)
         {
             case WebController.NicknameExist:
@@ -107,7 +107,6 @@ public class SignInPageClickEvent : MonoBehaviour
             default:
                 ShowTips("It seems that an unexpected error occured.");
                 break;
-
         }
     }
 
@@ -129,7 +128,7 @@ public class SignInPageClickEvent : MonoBehaviour
     void ShowTips(string message)
     {
         transform.parent.Find("Tips").gameObject.SetActive(true);
-        transform.Find("Tips").Find("Contain").Find("Viewport").Find("Content").Find("Tip")
+        transform.parent.Find("Tips").Find("Contain").Find("Viewport").Find("Content").Find("Tip")
             .gameObject.GetComponent<Text>().text= message;
     }
 }

@@ -48,4 +48,9 @@ public class WholeCube : MonoBehaviour
             cube[i + 18].transform.position = pos;
         }
     }
+
+    void MakeLettersInOrder(GameObject beginQuad)
+    {
+
+    }
 }

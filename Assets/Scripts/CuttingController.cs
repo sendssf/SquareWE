@@ -310,7 +310,6 @@ public class CuttingController : MonoBehaviour
     public Texture2D ScaleTextureCutOut(Texture2D originalTexture, int offsetX, int offsetY, float targetWidth,float targetHeight)
     {
         offsetY=originalTexture.height-offsetY-Mathf.CeilToInt(targetHeight);
-        Debug.Log($"{offsetX},{offsetY}");
         Texture2D newTexture = new Texture2D(Mathf.CeilToInt(targetWidth), Mathf.CeilToInt(targetHeight));
         for (int y = 0; y < newTexture.height; y++)
         {

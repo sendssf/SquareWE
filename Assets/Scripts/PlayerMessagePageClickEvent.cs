@@ -216,7 +216,14 @@ public class PlayerMessagePageClickEvent : MonoBehaviour
 
     public void GotoFriend()
     {
-        transform.Find("Friends").gameObject.SetActive(true) ;
+        if (AllMessageContainer.gameStatus.iflogin)
+        {
+            transform.Find("Friends").gameObject.SetActive(true);
+        }
+        else
+        {
+            ShowTips("This is the friend system. If you want to use it, you should sign up first.");
+        }
     }
 
     public void QuitFriend()
@@ -288,5 +295,12 @@ public class PlayerMessagePageClickEvent : MonoBehaviour
 
             item.transform.Find("Number").gameObject.GetComponent<Text>().text="Number:"+obj.Value;
         }
+    }
+
+    void ShowTips(string message)
+    {
+        transform.Find("Tips").gameObject.SetActive(true);
+        transform.Find("Tips").Find("Contain").Find("Viewport").Find("Content").Find("Tip").gameObject
+            .GetComponent<Text>().text=message;
     }
 }

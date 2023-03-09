@@ -41,7 +41,7 @@ public class SignUpPageClickEvent : MonoBehaviour
             { "nickname",AllMessageContainer.loginInfo.nickname},
             { "password",AllMessageContainer.loginInfo.password}
         };
-        string response=transform.parent.gameObject.GetComponent<WebController>().Post("http://127.0.0.1:8080/api/login/", JsonConvert.SerializeObject(json));
+        string response=WebController.Post("http://127.0.0.1:8080/api/login/", JsonConvert.SerializeObject(json));
         switch (response)
         {
             case WebController.Success:
@@ -49,6 +49,7 @@ public class SignUpPageClickEvent : MonoBehaviour
                 {
                     //登录成功且已加载玩家与登陆玩家一致
                     AllMessageContainer.gameStatus.iflogin=true;
+                    //UpdateAllInfo(AllMessageContainer.loginInfo.nickname);
                     transform.gameObject.SetActive(false);
                     if (transform.parent.name=="PlayerMessage")
                     {
@@ -59,6 +60,7 @@ public class SignUpPageClickEvent : MonoBehaviour
                 {
                     if (File.Exists($"{Application.persistentDataPath}\\{AllMessageContainer.loginInfo.nickname}.json"))    //玩家信息文件存在
                     {
+                        //UpdateAllInfo(AllMessageContainer.loginInfo.nickname);
                         ReadInfoState res = AllMessageContainer.ReadInfoFromFile($"{AllMessageContainer.loginInfo.nickname}.json");
                         if (res == ReadInfoState.Success)
                         {
@@ -78,7 +80,7 @@ public class SignUpPageClickEvent : MonoBehaviour
                     else
                     {
                         //从server拉取文件
-                        string resp2 = transform.parent.gameObject.GetComponent<WebController>().Post("http://127.0.0.1:8080/api/all_info/",
+                        string resp2 = WebController.Post("http://127.0.0.1:8080/api/all_info/",
                             JsonConvert.SerializeObject(new Dictionary<string, string>
                             {
                                 { "nickname",AllMessageContainer.loginInfo.nickname}
@@ -144,6 +146,26 @@ public class SignUpPageClickEvent : MonoBehaviour
                         "So you cannot log in this account";
                 }
                 break;
+        }
+    }
+
+    private void UpdateAllInfo(string nickname)        //尽力从server更新玩家全部信息
+    {
+        string res = WebController.Post("http://127.0.0.1:8080/api/all_info/", JsonConvert.SerializeObject(new Dictionary<string, string>
+        {
+            {"nickname",nickname }
+        }));
+        if(res!=WebController.Success && res!=WebController.ServerNotFound && res!=WebController.PlayerNotExist)
+        {
+            using (FileStream fs=new FileStream($"{Application.persistentDataPath}\\{nickname}.json", FileMode.OpenOrCreate))
+            {
+                fs.Seek(0, SeekOrigin.Begin);
+                fs.SetLength(0);
+                using(StreamWriter sw=new StreamWriter(fs))
+                {
+                    sw.WriteLine(res);
+                }
+            }
         }
     }
 

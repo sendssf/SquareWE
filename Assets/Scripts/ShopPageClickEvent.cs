@@ -359,11 +359,13 @@ public class ShopPageClickEvent : MonoBehaviour
 
                 for (int i = 0; i<number; i++)
                 {
-                    string response=transform.gameObject.GetComponent<WebController>().Post("http://127.0.0.1:8080/api/post_object/",
+                    string response=WebController.Post("http://127.0.0.1:8080/api/post_object/",
                         JsonConvert.SerializeObject(new Dictionary<string, string>
                         {
                             { "nickname",AllMessageContainer.playerInfo.playerName},
-                            { "object",objName }
+                            { "object",objName },
+                            {"coin", eachCoin.ToString()},
+                            {"crystal",eachCrystal.ToString() }
                         }));
                     if (response==WebController.PlayerNotExist)
                     {
