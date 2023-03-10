@@ -34,6 +34,7 @@ public class FriendsController : MonoBehaviour
     public string addFriendname;
     float time;
     static List<string> waitList;              //等待同意的好友昵称
+    private List<string> friendsHaveLoaded=new List<string>();     //已经加载的好友
     GameObject friendlist;
     GameObject newFriendList;   //添加好友栏
 
@@ -43,6 +44,10 @@ public class FriendsController : MonoBehaviour
         time=0;
         friendlist=transform.Find("FriendList").Find("Viewport").Find("Content").gameObject;
         newFriendList=transform.Find("AddPage").Find("FriendList").Find("Viewport").Find("Content").gameObject;
+        for(int i = 0; i<friendlist.transform.childCount; i++)
+        {
+            Destroy(friendlist.transform.GetChild(i).gameObject);
+        }
         LoadFriends();
         applicationList = GetFriendApplication();
         if (applicationList!=null && applicationList.Count!=0)
@@ -63,6 +68,10 @@ public class FriendsController : MonoBehaviour
         addFriendname=null;
     }
 
+    private void OnEnable()
+    {
+        
+    }
     // Update is called once per frame
     void Update()
     {
@@ -88,6 +97,25 @@ public class FriendsController : MonoBehaviour
             {
                 LoadApplicationList();
             }
+        }
+        if (AllMessageContainer.gameStatus.changeFriendInfo)
+        {
+            //删除所有好友的显示，准备进行刷新
+            for (int i = 0; i<friendlist.transform.childCount; i++)
+            {
+                Destroy(friendlist.transform.GetChild(i).gameObject);
+            }
+            AllMessageContainer.gameStatus.changeFriendInfo = false;
+            GameObject applist = transform.Find("ApplicationPage").Find("FriendList").
+                Find("Viewport").Find("Content").gameObject;
+            //删除申请列表所有信息
+            for (int i = 0; i<applist.transform.childCount; i++)
+            {
+                Destroy(applist.transform.GetChild(i).gameObject);
+            }
+            waitList.Clear();
+            friendsHaveLoaded.Clear();
+            LoadFriends();
         }
     }
 
@@ -122,25 +150,24 @@ public class FriendsController : MonoBehaviour
     public void LoadFriends()
     {
         int friendnum = friendlist.transform.childCount;
-        for (int i = 0; i<friendnum; i++)
-        {
-            Destroy(friendlist.transform.GetChild(i).gameObject);
-        }
         foreach(string frd in AllMessageContainer.playerInfo.friendList)
         {
             if (frd=="0")
             {
                 continue;
             }
-            var item = Instantiate(friendItem, friendlist.transform);
-            item.transform.Find("Image").gameObject.GetComponent<Image>().sprite= normalHead;
-            item.transform.Find("Name").gameObject.GetComponent<Text>().text= frd;
+            if (!friendsHaveLoaded.Contains(frd))
+            {
+                var item = Instantiate(friendItem, friendlist.transform);
+                item.transform.Find("Image").gameObject.GetComponent<Image>().sprite= normalHead;
+                item.transform.Find("Name").gameObject.GetComponent<Text>().text= frd;
 
-            var msgInfo = AllMessageContainer.GetFriendsInfoFromServer(frd);
-            item.transform.Find("Info").gameObject.GetComponent<Text>().text=
-                $"Level:{msgInfo["level"]}    Rank:{msgInfo["rank"]}    "+
-                $"Word Number:{msgInfo["wordnumber"]}";
-            StartCoroutine(GetFriendImageAsync(frd, item));
+                var msgInfo = AllMessageContainer.GetFriendsInfoFromServer(frd);
+                item.transform.Find("Info").gameObject.GetComponent<Text>().text=
+                    $"Level:{msgInfo["level"]}    Rank:{msgInfo["rank"]}";
+                StartCoroutine(GetFriendImageAsync(frd, item));
+                friendsHaveLoaded.Add(frd);
+            }
         }
     }
 
@@ -165,13 +192,13 @@ public class FriendsController : MonoBehaviour
             if (webRequest.result==UnityWebRequest.Result.Success)
             {
                 string content = webRequest.downloadHandler.text;
-                if (content==null||content==""||content.Length==0)
+                Dictionary<string, string> dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(content);
+                if (dict["pic"]==null||dict["pic"]==""||dict["pic"].Length==0)
                 {
                     item.transform.Find("Image").GetComponent<Image>().sprite=normalHead;
                 }
                 else
                 {
-                    Dictionary<string, string> dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(content);
                     byte[] picture = Convert.FromBase64String(dict["pic"]);
                     //File.WriteAllBytes($"{Application.persistentDataPath}\\Friends\\{nickname}.png", picture);
                     Texture2D texture = new Texture2D(290, 290);
@@ -351,7 +378,7 @@ public class FriendsController : MonoBehaviour
         //检查如果有重复的就从applicationList里面删掉
         for(int i=0;i<applist.transform.childCount;i++)
         {
-            string pname = transform.GetChild(i).Find("Name").gameObject.GetComponent<Text>().text;
+            string pname = applist.transform.GetChild(i).Find("Name").gameObject.GetComponent<Text>().text;
             if (applicationList.ContainsKey(pname))
             {
                 applicationList.Remove(pname);
@@ -384,6 +411,8 @@ public class FriendsController : MonoBehaviour
             FriendPageShowError("");
             Destroy(item);
             AllMessageContainer.playerInfo.friendList.Remove(nickname);
+            friendsHaveLoaded.Remove(nickname);
+            LoadFriends();
         }
         else if (res==WebController.ServerNotFound)
         {
@@ -395,11 +424,32 @@ public class FriendsController : MonoBehaviour
     {
         waitList.Remove(nickname);
         AllMessageContainer.playerInfo.friendList.Add(nickname);
+        applicationList.Remove(nickname);
+        if (applicationList.Count==0)
+        {
+            transform.Find("Application").Find("Mask").gameObject.SetActive(false);
+        }
+        else
+        {
+            transform.Find("Application").Find("Mask").Find("Back").Find("Number").gameObject
+                .GetComponent<Text>().text=applicationList.Count.ToString();
+        }
+        LoadFriends();
     }
 
     public void RejectSuccess(string nickname)
     {
         waitList.Remove(nickname);
         AllMessageContainer.playerInfo.friendList.Remove(nickname);
+        applicationList.Remove(nickname);
+        if (applicationList.Count==0)
+        {
+            transform.Find("Application").Find("Mask").gameObject.SetActive(false);
+        }
+        else
+        {
+            transform.Find("Application").Find("Mask").Find("Back").Find("Number").gameObject
+                .GetComponent<Text>().text=applicationList.Count.ToString();
+        }
     }
 }

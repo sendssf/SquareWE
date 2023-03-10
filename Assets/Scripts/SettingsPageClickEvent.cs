@@ -141,6 +141,7 @@ public class SettingsPageClickEvent : MonoBehaviour
             transform.parent.gameObject.GetComponent<PlayerMessagePageClickEvent>().LoadPage();
         }
         AllMessageContainer.gameStatus.iflogin=false;
+        AllMessageContainer.gameStatus.changeFriendInfo=true;
         transform.gameObject.SetActive(false);
 
     }

@@ -49,7 +49,7 @@ public class SignUpPageClickEvent : MonoBehaviour
                 {
                     //登录成功且已加载玩家与登陆玩家一致
                     AllMessageContainer.gameStatus.iflogin=true;
-                    //UpdateAllInfo(AllMessageContainer.loginInfo.nickname);
+                    UpdateAllInfo(AllMessageContainer.loginInfo.nickname);
                     transform.gameObject.SetActive(false);
                     if (transform.parent.name=="PlayerMessage")
                     {
@@ -60,7 +60,7 @@ public class SignUpPageClickEvent : MonoBehaviour
                 {
                     if (File.Exists($"{Application.persistentDataPath}\\{AllMessageContainer.loginInfo.nickname}.json"))    //玩家信息文件存在
                     {
-                        //UpdateAllInfo(AllMessageContainer.loginInfo.nickname);
+                        UpdateAllInfo(AllMessageContainer.loginInfo.nickname);
                         ReadInfoState res = AllMessageContainer.ReadInfoFromFile($"{AllMessageContainer.loginInfo.nickname}.json");
                         if (res == ReadInfoState.Success)
                         {

@@ -7,6 +7,7 @@ public class CubeClickEvent : MonoBehaviour
 {
     // Start is called before the first frame update
     bool _isClicked = false;
+    public bool _isVisited = false;     //生成字母的时候用
     private PhysicsRaycaster m_Raycaster;
     void Awake()
     {
