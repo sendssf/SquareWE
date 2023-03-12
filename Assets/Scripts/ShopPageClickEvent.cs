@@ -353,7 +353,6 @@ public class ShopPageClickEvent : MonoBehaviour
                 {
                     AllMessageContainer.playerInfo.objectList.Add(objName, number.ToString());
                 }
-                Debug.Log(AllMessageContainer.playerInfo.objectList.Count);
                 transform.Find("Confirm").gameObject.SetActive(false);
                 UpdateRemainMoney();
 

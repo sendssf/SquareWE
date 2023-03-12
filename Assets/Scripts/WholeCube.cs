@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
 //using System;
 
 public class WholeCube : MonoBehaviour
@@ -42,7 +41,6 @@ public class WholeCube : MonoBehaviour
         //动态加载贴图
         System.Random random = new System.Random(~unchecked((int)System.DateTime.Now.Ticks));
         presentWord1 = WordList[System.Convert.ToString(UnityEngine.Random.Range(0, 5556))];
-        Debug.Log(presentWord1);
         for (int i = 0; i < 27; i++)
         {
             for (int j = 0; j < 6; j++)
@@ -76,15 +74,12 @@ public class WholeCube : MonoBehaviour
                 {
                     if (visited[k, l] == false)
                     {
-                        Debug.Log(k + " " + l);
                         for (int m = 0; m < 4; m++)
                         {
                             if (!position.ContainsKey(this.transform.GetChild(k).position + new Vector3(px[m], 0, py[m])))
                             {
-                                Debug.Log(k + " " + l);
                                 if (m == 0 && l == 3)
                                 {
-                                    Debug.Log("hhhhhhhhhhhhhhhhhhhhh");
                                     dfs(new Vector3(k / 9, (k % 9) / 3, (k % 9) % 3), l);
                                 }
                                 if (m == 1 && l == 5)
@@ -204,7 +199,6 @@ public class WholeCube : MonoBehaviour
             if (count1 == 0)
             {
                 presentWord1 = WordList[System.Convert.ToString(UnityEngine.Random.Range(0, 5556))];
-                Debug.Log(presentWord1);
             }
             else
             {
@@ -220,7 +214,6 @@ public class WholeCube : MonoBehaviour
                         {
                             presentWord1 = word;
                             presentWord += presentWord1.Substring(0, 1);
-                            Debug.Log(presentWord1);
                             count1 = 0;
                             count2 = 0;
                         }
@@ -234,8 +227,6 @@ public class WholeCube : MonoBehaviour
         meshRenderer = getSquad(cube,squad).GetComponent<MeshRenderer>();
         meshRenderer.material.SetTexture("_MainTex", texture);
         presentWord += presentWord1.Substring(count, 1);
-        Debug.Log(cube+" "+squad+" "+ count+" "+presentWord);
-        count++;
         if(squad == 0)//顶部
         {  
             for (int i = 0; i < 4; i++)
@@ -683,7 +674,6 @@ public class WholeCube : MonoBehaviour
                 else
                 {
                     haveGenWordIndex.Add(index);
-                    Debug.Log(WordList[index.ToString()].ToUpper());
                     return WordList[index.ToString()].ToUpper();
                 }
             }
