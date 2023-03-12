@@ -13,54 +13,138 @@ enum PressState
     MoveCube
 }
 
-public class GameCubeMoveButton : MonoBehaviour,ISelectHandler,IDeselectHandler
+public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
 {
     // Start is called before the first frame update
     static PressState pressState=PressState.None;
+    bool behave = false;
     GameObject mainCube;
     void Start()
     {
-        mainCube=GameObject.Find("MainCube");
+        mainCube=GameObject.Find("Third-orderCube");
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(pressState==PressState.RotateScreen) 
+        
+        if (Input.GetKey(KeyCode.W))
         {
-            if(Input.GetKeyDown(KeyCode.W))     //向上转动
+            if (transform.name=="RotateScreen" && pressState==PressState.RotateScreen)
             {
-                mainCube.transform.Rotate(-5*Time.deltaTime,0,5*Time.deltaTime);
+                mainCube.transform.Rotate(-20*Time.deltaTime, 0, 20*Time.deltaTime,Space.World);
             }
         }
-        else if(pressState==PressState.RotateCube)
+        else if(Input.GetKey(KeyCode.S))
         {
-            
+            if (transform.name=="RotateScreen" && pressState==PressState.RotateScreen)
+            {
+                mainCube.transform.Rotate(20*Time.deltaTime, 0, -20*Time.deltaTime,Space.World);
+            }
         }
-        else if(pressState==PressState.MoveCube)
+        else if(Input.GetKey(KeyCode.D))
         {
-            
+            if (transform.name=="RotateScreen" && pressState==PressState.RotateScreen)
+            {
+                mainCube.transform.Rotate(20*Time.deltaTime, 0, 20*Time.deltaTime, Space.World);
+            }
+        }
+        else if(Input.GetKey(KeyCode.A))
+        {
+            if (transform.name=="RotateScreen" && pressState==PressState.RotateScreen)
+            {
+                mainCube.transform.Rotate(-20*Time.deltaTime, 0, -20*Time.deltaTime, Space.World);
+            }
+        }
+        else if(Input.GetKey(KeyCode.Q))
+        {
+            if (transform.name=="RotateScreen" && pressState==PressState.RotateScreen)
+            {
+                mainCube.transform.Rotate(0, 20*Time.deltaTime, 0,Space.World);
+            }
+        }
+        else if(Input.GetKey(KeyCode.E))
+        {
+            if (transform.name=="RotateScreen" && pressState==PressState.RotateScreen)
+            {
+                mainCube.transform.Rotate(0, -20*Time.deltaTime, 0, Space.World);
+            }
         }
     }
 
-    public void OnSelect(BaseEventData eventData)
+    public void OnPointerDown(PointerEventData eventData)
     {
         if (transform.name=="RotateScreen")
         {
-            pressState= PressState.RotateScreen;
+            behave=!behave;
+            if (behave)
+            {
+                pressState= PressState.RotateScreen;
+                transform.Find("Image").gameObject.SetActive(true);
+                if (transform.parent.Find("RotateCube").Find("Image").gameObject.activeInHierarchy)
+                {
+                    transform.parent.Find("RotateCube").Find("Image").gameObject.SetActive(false);
+                    transform.parent.Find("RotateCube").GetComponent<GameCubeMoveButton>().behave=false;
+                }
+                if (transform.parent.Find("MoveCube").Find("Image").gameObject.activeInHierarchy)
+                {
+                    transform.parent.Find("MoveCube").Find("Image").gameObject.SetActive(false);
+                    transform.parent.Find("MoveCube").GetComponent<GameCubeMoveButton>().behave=false;
+                }
+            }
+            else
+            {
+                pressState=PressState.None;
+                transform.Find("Image").gameObject.SetActive(false);
+            }
         }
         else if (transform.name=="RotateCube")
         {
-            pressState=PressState.RotateCube;
+            behave=!behave;
+            if (behave)
+            {
+                pressState= PressState.RotateCube;
+                transform.Find("Image").gameObject.SetActive(true);
+                if (transform.parent.Find("RotateScreen").Find("Image").gameObject.activeInHierarchy)
+                {
+                    transform.parent.Find("RotateScreen").Find("Image").gameObject.SetActive(false);
+                    transform.parent.Find("RotateScreen").GetComponent<GameCubeMoveButton>().behave=false;
+                }
+                if (transform.parent.Find("MoveCube").Find("Image").gameObject.activeInHierarchy)
+                {
+                    transform.parent.Find("MoveCube").Find("Image").gameObject.SetActive(false);
+                    transform.parent.Find("MoveCube").GetComponent<GameCubeMoveButton>().behave=false;
+                }
+            }
+            else
+            {
+                pressState=PressState.None;
+                transform.Find("Image").gameObject.SetActive(false);
+            }
         }
         else if (transform.name=="MoveCube")
         {
-            pressState=PressState.MoveCube;
+            behave=!behave;
+            if (behave)
+            {
+                pressState= PressState.MoveCube;
+                transform.Find("Image").gameObject.SetActive(true);
+                if (transform.parent.Find("RotateScreen").Find("Image").gameObject.activeInHierarchy)
+                {
+                    transform.parent.Find("RotateScreen").Find("Image").gameObject.SetActive(false);
+                    transform.parent.Find("RotateScreen").GetComponent<GameCubeMoveButton>().behave=false;
+                }
+                if (transform.parent.Find("RotateCube").Find("Image").gameObject.activeInHierarchy)
+                {
+                    transform.parent.Find("RotateCube").Find("Image").gameObject.SetActive(false);
+                    transform.parent.Find("RotateCube").GetComponent<GameCubeMoveButton>().behave=false;
+                }
+            }
+            else
+            {
+                pressState=PressState.None;
+                transform.Find("Image").gameObject.SetActive(false);
+            }
         }
-    }
-
-    public void OnDeselect(BaseEventData eventData)
-    {
-        pressState=PressState.None;
     }
 }
