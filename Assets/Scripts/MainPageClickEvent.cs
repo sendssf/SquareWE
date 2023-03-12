@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -28,6 +29,7 @@ public class MainPageClickEvent : MonoBehaviour
 
     public void Exit()
     {
+        SendInfoToServer();
         AllMessageContainer.WriteInfoToFile(AllMessageContainer.playerInfo.playerName+".json");
         Application.Quit();
     }
@@ -64,18 +66,43 @@ public class MainPageClickEvent : MonoBehaviour
         }
         else
         {
-            transform.Find("NoLoginTips").gameObject.SetActive(true);
+            transform.Find("Tips").gameObject.SetActive(true);
         }
     }
 
     public void QuitNoLoginTips()
     {
-        transform.Find("NoLoginTips").gameObject.SetActive(false);
+        transform.Find("Tips").gameObject.SetActive(false);
     }
 
     public void SignUpNow()
     {
-        transform.Find("NoLoginTips").gameObject.SetActive(false);
+        transform.Find("Tips").gameObject.SetActive(false);
         StartCoroutine(loadScene("PlayerMessageUI"));
+    }
+
+    public void SendInfoToServer()
+    {
+        WebController.Post("http://127.0.0.1:8080/api/post_settings/", 
+            JsonConvert.SerializeObject(new Dictionary<string, string>
+            {
+                {"nickname",AllMessageContainer.playerInfo.playerName },
+                {"totalSoundOpen",AllMessageContainer.settingsInfo.totalSoundOpen.ToString() },
+                {"backSoundOpen",AllMessageContainer.settingsInfo.backSoundOpen.ToString() },
+                {"effectSoundOpen",AllMessageContainer.settingsInfo.effectSoundOpen.ToString() },
+                {"totalSoundValue",AllMessageContainer.settingsInfo.totalSoundValue.ToString() },
+                {"backSoundValue",AllMessageContainer.settingsInfo.backSoundValue.ToString()},
+                {"effectSoundValue",AllMessageContainer.settingsInfo.effectSoundValue.ToString()}
+            }));
+        WebController.Post("http://127.0.0.1:8080/api/post_info/",
+            JsonConvert.SerializeObject(new Dictionary<string, string>
+            {
+                {"nickname",AllMessageContainer.playerInfo.playerName },
+                {"coin",AllMessageContainer.playerInfo.coin.ToString() },
+                {"crystal",AllMessageContainer.playerInfo.crystal.ToString() },
+                {"level",AllMessageContainer.playerInfo.level.ToString() },
+                {"experience",AllMessageContainer.playerInfo.experience.ToString() },
+                {"rank",AllMessageContainer.playerInfo.experience.ToString() }
+            }));
     }
 }
