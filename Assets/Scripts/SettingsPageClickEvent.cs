@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 //此脚本用来管理设置页面的鼠标点击事件
@@ -14,6 +15,7 @@ public class SettingsPageClickEvent : MonoBehaviour
     public Sprite AllMusicOff;      //音效关闭时的图片
     public GameObject Register;
     public GameObject Login;
+    AsyncOperation operation;
 
     Transform accounttrans;
     void Start()
@@ -111,7 +113,20 @@ public class SettingsPageClickEvent : MonoBehaviour
 
     public void QuitSettings()      //退出设置
     {
-        transform.gameObject.SetActive(false);
+        if (transform.parent.name=="Overlayer")
+        {
+            StartCoroutine(unloadScene("3DOverlayer"));
+        }
+        else
+        {
+            transform.gameObject.SetActive(false);
+        }
+    }
+
+    IEnumerator unloadScene(string name)
+    {
+        operation=SceneManager.UnloadSceneAsync(name);
+        yield return operation;
     }
 
     public void SettingsOK()        //完成设置
@@ -141,6 +156,7 @@ public class SettingsPageClickEvent : MonoBehaviour
             transform.parent.gameObject.GetComponent<PlayerMessagePageClickEvent>().LoadPage();
         }
         AllMessageContainer.gameStatus.iflogin=false;
+        AllMessageContainer.gameStatus.changeFriendInfo=true;
         transform.gameObject.SetActive(false);
 
     }

@@ -14,6 +14,7 @@ public class Faces : MonoBehaviour
 
     public char letter = new char();
     public int times = 0;//µã»÷´ÎÊý
+    public bool visited=false;
     private void Awake()
     {
         meshRenderer = GetComponent<MeshRenderer>();

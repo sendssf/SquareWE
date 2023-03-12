@@ -7,6 +7,7 @@ public class CubeClickEvent : MonoBehaviour
 {
     // Start is called before the first frame update
     bool _isClicked = false;
+    public bool _isVisited = false;     //生成字母的时候用
     private PhysicsRaycaster m_Raycaster;
     void Awake()
     {
@@ -66,16 +67,19 @@ public class CubeClickEvent : MonoBehaviour
                         {
                             if (word == WholeCube.selectedWord.ToLower())
                             {
-                                for (int i = 0; i < WholeCube.Matched.Count; i++)
+                                /*for (int i = 0; i < WholeCube.Matched.Count; i++)
                                 {
                                     if(WholeCube.Matched[i] == word)
                                     {
                                         WholeCube._isUsed = true;
                                     }
-                                }
+                                }*/
                                 if (WholeCube._isUsed == false)
                                 {
                                     WholeCube.Matched.Add(word);
+                                    
+                                    List<GameObject> dsj= new List<GameObject>();
+
                                     Debug.Log("right" + this.gameObject.GetComponent<Faces>().Times());
                                     foreach (GameObject _isSelected in WholeCube.Slected)
                                     {
@@ -100,11 +104,17 @@ public class CubeClickEvent : MonoBehaviour
                                             {
                                                 father.transform.GetChild(i).gameObject.GetComponent<Faces>().rb.isKinematic = false;
                                                 father.transform.GetChild(i).gameObject.GetComponent<Faces>().rb.useGravity = true;
+                                                
                                             }
+                                            father.transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
                                             GameObject.Find("Explosion").gameObject.AddComponent<Expolosion>().explosionPos = GameObject.Find("cube13").transform;
-                                            await Task.Delay(800);
-                                            Destroy(father);
+                                            dsj.Add(father);
                                         }
+                                    }
+                                    await Task.Delay(800);
+                                    foreach(var father in dsj)
+                                    {
+                                        Destroy(father);
                                     }
                                     WholeCube.Slected.Clear();
                                     break;

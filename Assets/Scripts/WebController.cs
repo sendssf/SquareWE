@@ -86,11 +86,23 @@ public class WebController : MonoBehaviour
                 {
                     return PlayerNotExist;
                 }
-                else if(content==null||content==""||content.Length==0){
+                Dictionary<string, string> dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(content);
+                if (dict["pic"]==""||dict["pic"].Length==0)
+                {
                     return FileNotExist;
                 }
-                Dictionary<string, string> dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(content);
-                File.WriteAllBytes($"{Application.persistentDataPath}\\{nickname}.png", Convert.FromBase64String(dict["pic"]));
+                if (nickname==AllMessageContainer.playerInfo.playerName)
+                {
+                    File.WriteAllBytes($"{Application.persistentDataPath}\\{nickname}.png", Convert.FromBase64String(dict["pic"]));
+                }
+                else
+                {
+                    if (!Directory.Exists($"{Application.persistentDataPath}\\searchTemp"))
+                    {
+                        Directory.CreateDirectory($"{Application.persistentDataPath}\\searchTemp");
+                    }
+                    File.WriteAllBytes($"{Application.persistentDataPath}\\SearchTemp\\{nickname}.png", Convert.FromBase64String(dict["pic"]));
+                }
                 return Success;
             }
             else
@@ -184,7 +196,7 @@ public class WebController : MonoBehaviour
         PostAsync(url,JsonConvert.SerializeObject(file));
     }
 
-    public string Post(string url, string postData)
+    public static string Post(string url, string postData)
     {
         using (UnityWebRequest webRequest = new UnityWebRequest(url, UnityWebRequest.kHttpVerbPOST))
         {
@@ -213,6 +225,12 @@ public class WebController : MonoBehaviour
                     case "Log in successfully":
                         return Success;
                     case "Upload successfully":
+                        return Success;
+                    case "Send successfully":
+                        return Success;
+                    case "Accept successfully":
+                        return Success;
+                    case "Reject successfully":
                         return Success;
                     default:
                         return webRequest.downloadHandler.text;

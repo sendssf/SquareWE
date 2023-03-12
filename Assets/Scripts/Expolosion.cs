@@ -6,7 +6,7 @@ public class Expolosion : MonoBehaviour
 {
     // Start is called before the first frame update
     public float radius = 10.0F;
-    public float power = 2000.0F;
+    public float power = 400.0F;
     public Transform explosionPos;
 
     void Start()
@@ -17,7 +17,7 @@ public class Expolosion : MonoBehaviour
             Rigidbody rb = hit.GetComponent<Rigidbody>();
 
             if (rb != null)
-                rb.AddExplosionForce(power,explosionPos.position, radius, 10.0F);
+                rb.AddExplosionForce(power,explosionPos.position, radius, 2.0F);
         }
     }
 }
