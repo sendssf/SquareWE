@@ -5,7 +5,8 @@ using UnityEngine;
 public class Cube : MonoBehaviour
 {
     //将六个面组成一个立方体
-    void Start()
+
+    private void Awake()
     {
         Transform[] squad = new Transform[6];
         for (int i = 0; i < 6; i++)
@@ -37,4 +38,9 @@ public class Cube : MonoBehaviour
         pos = new Vector3(0, 0, 0.5f);
         squad[5].localPosition = pos;
     }
+    void Start()
+    {
+
+    }
+        
 }

@@ -102,6 +102,16 @@ public class SignInPageClickEvent : MonoBehaviour
                     transform.parent.gameObject.GetComponent<PlayerMessagePageClickEvent>().LoadPage();
                 }
                 AllMessageContainer.gameStatus.iflogin= true;
+                WebController.Post("http://127.0.0.1:8080/api/post_settings/", JsonConvert.SerializeObject(new Dictionary<string, string>
+                {
+                    {"nickname",AllMessageContainer.playerInfo.playerName },
+                    {"totalSoundOpen",AllMessageContainer.settingsInfo.totalSoundOpen.ToString() },
+                    {"backSoundOpen",AllMessageContainer.settingsInfo.backSoundOpen.ToString() },
+                    {"effectSoundOpen",AllMessageContainer.settingsInfo.effectSoundOpen.ToString() },
+                    {"totalSoundValue",AllMessageContainer.settingsInfo.totalSoundValue.ToString() },
+                    {"backSoundValue",AllMessageContainer.settingsInfo.backSoundValue.ToString() },
+                    {"effectSoundOpen",AllMessageContainer.settingsInfo.effectSoundValue.ToString() }
+                }));
                 transform.Find("OK").gameObject.SetActive(false);
                 break;
             default:

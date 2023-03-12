@@ -120,9 +120,10 @@ public class SignUpPageClickEvent : MonoBehaviour
             case WebController.ServerNotFound:
                 if (File.Exists($"{Application.persistentDataPath}\\{AllMessageContainer.loginInfo.nickname}.json"))
                 {
-                    var info = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, string>>>
+                    var info = JsonConvert.DeserializeObject<Dictionary<string, object>>
                         (File.ReadAllText($"{Application.persistentDataPath}\\{AllMessageContainer.loginInfo.nickname}.json"));
-                    if (info["playerInfo"]["password"]==AllMessageContainer.loginInfo.password)
+                    var playerInfo = JsonConvert.DeserializeObject<Dictionary<string, string>>(info["playerInfo"].ToString());
+                    if (playerInfo["password"]==AllMessageContainer.loginInfo.password)
                     {
                         transform.Find("Contain").Find("Viewport").Find("Content").Find("ErrorTips")
                             .gameObject.GetComponent<Text>().text="Log in success! But the server connection is error. " +
