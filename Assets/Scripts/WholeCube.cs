@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
+//using System;
 
 public class WholeCube : MonoBehaviour
 {
@@ -13,17 +13,119 @@ public class WholeCube : MonoBehaviour
     public static List<string> Matched = new List<string>();
     public static string selectedWord = string.Empty;
     public static Dictionary<string, string> WordList = ReadCsv.ReadCsvFile("word6.csv");
+
+    public bool _isCleared = false;
+    public Dictionary<Vector3, int> position= new Dictionary<Vector3, int>() ;
+    public int[] px = new int[4] { 1, 0, -1, 0 };
+    public int[] py = new int[4] { 0, 1, 0, -1 };
+    public bool[,] visited = new bool[27, 6];
+    string presentWord = null, presentWord1 = null;
+    int count = 0, count1 = 0, count2 = 0, count3 = -1;
+    public static List<string> SelectedWord = new List<string>();
+    private MeshRenderer meshRenderer;
+    private Texture texture;
+     
     public static char[] alphabet = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
     private static List<int> haveGenWordIndex= new List<int>();
     public Dictionary<Vector3,GameObject> cubeDict= new Dictionary<Vector3,GameObject>();
-    //Ê¹27¸öÁ¢·½Ìå×é³ÉÒ»¸ö´óÁ¢·½Ìå
+    
+    //ä½¿27ä¸ªç«‹æ–¹ä½“ç»„æˆä¸€ä¸ªå¤§ç«‹æ–¹ä½“
+
+    void DFS_Start()
+    {
+        for (int i = 0; i < 27; i++)
+        {
+            position.Add(this.gameObject.transform.GetChild(i).position, i);
+        }
+        //å®šä¹‰è·å–è´´å›¾çš„æ•°é‡
+        //åŠ¨æ€åŠ è½½è´´å›¾
+        System.Random random = new System.Random(~unchecked((int)System.DateTime.Now.Ticks));
+        presentWord1 = WordList[System.Convert.ToString(UnityEngine.Random.Range(0, 5556))];
+        Debug.Log(presentWord1);
+        for (int i = 0; i < 27; i++)
+        {
+            for (int j = 0; j < 6; j++)
+            {
+                visited[i, j] = false;
+            }
+        }
+        dfs(new Vector3(0, 0, 0), 0);
+    }
+
+    void DFS_Update()
+    {
+        if (_isCleared == true)
+        {
+            foreach (int j in position.Values)
+            {
+                count3++;
+                if (j!=count3)
+                {
+                    for (int k = 0; k < 6; k++)
+                    {
+                        visited[count3, k] = true;
+                    }
+                    count3 = j;
+                }
+            }
+            count3 = -1;
+            for (int k = 0; k < 27; k++)
+            {
+                for (int l = 0; l < 6; l++)
+                {
+                    if (visited[k, l] == false)
+                    {
+                        Debug.Log(k + " " + l);
+                        for (int m = 0; m < 4; m++)
+                        {
+                            if (!position.ContainsKey(this.transform.GetChild(k).position + new Vector3(px[m], 0, py[m])))
+                            {
+                                Debug.Log(k + " " + l);
+                                if (m == 0 && l == 3)
+                                {
+                                    Debug.Log("hhhhhhhhhhhhhhhhhhhhh");
+                                    dfs(new Vector3(k / 9, (k % 9) / 3, (k % 9) % 3), l);
+                                }
+                                if (m == 1 && l == 5)
+                                {
+                                    dfs(new Vector3(k / 9, (k % 9) / 3, (k % 9) % 3), l);
+                                }
+                                if (m == 2 && l == 2)
+                                {
+                                    dfs(new Vector3(k / 9, (k % 9) / 3, (k % 9) % 3), l);
+                                }
+                                if (m == 3 && l == 4)
+                                {
+                                    dfs(new Vector3(k / 9, (k % 9) / 3, (k % 9) % 3), l);
+                                }
+                            }
+                        }
+                        if (!position.ContainsKey(this.transform.GetChild(k).position + new Vector3(0, 1, 0)))
+                        {
+                            if (l == 0)
+                            {
+                                dfs(new Vector3(k / 9, (k % 9) / 3, (k % 9) % 3), l);
+                            }
+                        }
+                        if (!position.ContainsKey(this.transform.GetChild(k).position + new Vector3(0, -1, 0)))
+                        {
+                            if (l == 0)
+                            {
+                                dfs(new Vector3(k / 9, (k % 9) / 3, (k % 9) % 3), l);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        _isCleared = false;
+    }
     private void Awake()
     {
         
     }
     void Start()
     {
-        Debug.Log("start");
         GameObject[] cube = new GameObject[27];
         int a = -1;
         for (int i = 0; i < 9; i++)
@@ -59,15 +161,260 @@ public class WholeCube : MonoBehaviour
             cube[i + 18].transform.position = pos;
         }
         haveGenWordIndex.Clear();
-        int beginIndex=Random.Range(0, transform.childCount);
+        int beginIndex = Random.Range(0, transform.childCount);
         int quadBeginIndex = Random.Range(0, 6);
         MakeLettersInOrder(transform.GetChild(beginIndex).GetChild(quadBeginIndex).gameObject);
+    }
+
+    Transform getSquad(Vector3 cube, int squad)
+    {
+        return this.transform.GetChild((int)(cube.x * 9 + cube.y * 3 + cube.z)).GetChild(squad);
+    }
+
+    void dfs(Vector3 cube, int squad)//å‚æ•°ä¸ºè®¿é—®å“ªä¸ªç«‹æ–¹ä½“å’Œè®¿é—®ç«‹æ–¹ä½“çš„å“ªä¸ªé¢
+    {
+        if (cube.x < 0 || cube.x > 2 || cube.y < 0 || cube.y > 2 || cube.z < 0 || cube.z > 2 || squad > 5 || squad < 0)
+        {
+            return;
+        }
+        if (visited[(int)(cube.x*9+cube.y*3+cube.z), squad] == true)
+        {
+            /*if (presentWord != presentWord1)
+            {
+                if (presentWord1.Substring(presentWord.Length, 1).ToUpper() != getSquad(cube, squad).GetComponent<Faces>().letter.ToString())
+                {
+                    return;
+                }
+            }*/
+            return;
+        }
+        if(presentWord == presentWord1)
+        {
+            count = 0;
+            SelectedWord.Add(presentWord1);
+            presentWord = null;
+            foreach (string word in WordList.Values)
+            {
+                if(word.Substring(0,1) == presentWord1.Substring(presentWord1.Length-1,1))
+                {
+                    count1++;
+                }
+            }
+            if (count1 == 0)
+            {
+                presentWord1 = WordList[System.Convert.ToString(UnityEngine.Random.Range(0, 5556))];
+                Debug.Log(presentWord1);
+            }
+            else
+            {
+                count2 = 0;
+                count = 1;
+                count1 = UnityEngine.Random.Range(0, 10000) % (count1-1)+1;
+                foreach (string word in WordList.Values)
+                {
+                    if (word.Substring(0, 1) == presentWord1.Substring(presentWord1.Length - 1,1))
+                    {
+                        count2++;
+                        if (count1 == count2)
+                        {
+                            presentWord1 = word;
+                            presentWord += presentWord1.Substring(0, 1);
+                            Debug.Log(presentWord1);
+                            count1 = 0;
+                            count2 = 0;
+                        }
+                    }
+                }
+            }
+        }
+        visited[(int)(cube.x * 9 + cube.y * 3 + cube.z), squad] = true;
+        texture = Resources.Load(presentWord1.Substring(count, 1).ToUpper()) as Texture;
+        getSquad(cube, squad).GetComponent<Faces>().letter = presentWord1.Substring(count, 1).ToUpper().ToCharArray()[0];
+        meshRenderer = getSquad(cube,squad).GetComponent<MeshRenderer>();
+        meshRenderer.material.SetTexture("_MainTex", texture);
+        presentWord += presentWord1.Substring(count, 1);
+        Debug.Log(cube+" "+squad+" "+ count+" "+presentWord);
+        count++;
+        if(squad == 0)//é¡¶éƒ¨
+        {  
+            for (int i = 0; i < 4; i++)
+            {
+                if (position.ContainsKey(getSquad(cube, squad).parent.position + new Vector3(px[i], 0, py[i])))
+                {
+                    dfs(cube + new Vector3(0, py[i], px[i]), squad);
+                }
+                else
+                {
+                    if(i == 0)
+                    {
+                        dfs(cube, squad+3);
+                    }
+                    else if(i == 1)
+                    {
+                        dfs(cube, squad + 5);
+                    }
+                    else if(i == 2)
+                    {
+                        dfs(cube, squad + 2);
+                    }
+                    else if(i==3)
+                    {
+                        dfs(cube, squad + 4);
+                    }
+                }
+            }
+        }
+        if (squad == 1)//ä¸‹éƒ¨
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                if (position.ContainsKey(getSquad(cube, squad).parent.position + new Vector3(px[i], 0, py[i])))
+                {
+                    dfs(cube + new Vector3(0, py[i], px[i]), squad);
+                }
+                else
+                {
+                    if (i == 0)
+                    {
+                        dfs(cube, squad + 2);
+                    }
+                    else if (i == 1)
+                    {
+                        dfs(cube, squad + 4);
+                    }
+                    else if (i == 2)
+                    {
+                        dfs(cube, squad + 1);
+                    }
+                    else if (i == 3)
+                    {
+                        dfs(cube, squad + 3);
+                    }
+                }
+            }
+        }
+        if (squad == 2)//å·¦éƒ¨
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                if (position.ContainsKey(getSquad(cube, squad).parent.position + new Vector3(0, px[i], py[i])))
+                {
+                    dfs(cube + new Vector3(-px[i], py[i], 0), squad);
+                }
+                else
+                {
+                    if (i == 0)
+                    {
+                        dfs(cube, squad - 2);
+                    }
+                    else if (i == 1)
+                    {
+                        dfs(cube, squad + 3);
+                    }
+                    else if (i == 2)
+                    {
+                        dfs(cube, squad - 1);
+                    }
+                    else if (i == 3)
+                    {
+                        dfs(cube, squad + 2);
+                    }
+                }
+            }
+        }
+        if (squad == 3)//å³éƒ¨
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                if (position.ContainsKey(getSquad(cube, squad).parent.position + new Vector3(0, px[i], py[i])))
+                {
+                    dfs(cube + new Vector3(-px[i], py[i], 0), squad);
+                }
+                else
+                {
+                    if (i == 0)
+                    {
+                        dfs(cube, squad - 3);
+                    }
+                    else if (i == 1)
+                    {
+                        dfs(cube, squad + 2);
+                    }
+                    else if (i == 2)
+                    {
+                        dfs(cube, squad - 2);
+                    }
+                    else if (i == 3)
+                    {
+                        dfs(cube, squad + 1);
+                    }
+                }
+            }
+        }
+        if (squad == 4)//å‰éƒ¨
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                if (position.ContainsKey(getSquad(cube, squad).parent.position + new Vector3(px[i], py[i], 0)))
+                {
+                    dfs(cube + new Vector3(-py[i], 0, px[i]), squad);
+                }
+                else
+                {
+                    if (i == 0)
+                    {
+                        dfs(cube, squad - 1);
+                    }
+                    else if (i == 1)
+                    {
+                        dfs(cube, squad - 4);
+                    }
+                    else if (i == 2)
+                    {
+                        dfs(cube, squad - 2);
+                    }
+                    else if (i == 3)
+                    {
+                        dfs(cube, squad - 3);
+                    }
+                }
+            }
+        }
+        if (squad == 5)//åéƒ¨
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                if (position.ContainsKey(getSquad(cube, squad).parent.position + new Vector3(px[i], py[i], 0)))
+                {
+                    dfs(cube + new Vector3(-py[i], 0, px[i]), squad);
+                }
+                else
+                {
+                    if (i == 0)
+                    {
+                        dfs(cube, squad - 2);
+                    }
+                    else if (i == 1)
+                    {
+                        dfs(cube, squad - 5);
+                    }
+                    else if (i == 2)
+                    {
+                        dfs(cube, squad - 3);
+                    }
+                    else if (i == 3)
+                    {
+                        dfs(cube, squad - 4);
+                    }
+                }
+            }
+        }
     }
 
     void MakeLettersInOrder(GameObject beginQuad)
     {
         var position= beginQuad.transform.localPosition;
-        //½«ËùÓĞ×ÓÎïÌåºÍ×ø±êÌí¼Ó½ø×Öµä
+        //å°†æ‰€æœ‰å­ç‰©ä½“å’Œåæ ‡æ·»åŠ è¿›å­—å…¸
         int cubeCount = transform.childCount;
         for(int i = 0; i<cubeCount; i++)
         {
@@ -116,9 +463,9 @@ public class WholeCube : MonoBehaviour
         List<int> haveTry= new List<int>();
         bool _isPastSuccess = false;
         while (!_isPastSuccess) {
-            if (haveTry.Count>=12)  //±»°üÎ§
+            if (haveTry.Count>=12)  //è¢«åŒ…å›´
             {
-                foreach(KeyValuePair<Vector3,GameObject> pair in cubeDict)  //È«¾ÖÑ°ÕÒÎ´ÌùµÄÃæ
+                foreach(KeyValuePair<Vector3,GameObject> pair in cubeDict)  //å…¨å±€å¯»æ‰¾æœªè´´çš„é¢
                 {
                     for (int i = 0; i<pair.Value.transform.childCount; i++)
                     {
@@ -133,7 +480,7 @@ public class WholeCube : MonoBehaviour
                 break;
             }
             int key = Random.Range(0, 12);
-            //0~3Îª±¾·½¿éµÄÆäËüÃæ
+            //0~3ä¸ºæœ¬æ–¹å—çš„å…¶å®ƒé¢
             if (key==0||key==1||key==2||key==3)
             {
                 Dictionary<Vector3, GameObject> selfDict = new Dictionary<Vector3, GameObject>();
@@ -309,13 +656,13 @@ public class WholeCube : MonoBehaviour
     string GenerateRandomWord(char mustContain='\0')
     {
         int allWordNum = WordList.Count;
-        int index = Random.Range(1, allWordNum+1);
+        int index = Random.Range(1, allWordNum);
         if (mustContain=='\0') {
             while (true)
             {
                 if (haveGenWordIndex.Contains(index)||false)
                 {
-                    index=Random.Range(1, allWordNum+1);
+                    index=Random.Range(1, allWordNum);
                 }
                 else
                 {
