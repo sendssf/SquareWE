@@ -96,6 +96,8 @@ public class CubeClickEvent : MonoBehaviour
                                         else if (_isSelected.GetComponent<Faces>().Times() == 3)
                                         {
                                             GameObject father = _isSelected.transform.parent.gameObject;
+                                            father.transform.parent.GetComponent<WholeCube>().position.Remove(father.transform.position);
+                                            father.transform.parent.GetComponent<WholeCube>()._isCleared = true;
                                             for (int i = 0; i < 6; i++)
                                             {
                                                 father.transform.GetChild(i).gameObject.GetComponent<Faces>().rb.isKinematic = false;
