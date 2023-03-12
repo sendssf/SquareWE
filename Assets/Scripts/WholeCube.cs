@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
 
 public class WholeCube : MonoBehaviour
 {
@@ -309,13 +308,13 @@ public class WholeCube : MonoBehaviour
     string GenerateRandomWord(char mustContain='\0')
     {
         int allWordNum = WordList.Count;
-        int index = Random.Range(1, allWordNum+1);
+        int index = Random.Range(1, allWordNum);
         if (mustContain=='\0') {
             while (true)
             {
                 if (haveGenWordIndex.Contains(index)||false)
                 {
-                    index=Random.Range(1, allWordNum+1);
+                    index=Random.Range(1, allWordNum);
                 }
                 else
                 {

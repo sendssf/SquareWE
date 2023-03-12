@@ -114,6 +114,7 @@ public class CubeClickEvent : MonoBehaviour
                                     await Task.Delay(800);
                                     foreach(var father in dsj)
                                     {
+                                        transform.parent.parent.gameObject.GetComponent<WholeCube>().cubeDict.Remove(father.transform.localPosition);
                                         Destroy(father);
                                     }
                                     WholeCube.Slected.Clear();
