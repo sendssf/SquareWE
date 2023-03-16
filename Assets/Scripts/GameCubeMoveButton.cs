@@ -70,6 +70,56 @@ public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
                 mainCube.transform.Rotate(0, -20*Time.deltaTime, 0, Space.World);
             }
         }
+
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            if(transform.name=="RotateCube" && pressState==PressState.RotateCube)
+            {
+                foreach(GameObject quad in WholeCube.Slected)
+                {
+                    GameObject cube = quad.transform.parent.gameObject;
+                    Quaternion begin = new Quaternion(cube.transform.rotation.x, 
+                        cube.transform.rotation.y, cube.transform.rotation.z, cube.transform.rotation.w);
+                    Vector3 beginVec3 = begin.eulerAngles;
+                    Vector3 endVec3 = new Vector3(beginVec3.x, beginVec3.y+90, beginVec3.z);
+                }
+            }
+        }
+        else if (Input.GetKeyDown(KeyCode.S))
+        {
+            if (transform.name=="RotateCube" && pressState==PressState.RotateCube)
+            {
+
+            }
+        }
+        else if (Input.GetKeyDown(KeyCode.A))
+        {
+            if (transform.name=="RotateCube" && pressState==PressState.RotateCube)
+            {
+
+            }
+        }
+        else if (Input.GetKeyDown(KeyCode.D))
+        {
+            if (transform.name=="RotateCube" && pressState==PressState.RotateCube)
+            {
+
+            }
+        }
+        else if (Input.GetKeyDown(KeyCode.Q))
+        {
+            if (transform.name=="RotateCube" && pressState==PressState.RotateCube)
+            {
+
+            }
+        }
+        else if (Input.GetKeyDown(KeyCode.E))
+        {
+            if (transform.name=="RotateCube" && pressState==PressState.RotateCube)
+            {
+
+            }
+        }
     }
 
     public void OnPointerDown(PointerEventData eventData)
