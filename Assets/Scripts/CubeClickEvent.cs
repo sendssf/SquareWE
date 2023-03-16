@@ -29,10 +29,10 @@ public class CubeClickEvent : MonoBehaviour
             {
                 if (hit.collider.gameObject == this.gameObject)
                 {
-                    foreach (GameObject gb in)
+                    /*foreach (GameObject gb in)
                     {
                         if (this.gameObject == gb)
-                        {
+                        {*/
                             if (_isClicked)
                             {
                                 _isClicked = false;
@@ -131,8 +131,8 @@ public class CubeClickEvent : MonoBehaviour
                                 }
                                 WholeCube.selectedWord = string.Empty;
                             }
-                        }
-                    }
+                        /*}
+                    }*/
                 }
             }
             else
