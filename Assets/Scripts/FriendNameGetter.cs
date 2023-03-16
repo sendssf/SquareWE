@@ -56,7 +56,6 @@ public class FriendNameGetter : MonoBehaviour,IPointerDownHandler,IPointerUpHand
                     {"nickname1",transform.parent.Find("Name").gameObject.GetComponent<Text>().text },
                     {"nickname2",AllMessageContainer.playerInfo.playerName }
                 }));
-                Debug.Log(transform.parent.Find("Name").gameObject.GetComponent<Text>().text+" "+AllMessageContainer.playerInfo.playerName);
 
                 if (res==WebController.ServerNotFound)
                 {

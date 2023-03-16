@@ -62,7 +62,6 @@ public class CubeClickEvent : MonoBehaviour
                         {
                             WholeCube.selectedWord += _isSelected.GetComponent<Faces>().letter;
                         }
-                        Debug.Log(WholeCube.selectedWord);
                         foreach (string word in WholeCube.WordList.Values)
                         {
                             if (word == WholeCube.selectedWord.ToLower())
@@ -79,8 +78,6 @@ public class CubeClickEvent : MonoBehaviour
                                     WholeCube.Matched.Add(word);
                                     
                                     List<GameObject> dsj= new List<GameObject>();
-
-                                    Debug.Log("right" + this.gameObject.GetComponent<Faces>().Times());
                                     foreach (GameObject _isSelected in WholeCube.Slected)
                                     {
                                         _isSelected.GetComponent<Faces>().TimeUp();

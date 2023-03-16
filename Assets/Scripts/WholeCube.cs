@@ -41,7 +41,6 @@ public class WholeCube : MonoBehaviour
         //动态加载贴图
         System.Random random = new System.Random(~unchecked((int)System.DateTime.Now.Ticks));
         presentWord1 = WordList[System.Convert.ToString(UnityEngine.Random.Range(0, 5556))];
-        Debug.Log(presentWord1);
         for (int i = 0; i < 27; i++)
         {
             for (int j = 0; j < 6; j++)
@@ -75,15 +74,12 @@ public class WholeCube : MonoBehaviour
                 {
                     if (visited[k, l] == false)
                     {
-                        Debug.Log(k + " " + l);
                         for (int m = 0; m < 4; m++)
                         {
                             if (!position.ContainsKey(this.transform.GetChild(k).position + new Vector3(px[m], 0, py[m])))
                             {
-                                Debug.Log(k + " " + l);
                                 if (m == 0 && l == 3)
                                 {
-                                    Debug.Log("hhhhhhhhhhhhhhhhhhhhh");
                                     dfs(new Vector3(k / 9, (k % 9) / 3, (k % 9) % 3), l);
                                 }
                                 if (m == 1 && l == 5)
@@ -203,7 +199,6 @@ public class WholeCube : MonoBehaviour
             if (count1 == 0)
             {
                 presentWord1 = WordList[System.Convert.ToString(UnityEngine.Random.Range(0, 5556))];
-                Debug.Log(presentWord1);
             }
             else
             {
@@ -219,7 +214,6 @@ public class WholeCube : MonoBehaviour
                         {
                             presentWord1 = word;
                             presentWord += presentWord1.Substring(0, 1);
-                            Debug.Log(presentWord1);
                             count1 = 0;
                             count2 = 0;
                         }
@@ -233,8 +227,6 @@ public class WholeCube : MonoBehaviour
         meshRenderer = getSquad(cube,squad).GetComponent<MeshRenderer>();
         meshRenderer.material.SetTexture("_MainTex", texture);
         presentWord += presentWord1.Substring(count, 1);
-        Debug.Log(cube+" "+squad+" "+ count+" "+presentWord);
-        count++;
         if(squad == 0)//顶部
         {  
             for (int i = 0; i < 4; i++)
@@ -656,13 +648,13 @@ public class WholeCube : MonoBehaviour
     string GenerateRandomWord(char mustContain='\0')
     {
         int allWordNum = WordList.Count;
-        int index = Random.Range(1, allWordNum);
+        int index = Random.Range(1, allWordNum+1);
         if (mustContain=='\0') {
             while (true)
             {
                 if (haveGenWordIndex.Contains(index)||false)
                 {
-                    index=Random.Range(1, allWordNum);
+                    index=Random.Range(1, allWordNum+1);
                 }
                 else
                 {
@@ -675,18 +667,100 @@ public class WholeCube : MonoBehaviour
         {
             while (true)
             {
-                if(/*haveGenWordIndex.Contains(index) ||*/ !WordList[index.ToString()].ToUpper().Contains(mustContain))
+                if(!WordList.ContainsKey(index.ToString())||!WordList[index.ToString()].ToUpper().Contains(mustContain))
                 {
                     index=Random.Range(1, allWordNum + 1);
                 }
                 else
                 {
                     haveGenWordIndex.Add(index);
-                    Debug.Log(WordList[index.ToString()].ToUpper());
                     return WordList[index.ToString()].ToUpper();
                 }
             }
         }
+    }
+
+    List<GameObject> GetNeighbor(GameObject begin)
+    {
+        List<GameObject> result = new List<GameObject>();
+        if (true)
+        {
+            Dictionary<Vector3, GameObject> selfDict = new Dictionary<Vector3, GameObject>();
+            List<Vector3> choice = new List<Vector3>();
+            for (int i = 0; i<begin.transform.parent.childCount; i++)
+            {
+                if (begin.transform.localPosition!=begin.transform.parent.GetChild(i).localPosition &&
+                    begin.transform.localPosition!=-begin.transform.parent.GetChild(i).localPosition)
+                {
+                    selfDict.Add(begin.transform.parent.GetChild(i).localPosition, begin.transform.parent.GetChild(i).gameObject);
+                    choice.Add(begin.transform.parent.GetChild(i).localPosition);
+                }
+            }
+
+            for(int i = 0; i<=3; i++)
+            {
+                result.Add(selfDict[choice[i]]);
+            }
+        }
+        if (true)
+        {
+            Dictionary<Vector3, GameObject> selfDict = new Dictionary<Vector3, GameObject>();
+            Dictionary<Vector3, GameObject> otherDict = new Dictionary<Vector3, GameObject>();
+            List<Vector3> choice = new List<Vector3>();
+            for (int i = 0; i<begin.transform.parent.childCount; i++)
+            {
+                if (begin.transform.localPosition!=begin.transform.parent.GetChild(i).localPosition &&
+                    begin.transform.localPosition!=-begin.transform.parent.GetChild(i).localPosition)
+                {
+                    selfDict.Add(begin.transform.parent.GetChild(i).localPosition, begin.transform.parent.GetChild(i).gameObject);
+                    choice.Add(begin.transform.parent.GetChild(i).localPosition);
+                }
+            }
+            Vector3 otherCubePos;
+            for (int x = 0; x<=3; x++)
+            {
+                otherCubePos=begin.transform.parent.localPosition+2*begin.transform.localPosition + 2*choice[x];
+                if (cubeDict.ContainsKey(otherCubePos))
+                {
+                    GameObject otherCube = cubeDict[otherCubePos];
+                    for (int i = 0; i<otherCube.transform.childCount; i++)
+                    {
+                        otherDict.Add(otherCube.transform.GetChild(i).localPosition, otherCube.transform.GetChild(i).gameObject);
+                    }
+                    result.Add(otherDict[-choice[x]]);
+                }
+            }
+        }
+        if (true)
+        {
+            Dictionary<Vector3, GameObject> selfDict = new Dictionary<Vector3, GameObject>();
+            Dictionary<Vector3, GameObject> otherDict = new Dictionary<Vector3, GameObject>();
+            List<Vector3> choice = new List<Vector3>();
+            for (int i = 0; i<begin.transform.parent.childCount; i++)
+            {
+                if (begin.transform.localPosition!=begin.transform.parent.GetChild(i).localPosition &&
+                    begin.transform.localPosition!=-begin.transform.parent.GetChild(i).localPosition)
+                {
+                    selfDict.Add(begin.transform.parent.GetChild(i).localPosition, begin.transform.parent.GetChild(i).gameObject);
+                    choice.Add(begin.transform.parent.GetChild(i).localPosition);
+                }
+            }
+            Vector3 otherCubePos = new Vector3();
+            for (int x = 0; x<=3; x++)
+            {
+                otherCubePos=begin.transform.parent.localPosition+2*choice[x];
+                if (cubeDict.ContainsKey(otherCubePos))
+                {
+                    GameObject otherCube = cubeDict[otherCubePos];
+                    for (int i = 0; i<otherCube.transform.childCount; i++)
+                    {
+                        otherDict.Add(otherCube.transform.GetChild(i).localPosition, otherCube.transform.GetChild(i).gameObject);
+                    }
+                    result.Add(otherDict[begin.transform.localPosition]);
+                }
+            }
+        }
+        return result;
     }
 
     Vector3 GenerateRandomVector3()
