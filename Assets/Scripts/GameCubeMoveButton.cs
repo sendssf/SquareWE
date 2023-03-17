@@ -13,12 +13,19 @@ enum PressState
     MoveCube
 }
 
+public struct RotateHelper
+{
+    public Vector3 target;
+    public float hasRotate;
+}
+
 public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
 {
     // Start is called before the first frame update
     static PressState pressState=PressState.None;
     bool behave = false;
     GameObject mainCube;
+    Dictionary<GameObject, RotateHelper> rotateCubeDict = new Dictionary<GameObject, RotateHelper>();
     void Start()
     {
         mainCube=GameObject.Find("Third-orderCube");
@@ -81,7 +88,11 @@ public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
                     Quaternion begin = new Quaternion(cube.transform.rotation.x, 
                         cube.transform.rotation.y, cube.transform.rotation.z, cube.transform.rotation.w);
                     Vector3 beginVec3 = begin.eulerAngles;
-                    Vector3 endVec3 = new Vector3(beginVec3.x, beginVec3.y+90, beginVec3.z);
+                    Vector3 endVec3 = new Vector3(beginVec3.x, beginVec3.y, beginVec3.z+90);
+                    RotateHelper rotateHelper = new RotateHelper();
+                    rotateHelper.hasRotate=0;
+                    rotateHelper.target=endVec3;
+                    rotateCubeDict.Add(cube, rotateHelper);
                 }
             }
         }
@@ -118,6 +129,19 @@ public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
             if (transform.name=="RotateCube" && pressState==PressState.RotateCube)
             {
 
+            }
+        }
+    }
+
+    void UpdateCubeRotate()
+    {
+        foreach(KeyValuePair<GameObject,RotateHelper> pair in rotateCubeDict)
+        {
+            Vector3 angle = pair.Key.transform.rotation.eulerAngles;
+            if (angle.x!=pair.Value.target.x)
+            {
+                pair.Key.transform.rotation=Quaternion.Euler(angle+Time.deltaTime*pair.Value.target);
+                
             }
         }
     }
