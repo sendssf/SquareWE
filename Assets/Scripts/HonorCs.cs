@@ -14,6 +14,7 @@ public class HonorCs : MonoBehaviour
     {
         mat.SetFloat("_Size", 0.06f);//鼠标移动到物体上，边框加粗
         mat.SetColor("_OutlineColor", new Color(1, 0.6f, 0));//鼠标移动到物体上，边框变橘色
+
     }
     void OnMouseExit()
     {
