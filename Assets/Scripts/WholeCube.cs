@@ -646,7 +646,7 @@ public class WholeCube : MonoBehaviour
         }
     }
 
-    List<GameObject> GetNeighbor(GameObject begin)
+    public List<GameObject> GetNeighbor(GameObject begin)
     {
         List<GameObject> result = new List<GameObject>();
         if (true)
@@ -685,15 +685,18 @@ public class WholeCube : MonoBehaviour
             Vector3 otherCubePos;
             for (int x = 0; x<=3; x++)
             {
-                otherCubePos=begin.transform.parent.localPosition+2*begin.transform.localPosition + 2*choice[x];
-                if (cubeDict.ContainsKey(otherCubePos))
+                otherCubePos=begin.transform.parent.localPosition+
+                    2*(begin.transform.parent.localRotation*begin.transform.localPosition) +
+                    2*(begin.transform.parent.localRotation*choice[x]);
+                if (cubeDict.ContainsKey(NormalizeCubeVec3(otherCubePos)))
                 {
-                    GameObject otherCube = cubeDict[otherCubePos];
+                    GameObject otherCube = cubeDict[NormalizeCubeVec3(otherCubePos)];
                     for (int i = 0; i<otherCube.transform.childCount; i++)
                     {
                         otherDict.Add(otherCube.transform.GetChild(i).localPosition, otherCube.transform.GetChild(i).gameObject);
                     }
-                    result.Add(otherDict[-choice[x]]);
+                    result.Add(otherDict[NormalizeVec3(Quaternion.Inverse(otherCube.transform.localRotation)*(-1*(begin.transform.parent.localRotation*choice[x])))]);
+                    otherDict.Clear();
                 }
             }
         }
@@ -722,11 +725,115 @@ public class WholeCube : MonoBehaviour
                     {
                         otherDict.Add(otherCube.transform.GetChild(i).localPosition, otherCube.transform.GetChild(i).gameObject);
                     }
-                    result.Add(otherDict[begin.transform.localPosition]);
+                    result.Add(otherDict[NormalizeVec3(Quaternion.Inverse(otherCube.transform.localRotation)*
+                        begin.transform.parent.localRotation*begin.transform.localPosition)]);
+                    otherDict.Clear();
                 }
             }
         }
         return result;
+    }
+
+    Vector3 NormalizeCubeVec3(Vector3 normal)
+    {
+        if (Mathf.Abs(normal.x)>=0.9f)
+        {
+            if (normal.x>0)
+            {
+                normal.x=1f;
+            }
+            else
+            {
+                normal.x=-1f;
+            }
+        }
+        else
+        {
+            normal.x=0f;
+        }
+        if (Mathf.Abs(normal.y)>=0.9f)
+        {
+            if (normal.y>0)
+            {
+                normal.y=1f;
+            }
+            else
+            {
+                normal.y=-1f;
+            }
+        }
+        else
+        {
+            normal.y=0f;
+        }
+        if (Mathf.Abs(normal.z)>=0.9f)
+        {
+
+            if (normal.z > 0)
+            {
+                normal.z = 1f;
+            }
+            else
+            {
+                normal.z = -1f;
+            }
+        }
+        else
+        {
+            normal.z=0f;
+        }
+        return normal;
+    }
+
+    Vector3 NormalizeVec3(Vector3 normal)
+    {
+        if (Mathf.Abs(normal.x)>=0.4f)
+        {
+            if (normal.x>0)
+            {
+                normal.x=0.5f;
+            }
+            else
+            {
+                normal.x=-0.5f;
+            }
+        }
+        else
+        {
+            normal.x=0f;
+        }
+        if (Mathf.Abs(normal.y)>=0.4f)
+        {
+            if (normal.y>0)
+            {
+                normal.y=0.5f;
+            }
+            else
+            {
+                normal.y=-0.5f;
+            }
+        }
+        else
+        {
+            normal.y=0f;
+        }
+        if (Mathf.Abs(normal.z)>=0.4f)
+        {
+
+            if (normal.z > 0)
+            {
+                normal.z = 0.5f;
+            }
+            else
+            {
+                normal.z = -0.5f;
+            }
+        }
+        else
+        {
+            normal.z=0f;
+        }
+        return normal;
     }
 
     Vector3 GenerateRandomVector3()
