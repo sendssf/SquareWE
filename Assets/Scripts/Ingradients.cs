@@ -20,7 +20,7 @@ public class Ingradients : MonoBehaviour
             cube1.name = "cube" + i.ToString();
             cube1.transform.parent = this.transform;
         }
-        this.gameObject.AddComponent<WholeCube>();
+        
         GameObject[] cube0 = new GameObject[num*num*num];
         for (int j = 0; j < num; j++)
         {
@@ -36,6 +36,7 @@ public class Ingradients : MonoBehaviour
                 cube0[i + j * num * num].transform.position = pos;
             }
         }
+        this.gameObject.AddComponent<WholeCube>();
     }
 
     void Generate(int num, params int[] arr)//几维正方体
@@ -66,5 +67,6 @@ public class Ingradients : MonoBehaviour
         {
             Destroy(GameObject.Find("cube" + i));
         }
+        this.gameObject.AddComponent<WholeCube>();                                                                                                       
     }
 }
