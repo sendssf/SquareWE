@@ -19,6 +19,9 @@ public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
     static PressState pressState=PressState.None;
     bool behave = false;
     GameObject mainCube;
+    Dictionary<GameObject,string> rotateCubeDict = new Dictionary<GameObject, string>();
+    List<GameObject> rotateCubeList= new List<GameObject>();
+    List<float> hasRotate=new List<float>();
     void Start()
     {
         mainCube=GameObject.Find("Third-orderCube");
@@ -78,10 +81,12 @@ public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
                 foreach(GameObject quad in WholeCube.Slected)
                 {
                     GameObject cube = quad.transform.parent.gameObject;
-                    Quaternion begin = new Quaternion(cube.transform.rotation.x, 
-                        cube.transform.rotation.y, cube.transform.rotation.z, cube.transform.rotation.w);
-                    Vector3 beginVec3 = begin.eulerAngles;
-                    Vector3 endVec3 = new Vector3(beginVec3.x, beginVec3.y+90, beginVec3.z);
+                    if (!rotateCubeDict.ContainsKey(cube))
+                    {
+                        rotateCubeDict.Add(cube, "Z+");
+                        rotateCubeList.Add(cube);
+                        hasRotate.Add(0);
+                    }
                 }
             }
         }
@@ -89,35 +94,159 @@ public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
         {
             if (transform.name=="RotateCube" && pressState==PressState.RotateCube)
             {
-
+                foreach (GameObject quad in WholeCube.Slected)
+                {
+                    GameObject cube = quad.transform.parent.gameObject;
+                    if (!rotateCubeDict.ContainsKey(cube))
+                    {
+                        rotateCubeDict.Add(cube, "Z-");
+                        rotateCubeList.Add(cube);
+                        hasRotate.Add(0);
+                    }
+                }
             }
         }
         else if (Input.GetKeyDown(KeyCode.A))
         {
             if (transform.name=="RotateCube" && pressState==PressState.RotateCube)
             {
-
+                
+                foreach (GameObject quad in WholeCube.Slected)
+                {
+                    GameObject cube = quad.transform.parent.gameObject;
+                    if (!rotateCubeDict.ContainsKey(cube))
+                    {
+                        rotateCubeDict.Add(cube, "X-");
+                        rotateCubeList.Add(cube);
+                        hasRotate.Add(0);
+                    }
+                }
             }
         }
         else if (Input.GetKeyDown(KeyCode.D))
         {
+            
             if (transform.name=="RotateCube" && pressState==PressState.RotateCube)
             {
-
+                foreach (GameObject quad in WholeCube.Slected)
+                {
+                    GameObject cube = quad.transform.parent.gameObject;
+                    if (!rotateCubeDict.ContainsKey(cube))
+                    {
+                        rotateCubeDict.Add(cube, "X+");
+                        rotateCubeList.Add(cube);
+                        hasRotate.Add(0);
+                    }
+                }
             }
         }
         else if (Input.GetKeyDown(KeyCode.Q))
         {
             if (transform.name=="RotateCube" && pressState==PressState.RotateCube)
             {
-
+                foreach (GameObject quad in WholeCube.Slected)
+                {
+                    GameObject cube = quad.transform.parent.gameObject;
+                    if (!rotateCubeDict.ContainsKey(cube))
+                    {
+                        rotateCubeDict.Add(cube, "Y+");
+                        rotateCubeList.Add(cube);
+                        hasRotate.Add(0);
+                    }
+                }
             }
         }
         else if (Input.GetKeyDown(KeyCode.E))
         {
             if (transform.name=="RotateCube" && pressState==PressState.RotateCube)
             {
+                foreach (GameObject quad in WholeCube.Slected)
+                {
+                    GameObject cube = quad.transform.parent.gameObject;
+                    if (!rotateCubeDict.ContainsKey(cube))
+                    {
+                        rotateCubeDict.Add(cube, "Y-");
+                        rotateCubeList.Add(cube);
+                        hasRotate.Add(0);
+                    }
+                }
+            }
+        }
+        UpdateCubeRotate();
+    }
 
+    void UpdateCubeRotate()
+    {
+        for(int i = 0; i<rotateCubeList.Count; i++) { 
+            GameObject cube = rotateCubeList[i];
+            if (rotateCubeDict[cube]=="Z+")
+            {
+                cube.transform.Rotate(cube.transform.parent.forward,Time.deltaTime*90,Space.World);
+                hasRotate[i]+=Time.deltaTime*90;
+                if (hasRotate[i]>=90)
+                {
+                    cube.transform.Rotate(cube.transform.parent.forward, 90-hasRotate[i],Space.World);
+                    hasRotate[i]=90;
+                }
+            }
+            else if (rotateCubeDict[cube]=="Z-")
+            {
+                cube.transform.Rotate(cube.transform.parent.forward, -Time.deltaTime*90, Space.World);
+                hasRotate[i]+=Time.deltaTime*90;
+                if (hasRotate[i]>=90)
+                {
+                    cube.transform.Rotate(cube.transform.parent.forward, -90+hasRotate[i], Space.World);
+                    hasRotate[i]=90;
+                }
+            }
+            else if (rotateCubeDict[cube]=="X+")
+            {
+                cube.transform.Rotate(cube.transform.parent.right, Time.deltaTime*90, Space.World);
+                hasRotate[i]+=Time.deltaTime*90;
+                if (hasRotate[i]>=90)
+                {
+                    cube.transform.Rotate(cube.transform.parent.right, 90-hasRotate[i],Space.World);
+                    hasRotate[i] = 90;
+                }
+            }
+            else if (rotateCubeDict[cube]=="X-")
+            {
+                cube.transform.Rotate(cube.transform.parent.right, -Time.deltaTime*90, Space.World);
+                hasRotate[i]+=Time.deltaTime*90;
+                if (hasRotate[i]>=90)
+                {
+                    cube.transform.Rotate(cube.transform.parent.right, -90+hasRotate[i], Space.World);
+                    hasRotate[i] = 90;
+                }
+            }
+            else if (rotateCubeDict[cube]=="Y+")
+            {
+                cube.transform.Rotate(cube.transform.parent.up, Time.deltaTime*90, Space.World);
+                hasRotate[i]+=Time.deltaTime*90;
+                if (hasRotate[i]>=90)
+                {
+                    cube.transform.Rotate(cube.transform.parent.up, 90-hasRotate[i], Space.World);
+                    hasRotate[i] = 90;
+                }
+            }
+            else if (rotateCubeDict[cube]=="Y-")
+            {
+                cube.transform.Rotate(cube.transform.parent.up, -Time.deltaTime*90, Space.World);
+                hasRotate[i]+=Time.deltaTime*90;
+                if (hasRotate[i]>=90)
+                {
+                    cube.transform.Rotate(cube.transform.parent.up, -90+hasRotate[i], Space.World);
+                    hasRotate[i] = 90;
+                }
+            }
+        }
+        for(int i=0;i<rotateCubeList.Count;i++)
+        {
+            if (hasRotate[i]==90)
+            {
+                rotateCubeDict.Remove(rotateCubeList[i]);
+                rotateCubeList.RemoveAt(i);
+                hasRotate.RemoveAt(i);
             }
         }
     }
