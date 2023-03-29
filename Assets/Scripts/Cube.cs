@@ -37,10 +37,5 @@ public class Cube : MonoBehaviour
         squad[5].Rotate(0, 180, 0);
         pos = new Vector3(0, 0, 0.5f);
         squad[5].localPosition = pos;
-    }
-    void Start()
-    {
-
-    }
-        
+    }   
 }
