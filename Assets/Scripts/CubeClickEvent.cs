@@ -59,7 +59,7 @@ public class CubeClickEvent : MonoBehaviour
                         if (WholeCube.Slected.Count!=0)
                         {
                             neighbor = transform.parent.parent.gameObject.
-                            GetComponent<WholeCube>().GetNeighbor(WholeCube.Slected[WholeCube.Slected.Count-1]);
+                            GetComponent<WholeCube>().GetNeighbor_Safe(WholeCube.Slected[WholeCube.Slected.Count-1]);
                         }
                         if (neighbor.Contains(gameObject)||WholeCube.Slected.Count==0)
                         {
@@ -124,6 +124,7 @@ public class CubeClickEvent : MonoBehaviour
                                         await Task.Delay(800);
                                         foreach (var father in dsj)
                                         {
+                                            WholeCube.cubeMatchQuad.Remove(father);
                                             transform.parent.parent.gameObject.GetComponent<WholeCube>().cubeDict.Remove(father.transform.localPosition);
                                             Destroy(father);
                                         }
