@@ -9,7 +9,7 @@ public class Ingradients : MonoBehaviour
     void Start()
     {
         int[] arr = new int[10] {0,2,5,6,8,9,14,25,16,21};
-        Generate(3);
+        Generate(3,arr);
     }
 
     void Generate(int num)//几维正方体

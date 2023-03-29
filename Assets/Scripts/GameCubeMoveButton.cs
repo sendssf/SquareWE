@@ -1,6 +1,8 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -21,10 +23,18 @@ public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
     GameObject mainCube;
     Dictionary<GameObject,string> rotateCubeDict = new Dictionary<GameObject, string>();
     List<GameObject> rotateCubeList= new List<GameObject>();
+    GameObject moveCube = null;
+    string moveCubeType = null;
+    float hasMoved = 0;
     List<float> hasRotate=new List<float>();
     void Start()
     {
         mainCube=GameObject.Find("Third-orderCube");
+    }
+
+    private void FixedUpdate()
+    {
+        
     }
 
     // Update is called once per frame
@@ -35,42 +45,42 @@ public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
         {
             if (transform.name=="RotateScreen" && pressState==PressState.RotateScreen)
             {
-                mainCube.transform.Rotate(-20*Time.deltaTime, 0, 20*Time.deltaTime,Space.World);
+                mainCube.transform.Rotate(-30*Time.deltaTime, 0, 30*Time.deltaTime,Space.World);
             }
         }
         else if(Input.GetKey(KeyCode.S))
         {
             if (transform.name=="RotateScreen" && pressState==PressState.RotateScreen)
             {
-                mainCube.transform.Rotate(20*Time.deltaTime, 0, -20*Time.deltaTime,Space.World);
+                mainCube.transform.Rotate(30*Time.deltaTime, 0, -30*Time.deltaTime,Space.World);
             }
         }
         else if(Input.GetKey(KeyCode.D))
         {
             if (transform.name=="RotateScreen" && pressState==PressState.RotateScreen)
             {
-                mainCube.transform.Rotate(20*Time.deltaTime, 0, 20*Time.deltaTime, Space.World);
+                mainCube.transform.Rotate(30*Time.deltaTime, 0, 30*Time.deltaTime, Space.World);
             }
         }
         else if(Input.GetKey(KeyCode.A))
         {
             if (transform.name=="RotateScreen" && pressState==PressState.RotateScreen)
             {
-                mainCube.transform.Rotate(-20*Time.deltaTime, 0, -20*Time.deltaTime, Space.World);
+                mainCube.transform.Rotate(-30*Time.deltaTime, 0, -30*Time.deltaTime, Space.World);
             }
         }
         else if(Input.GetKey(KeyCode.Q))
         {
             if (transform.name=="RotateScreen" && pressState==PressState.RotateScreen)
             {
-                mainCube.transform.Rotate(0, 20*Time.deltaTime, 0,Space.World);
+                mainCube.transform.Rotate(0, 30*Time.deltaTime, 0,Space.World);
             }
         }
         else if(Input.GetKey(KeyCode.E))
         {
             if (transform.name=="RotateScreen" && pressState==PressState.RotateScreen)
             {
-                mainCube.transform.Rotate(0, -20*Time.deltaTime, 0, Space.World);
+                mainCube.transform.Rotate(0, -30*Time.deltaTime, 0, Space.World);
             }
         }
 
@@ -89,6 +99,31 @@ public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
                     }
                 }
             }
+            else if(transform.name=="MoveCube" && pressState == PressState.MoveCube)
+            {
+                if(WholeCube.Slected.Count == 1)
+                {
+                    Vector3 nextPos = new Vector3();
+                    nextPos = WholeCube.NormalizeCubeVec3(WholeCube.Slected[0].transform.parent.localPosition + Vector3.up);
+                    bool canMove = true;
+                    Debug.Log(WholeCube.cubeMatchQuad.Count);
+                    foreach(KeyValuePair<GameObject,CubeInfo> pair in WholeCube.cubeMatchQuad)
+                    {
+                        if (nextPos==pair.Value.pos || (WholeCube.IsEdge(WholeCube.Slected[0].transform.parent.gameObject).Contains("Y+")))
+                        {
+                            Debug.Log(nextPos==pair.Value.pos);
+                            Debug.Log((WholeCube.IsEdge(WholeCube.Slected[0].transform.parent.gameObject).Contains("Y+")));
+                            canMove = false;
+                            break;
+                        }
+                    }
+                    if (canMove)
+                    {
+                        moveCube=WholeCube.Slected[0].transform.parent.gameObject;
+                        moveCubeType="Y+";
+                    }
+                }
+            }
         }
         else if (Input.GetKeyDown(KeyCode.S))
         {
@@ -102,6 +137,33 @@ public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
                         rotateCubeDict.Add(cube, "Z-");
                         rotateCubeList.Add(cube);
                         hasRotate.Add(0);
+                    }
+                }
+            }
+            else if(transform.name=="MoveCube" && pressState== PressState.MoveCube)
+            {
+                if (WholeCube.Slected.Count == 1)
+                {
+                    Vector3 nextPos = new Vector3();
+                    nextPos = WholeCube.NormalizeCubeVec3(WholeCube.Slected[0].transform.parent.localPosition - 
+                        Vector3.up);
+                    Debug.Log(WholeCube.Slected[0].transform.parent.parent.up);
+                    bool canMove = true;
+                    Debug.Log(WholeCube.cubeMatchQuad.Count);
+                    foreach (KeyValuePair<GameObject, CubeInfo> pair in WholeCube.cubeMatchQuad)
+                    {
+                        if (nextPos==pair.Value.pos|| (WholeCube.IsEdge(WholeCube.Slected[0].transform.parent.gameObject).Contains("Y-")))
+                        {
+                            Debug.Log(nextPos==pair.Value.pos);
+                            Debug.Log((WholeCube.IsEdge(WholeCube.Slected[0].transform.parent.gameObject).Contains("Y-")));
+                            canMove = false;
+                            break;
+                        }
+                    }
+                    if (canMove)
+                    {
+                        moveCube=WholeCube.Slected[0].transform.parent.gameObject;
+                        moveCubeType="Y-";
                     }
                 }
             }
@@ -122,6 +184,33 @@ public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
                     }
                 }
             }
+            else if (transform.name=="MoveCube" && pressState== PressState.MoveCube)
+            {
+                if (WholeCube.Slected.Count == 1)
+                {
+                    Vector3 nextPos = new Vector3();
+                    nextPos = WholeCube.NormalizeCubeVec3(WholeCube.Slected[0].transform.parent.localPosition +
+                        Vector3.right);
+                    Debug.Log(WholeCube.Slected[0].transform.parent.parent.up);
+                    bool canMove = true;
+                    Debug.Log(WholeCube.cubeMatchQuad.Count);
+                    foreach (KeyValuePair<GameObject, CubeInfo> pair in WholeCube.cubeMatchQuad)
+                    {
+                        if (nextPos==pair.Value.pos|| (WholeCube.IsEdge(WholeCube.Slected[0].transform.parent.gameObject).Contains("X+")))
+                        {
+                            Debug.Log(nextPos==pair.Value.pos);
+                            Debug.Log((WholeCube.IsEdge(WholeCube.Slected[0].transform.parent.gameObject).Contains("X+")));
+                            canMove = false;
+                            break;
+                        }
+                    }
+                    if (canMove)
+                    {
+                        moveCube=WholeCube.Slected[0].transform.parent.gameObject;
+                        moveCubeType="X+";
+                    }
+                }
+            }
         }
         else if (Input.GetKeyDown(KeyCode.D))
         {
@@ -136,6 +225,33 @@ public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
                         rotateCubeDict.Add(cube, "X+");
                         rotateCubeList.Add(cube);
                         hasRotate.Add(0);
+                    }
+                }
+            }
+            else if (transform.name=="MoveCube" && pressState== PressState.MoveCube)
+            {
+                if (WholeCube.Slected.Count == 1)
+                {
+                    Vector3 nextPos = new Vector3();
+                    nextPos = WholeCube.NormalizeCubeVec3(WholeCube.Slected[0].transform.parent.localPosition -
+                        Vector3.right);
+                    Debug.Log(WholeCube.Slected[0].transform.parent.parent.up);
+                    bool canMove = true;
+                    Debug.Log(WholeCube.cubeMatchQuad.Count);
+                    foreach (KeyValuePair<GameObject, CubeInfo> pair in WholeCube.cubeMatchQuad)
+                    {
+                        if (nextPos==pair.Value.pos|| (WholeCube.IsEdge(WholeCube.Slected[0].transform.parent.gameObject).Contains("X-")))
+                        {
+                            Debug.Log(nextPos==pair.Value.pos);
+                            Debug.Log((WholeCube.IsEdge(WholeCube.Slected[0].transform.parent.gameObject).Contains("X-")));
+                            canMove = false;
+                            break;
+                        }
+                    }
+                    if (canMove)
+                    {
+                        moveCube=WholeCube.Slected[0].transform.parent.gameObject;
+                        moveCubeType="X-";
                     }
                 }
             }
@@ -155,6 +271,33 @@ public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
                     }
                 }
             }
+            else if (transform.name=="MoveCube" && pressState== PressState.MoveCube)
+            {
+                if (WholeCube.Slected.Count == 1)
+                {
+                    Vector3 nextPos = new Vector3();
+                    nextPos = WholeCube.NormalizeCubeVec3(WholeCube.Slected[0].transform.parent.localPosition -
+                        Vector3.forward);
+                    Debug.Log(WholeCube.Slected[0].transform.parent.parent.up);
+                    bool canMove = true;
+                    Debug.Log(WholeCube.cubeMatchQuad.Count);
+                    foreach (KeyValuePair<GameObject, CubeInfo> pair in WholeCube.cubeMatchQuad)
+                    {
+                        if (nextPos==pair.Value.pos|| (WholeCube.IsEdge(WholeCube.Slected[0].transform.parent.gameObject).Contains("Z-")))
+                        {
+                            Debug.Log(nextPos==pair.Value.pos);
+                            Debug.Log((WholeCube.IsEdge(WholeCube.Slected[0].transform.parent.gameObject).Contains("Z-")));
+                            canMove = false;
+                            break;
+                        }
+                    }
+                    if (canMove)
+                    {
+                        moveCube=WholeCube.Slected[0].transform.parent.gameObject;
+                        moveCubeType="Z-";
+                    }
+                }
+            }
         }
         else if (Input.GetKeyDown(KeyCode.E))
         {
@@ -171,8 +314,135 @@ public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
                     }
                 }
             }
+            else if (transform.name=="MoveCube" && pressState== PressState.MoveCube)
+            {
+                if (WholeCube.Slected.Count == 1)
+                {
+                    Vector3 nextPos = new Vector3();
+                    nextPos = WholeCube.NormalizeCubeVec3(WholeCube.Slected[0].transform.parent.localPosition +
+                        Vector3.forward);
+                    Debug.Log(WholeCube.Slected[0].transform.parent.parent.up);
+                    bool canMove = true;
+                    Debug.Log(WholeCube.cubeMatchQuad.Count);
+                    foreach (KeyValuePair<GameObject, CubeInfo> pair in WholeCube.cubeMatchQuad)
+                    {
+                        if (nextPos==pair.Value.pos|| (WholeCube.IsEdge(WholeCube.Slected[0].transform.parent.gameObject).Contains("Z+")))
+                        {
+                            Debug.Log(nextPos==pair.Value.pos);
+                            Debug.Log((WholeCube.IsEdge(WholeCube.Slected[0].transform.parent.gameObject).Contains("Z+")));
+                            canMove = false;
+                            break;
+                        }
+                    }
+                    if (canMove)
+                    {
+                        moveCube=WholeCube.Slected[0].transform.parent.gameObject;
+                        moveCubeType="Z+";
+                    }
+                }
+            }
+        }
+        else if(Input.GetKeyDown(KeyCode.F))
+        {
+            Dictionary<string, Dictionary<string, string>> info = new Dictionary<string, Dictionary<string, string>>();
+            foreach (KeyValuePair<GameObject,CubeInfo> pair in WholeCube.cubeMatchQuad)
+            {
+                Dictionary<string, string> sub = new Dictionary<string, string>();
+                foreach(KeyValuePair<GameObject,Vector3> quadpair in WholeCube.cubeMatchQuad[pair.Key].quadPos)
+                {
+                    sub.Add(quadpair.Key.name, quadpair.Value.ToString());
+                }
+                info.Add(pair.Key.name, sub);
+            }
+            File.WriteAllText("E:\\aaa.json", JsonConvert.SerializeObject(info));
         }
         UpdateCubeRotate();
+        UpdateCubeMove();
+    }
+
+    void UpdateCubeMove()
+    {
+        if(moveCube!=null && moveCubeType!=null)
+        {
+            if (moveCubeType=="X+")
+            {
+                moveCube.transform.Translate(Vector3.right*Time.deltaTime, moveCube.transform.parent);
+                hasMoved+=Time.deltaTime*1;
+                if (hasMoved>=1)
+                {
+                    moveCube.transform.Translate(1-hasMoved, 0, 0, moveCube.transform.parent);
+                    WholeCube.cubeMatchQuad[moveCube].pos=WholeCube.NormalizeCubeVec3(moveCube.transform.localPosition);
+                    moveCube=null;
+                    moveCubeType=null;
+                    hasMoved=0;
+                }
+            }
+            else if (moveCubeType=="X-")
+            {
+                moveCube.transform.Translate(-Vector3.right*Time.deltaTime, moveCube.transform.parent);
+                hasMoved+=Time.deltaTime*1;
+                if (hasMoved>=1)
+                {
+                    moveCube.transform.Translate(-1+hasMoved, 0, 0, moveCube.transform.parent);
+                    WholeCube.cubeMatchQuad[moveCube].pos=WholeCube.NormalizeCubeVec3(moveCube.transform.localPosition);
+                    moveCube=null;
+                    moveCubeType=null;
+                    hasMoved=0;
+                }
+            }
+            else if (moveCubeType=="Z+")
+            {
+                moveCube.transform.Translate(Vector3.forward*Time.deltaTime, moveCube.transform.parent);
+                hasMoved+=Time.deltaTime*1;
+                if (hasMoved>=1)
+                {
+                    moveCube.transform.Translate(0, 0, 1-hasMoved, moveCube.transform.parent);
+                    WholeCube.cubeMatchQuad[moveCube].pos=WholeCube.NormalizeCubeVec3(moveCube.transform.localPosition);
+                    moveCube=null;
+                    moveCubeType=null;
+                    hasMoved=0;
+                }
+            }
+            else if (moveCubeType=="Z-")
+            {
+                moveCube.transform.Translate(-Vector3.forward*Time.deltaTime, moveCube.transform.parent);
+                hasMoved+=Time.deltaTime*1;
+                if (hasMoved>=1)
+                {
+                    moveCube.transform.Translate(0, 0, -1+hasMoved, moveCube.transform.parent);
+                    WholeCube.cubeMatchQuad[moveCube].pos=WholeCube.NormalizeCubeVec3(moveCube.transform.localPosition);
+                    moveCube=null;
+                    moveCubeType=null;
+                    hasMoved=0;
+                }
+            }
+            else if (moveCubeType=="Y+")
+            {
+                moveCube.transform.Translate(Vector3.up*Time.deltaTime, moveCube.transform.parent);
+                hasMoved+=Time.deltaTime*1;
+                if (hasMoved>=1)
+                {
+                    moveCube.transform.Translate(0, 1-hasMoved, 0, moveCube.transform.parent);
+                    WholeCube.cubeMatchQuad[moveCube].pos=WholeCube.NormalizeCubeVec3(moveCube.transform.localPosition);
+                    moveCube=null;
+                    moveCubeType=null;
+                    hasMoved=0;
+                }
+            }
+            else if (moveCubeType=="Y-")
+            {
+                moveCube.transform.Translate(-Vector3.up*Time.deltaTime, moveCube.transform.parent);
+                hasMoved+=Time.deltaTime*1;
+                if (hasMoved>=1)
+                {
+                    moveCube.transform.Translate(0, -1+hasMoved, 0, moveCube.transform.parent);
+                    WholeCube.cubeMatchQuad[moveCube].pos=WholeCube.NormalizeCubeVec3(moveCube.transform.localPosition);
+                    moveCube=null;
+                    moveCubeType=null;
+                    hasMoved=0;
+                }
+            }
+        }
     }
 
     void UpdateCubeRotate()
@@ -181,61 +451,91 @@ public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
             GameObject cube = rotateCubeList[i];
             if (rotateCubeDict[cube]=="Z+")
             {
-                cube.transform.Rotate(cube.transform.parent.forward,Time.deltaTime*90,Space.World);
+                cube.transform.Rotate(0, 0, Time.deltaTime*90, Space.Self);
                 hasRotate[i]+=Time.deltaTime*90;
                 if (hasRotate[i]>=90)
                 {
-                    cube.transform.Rotate(cube.transform.parent.forward, 90-hasRotate[i],Space.World);
+                    cube.transform.Rotate(0, 0, 90-hasRotate[i], Space.Self);
+                    for (int j = 0; j<cube.transform.childCount; j++)
+                    {
+                        WholeCube.cubeMatchQuad[cube].quadPos[cube.transform.GetChild(j).gameObject]=
+                            WholeCube.NormalizeVec3(cube.transform.localRotation*cube.transform.GetChild(j).localPosition);
+                    }
                     hasRotate[i]=90;
                 }
             }
             else if (rotateCubeDict[cube]=="Z-")
             {
-                cube.transform.Rotate(cube.transform.parent.forward, -Time.deltaTime*90, Space.World);
+                cube.transform.Rotate(0, 0, -Time.deltaTime*90, Space.Self);
                 hasRotate[i]+=Time.deltaTime*90;
                 if (hasRotate[i]>=90)
                 {
-                    cube.transform.Rotate(cube.transform.parent.forward, -90+hasRotate[i], Space.World);
+                    cube.transform.Rotate(0, 0, -90+hasRotate[i], Space.Self);
+                    for(int j = 0; j<cube.transform.childCount; j++)
+                    {
+                        WholeCube.cubeMatchQuad[cube].quadPos[cube.transform.GetChild(j).gameObject]=
+                            WholeCube.NormalizeVec3(cube.transform.localRotation * cube.transform.GetChild(j).localPosition);
+                    }
                     hasRotate[i]=90;
                 }
             }
             else if (rotateCubeDict[cube]=="X+")
             {
-                cube.transform.Rotate(cube.transform.parent.right, Time.deltaTime*90, Space.World);
+                cube.transform.Rotate(Time.deltaTime*90, 0, 0, Space.Self);
                 hasRotate[i]+=Time.deltaTime*90;
                 if (hasRotate[i]>=90)
                 {
-                    cube.transform.Rotate(cube.transform.parent.right, 90-hasRotate[i],Space.World);
+                    cube.transform.Rotate(90-hasRotate[i], 0, 0, Space.Self);
+                    for (int j = 0; j<cube.transform.childCount; j++)
+                    {
+                        WholeCube.cubeMatchQuad[cube].quadPos[cube.transform.GetChild(j).gameObject]=
+                            WholeCube.NormalizeVec3(cube.transform.localRotation * cube.transform.GetChild(j).localPosition);
+                    }
                     hasRotate[i] = 90;
                 }
             }
             else if (rotateCubeDict[cube]=="X-")
             {
-                cube.transform.Rotate(cube.transform.parent.right, -Time.deltaTime*90, Space.World);
+                cube.transform.Rotate(-Time.deltaTime*90, 0, 0, Space.Self);
                 hasRotate[i]+=Time.deltaTime*90;
                 if (hasRotate[i]>=90)
                 {
-                    cube.transform.Rotate(cube.transform.parent.right, -90+hasRotate[i], Space.World);
+                    cube.transform.Rotate(-90+hasRotate[i], 0, 0, Space.Self);
+                    for (int j = 0; j<cube.transform.childCount; j++)
+                    {
+                        WholeCube.cubeMatchQuad[cube].quadPos[cube.transform.GetChild(j).gameObject]=
+                            WholeCube.NormalizeVec3(cube.transform.localRotation * cube.transform.GetChild(j).localPosition);
+                    }
                     hasRotate[i] = 90;
                 }
             }
             else if (rotateCubeDict[cube]=="Y+")
             {
-                cube.transform.Rotate(cube.transform.parent.up, Time.deltaTime*90, Space.World);
+                cube.transform.Rotate(0, Time.deltaTime*90, 0, Space.Self);
                 hasRotate[i]+=Time.deltaTime*90;
                 if (hasRotate[i]>=90)
                 {
-                    cube.transform.Rotate(cube.transform.parent.up, 90-hasRotate[i], Space.World);
+                    cube.transform.Rotate(0, 90 - hasRotate[i], 0, Space.Self);
+                    for (int j = 0; j<cube.transform.childCount; j++)
+                    {
+                        WholeCube.cubeMatchQuad[cube].quadPos[cube.transform.GetChild(j).gameObject]=
+                            WholeCube.NormalizeVec3(cube.transform.localRotation * cube.transform.GetChild(j).localPosition);
+                    }
                     hasRotate[i] = 90;
                 }
             }
             else if (rotateCubeDict[cube]=="Y-")
             {
-                cube.transform.Rotate(cube.transform.parent.up, -Time.deltaTime*90, Space.World);
+                cube.transform.Rotate(0, -Time.deltaTime*90, 0, Space.Self);
                 hasRotate[i]+=Time.deltaTime*90;
                 if (hasRotate[i]>=90)
                 {
-                    cube.transform.Rotate(cube.transform.parent.up, -90+hasRotate[i], Space.World);
+                    cube.transform.Rotate(0, -90 + hasRotate[i], 0, Space.Self);
+                    for (int j = 0; j<cube.transform.childCount; j++)
+                    {
+                        WholeCube.cubeMatchQuad[cube].quadPos[cube.transform.GetChild(j).gameObject]=
+                            WholeCube.NormalizeVec3(cube.transform.localRotation * cube.transform.GetChild(j).localPosition);
+                    }
                     hasRotate[i] = 90;
                 }
             }
