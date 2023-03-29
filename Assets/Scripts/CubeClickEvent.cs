@@ -9,6 +9,7 @@ public class CubeClickEvent : MonoBehaviour
     bool _isClicked = false;
     public bool _isVisited = false;     //生成字母的时候用
     private PhysicsRaycaster m_Raycaster;
+    private AudioSource audioSource1, audioSource2;
     void Awake()
     {
         m_Raycaster = FindObjectOfType<PhysicsRaycaster>();
@@ -16,6 +17,7 @@ public class CubeClickEvent : MonoBehaviour
         {
             Camera.main.gameObject.AddComponent<PhysicsRaycaster>();
         }
+        audioSource1 = this.transform.parent.parent.GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -27,12 +29,9 @@ public class CubeClickEvent : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit, 100.0F))//检测到碰撞
             {
+                audioSource1.Play();
                 if (hit.collider.gameObject == this.gameObject)
                 {
-                    /*foreach (GameObject gb in)
-                    {
-                        if (this.gameObject == gb)
-                        {*/
                             if (_isClicked)
                             {
                                 _isClicked = false;
@@ -114,6 +113,8 @@ public class CubeClickEvent : MonoBehaviour
                                                     }
                                                     father.transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
                                                     GameObject.Find("Explosion").gameObject.AddComponent<Expolosion>().explosionPos = GameObject.Find("cube13").transform;
+                                                    audioSource2 = GameObject.Find("Explosion").gameObject.GetComponent<AudioSource>();
+                                                    audioSource2.Play();
                                                     dsj.Add(father);
                                                 }
                                             }
