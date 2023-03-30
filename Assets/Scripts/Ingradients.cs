@@ -62,7 +62,7 @@ public class Ingradients : MonoBehaviour
         }
     }
 
-    void Generate(int num)//¼¸Î¬Õý·½Ìå
+    void Generate(int num)//ï¿½ï¿½Î¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     {
         for (int i = 0; i < num*num*num; i++)
         {
@@ -88,7 +88,7 @@ public class Ingradients : MonoBehaviour
         gameObject.AddComponent<WholeCube>();
     }
 
-    void Generate(int num, params int[] arr)//¼¸Î¬Õý·½Ìå
+    void Generate(int num, params int[] arr)//ï¿½ï¿½Î¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     {
         for (int i = 0; i < num * num * num; i++)
         {
