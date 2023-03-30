@@ -40,9 +40,6 @@ public class GameCanvasClickEvent : MonoBehaviour
     {
         switch (AllMessageContainer.gameStatus.gameMode)
         {
-            case GameMode.Endless:
-
-                break;
             case GameMode.BreakThrough_1:
             case GameMode.BreakThrough_2:
             case GameMode.BreakThrough_3:
@@ -64,6 +61,13 @@ public class GameCanvasClickEvent : MonoBehaviour
             case GameMode.BreakThrough_19:
             case GameMode.BreakThrough_21:
                 StartCoroutine(loadScene("BreakThrough"));
+                break;
+            case GameMode.CustomOthers:
+            case GameMode.CustomRandom:
+                StartCoroutine(loadScene("CustomMode"));
+                break;
+            case GameMode.Endless:
+                StartCoroutine(loadScene("ChooseModeUI"));
                 break;
         }
     }

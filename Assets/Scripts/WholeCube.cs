@@ -137,7 +137,15 @@ public class WholeCube : MonoBehaviour
         Slected.Clear();
         position.Clear();
         haveGenWordIndex.Clear();
-        WordList = ReadCsv.ReadCsvFile(AllMessageContainer.gameStatus.wordFileName);
+        if (AllMessageContainer.gameStatus.ifExternList)
+        {
+            WordList = ReadCsv.ReadCsvFile_Extern(AllMessageContainer.gameStatus.wordFileName);
+            AllMessageContainer.gameStatus.ifExternList = false;
+        }
+        else
+        {
+            WordList = ReadCsv.ReadCsvFile(AllMessageContainer.gameStatus.wordFileName);
+        }
         haveGenWordIndex.Clear();
         //GameObject.Find("Third-orderCube").gameObject.GetComponent<Ingradients>().InitCubeShape();
         int beginIndex = Random.Range(0, transform.childCount);
@@ -145,7 +153,7 @@ public class WholeCube : MonoBehaviour
         MakeLettersInOrder(transform.GetChild(beginIndex).GetChild(quadBeginIndex).gameObject);
         UpdateCubeQuadMatch();
         UpdateEdges();
-        Debug.Log(cubeMatchQuad.Count);
+        //Debug.Log(cubeMatchQuad.Count);
     }
 
     Transform getSquad(Vector3 cube, int squad)

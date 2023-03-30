@@ -18,6 +18,7 @@ public class CubeClickEvent : MonoBehaviour
             Camera.main.gameObject.AddComponent<PhysicsRaycaster>();
         }
         audioSource1 = this.transform.parent.parent.GetComponent<AudioSource>();
+        audioSource1.volume = AllMessageContainer.settingsInfo.effectSoundValue / 10;
     }
 
     // Update is called once per frame
@@ -29,7 +30,7 @@ public class CubeClickEvent : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit, 100.0F))//¼ì²âµ½Åö×²
             {
-                audioSource1.Play();
+                audioSource1.PlayOneShot(audioSource1.clip);
                 if (hit.collider.gameObject == this.gameObject)
                 {
                     if (_isClicked)
@@ -122,7 +123,8 @@ public class CubeClickEvent : MonoBehaviour
                                                 father.transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
                                                 GameObject.Find("Explosion").gameObject.AddComponent<Expolosion>().explosionPos = GameObject.Find("cube13").transform;
                                                 audioSource2  = GameObject.Find("Explosion").gameObject.GetComponent<AudioSource>();
-                                                audioSource2.Play();
+                                                audioSource2.volume = AllMessageContainer.settingsInfo.effectSoundValue / 4;
+                                                audioSource2.PlayOneShot(audioSource2.clip);
                                                 dsj.Add(father);
                                             }
                                         }

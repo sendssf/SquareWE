@@ -39,4 +39,15 @@ public class ChooseModePageClickEvent : MonoBehaviour
     {
         StartCoroutine(loadScene("BreakThrough"));
     }
+
+    public void GotoCustom()
+    {
+
+    }
+
+    public void GotoEndless()
+    {
+        AllMessageContainer.gameStatus.gameMode=GameMode.Endless;
+        StartCoroutine(loadScene("GamePage"));
+    }
 }

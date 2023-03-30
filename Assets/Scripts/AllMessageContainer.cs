@@ -33,10 +33,7 @@ public enum GameMode
     BreakThrough_13=13, BreakThrough_14=14, BreakThrough_15=15,BreakThrough_16=16,
     BreakThrough_17=17, BreakThrough_18=18, BreakThrough_19=19, BreakThrough_20=20,
     BreakThrough_21=21, 
-    Custom3_3CubeEasy=22,Custom3_3CubeDiff=23,
-    Custom4_4CubeEasy=24,Custom4_4CubeDiff=25,
-    Custom5_5CubeEasy=26,Custom5_5CubeDiff=27,
-    Custom6_6CubeEasy=28,Custom6_6CubeDiff=29,
+    CustomOthers=22,
     CustomRandom=30,
     Endless = 31
 }
@@ -91,6 +88,7 @@ public struct GameStatus
     public bool ifUpdateFriendImage;
     public bool changeFriendInfo;
     public string wordFileName;
+    public bool ifExternList;
 }
 
 public class AllMessageContainer : MonoBehaviour
@@ -120,6 +118,7 @@ public class AllMessageContainer : MonoBehaviour
         gameStatus.ifInit=true;
         gameStatus.ifUpdateFriendImage=false;
         gameStatus.changeFriendInfo=false;
+        gameStatus.ifExternList=false;
         fullExp=new int[31];
         fullExp[0]=0; fullExp[1]=(int)LevelFullExp.Level1; fullExp[2]=(int)LevelFullExp.Level2;
         fullExp[3]=(int)LevelFullExp.Level3; fullExp[4]=(int)LevelFullExp.Level4; fullExp[5]=(int)LevelFullExp.Level5;
