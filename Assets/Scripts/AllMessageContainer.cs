@@ -90,6 +90,7 @@ public struct GameStatus
     public GameMode gameMode;
     public bool ifUpdateFriendImage;
     public bool changeFriendInfo;
+    public string wordFileName;
 }
 
 public class AllMessageContainer : MonoBehaviour
