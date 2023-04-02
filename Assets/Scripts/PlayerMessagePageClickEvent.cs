@@ -92,7 +92,7 @@ public class PlayerMessagePageClickEvent : MonoBehaviour
         FileInfo fileInfo = new FileInfo($"{Application.persistentDataPath}\\{AllMessageContainer.playerInfo.playerName}.png");
         if(!fileInfo.Exists)      //没有头像文件就从服务器拉取
         {
-            string res = WebController.GetHeadImage("http://127.0.0.1:8080/api/send_avatar/", AllMessageContainer.playerInfo.playerName);
+            string res = WebController.GetHeadImage(WebController.rootIP + API_Local.sendAvater, AllMessageContainer.playerInfo.playerName);
             if (res==WebController.Success)
             {
                 fileInfo=new FileInfo($"{Application.persistentDataPath}\\{AllMessageContainer.playerInfo.playerName}.png");

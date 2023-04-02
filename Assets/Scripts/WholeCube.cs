@@ -38,7 +38,8 @@ public class WholeCube : MonoBehaviour
     private static List<int> haveGenWordIndex= new List<int>();
     public Dictionary<Vector3,GameObject> cubeDict= new Dictionary<Vector3,GameObject>();
 
-    public static Dictionary<GameObject, CubeInfo> cubeMatchQuad = new Dictionary<GameObject, CubeInfo>(); 
+    public static Dictionary<GameObject, CubeInfo> cubeMatchQuad = new Dictionary<GameObject, CubeInfo>();
+    public static List<string> hasLinked = new List<string>();
     //使27个立方体组成一个大立方体
 
     void DFS_Start()
@@ -137,6 +138,7 @@ public class WholeCube : MonoBehaviour
         Slected.Clear();
         position.Clear();
         haveGenWordIndex.Clear();
+        hasLinked.Clear();
         if (AllMessageContainer.gameStatus.ifExternList)
         {
             WordList = ReadCsv.ReadCsvFile_Extern(AllMessageContainer.gameStatus.wordFileName);

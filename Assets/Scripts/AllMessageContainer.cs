@@ -301,7 +301,7 @@ public class AllMessageContainer : MonoBehaviour
     public static Dictionary<string,string> GetFriendsInfoFromServer(string nickname)
     {
         var res=new Dictionary<string,string>();
-        string result = WebController.Post("http://127.0.0.1:8080/api/all_info/",
+        string result = WebController.Post(WebController.rootIP + API_Local.allInfo,
             JsonConvert.SerializeObject(new Dictionary<string, string>
             {
                 {"nickname",nickname }
@@ -320,6 +320,21 @@ public class AllMessageContainer : MonoBehaviour
             res.Add("rank", plyInfo["rank"]);
             res.Add("wordnumber", wordlst.Count.ToString());
         }
+        return res;
+    }
+
+    public static string SendBasicInfo()
+    {
+        string res = WebController.Post(WebController.rootIP + API_Local.postInfo,
+            JsonConvert.SerializeObject(new Dictionary<string, string>
+            {
+                {"nickname",playerInfo.playerName },
+                {"coin",playerInfo.coin.ToString() },
+                {"crystal",playerInfo.crystal.ToString() },
+                {"level",playerInfo.level.ToString() },
+                {"experience",playerInfo.experience.ToString() },
+                {"rank",playerInfo.experience.ToString() }
+            }));
         return res;
     }
 }

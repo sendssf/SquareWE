@@ -51,7 +51,7 @@ public class FriendNameGetter : MonoBehaviour,IPointerDownHandler,IPointerUpHand
             if (transform.Find("Name").gameObject.GetComponent<Text>().text=="Agree")
             {
                 //同意添加好友请求
-                string res = WebController.Post("http://127.0.0.1:8080/api/accept_friend/", JsonConvert.SerializeObject(new Dictionary<string, string>
+                string res = WebController.Post(WebController.rootIP + API_Local.acceptFriend, JsonConvert.SerializeObject(new Dictionary<string, string>
                 {
                     {"nickname1",transform.parent.Find("Name").gameObject.GetComponent<Text>().text },
                     {"nickname2",AllMessageContainer.playerInfo.playerName }
@@ -72,7 +72,7 @@ public class FriendNameGetter : MonoBehaviour,IPointerDownHandler,IPointerUpHand
             else if (transform.Find("Name").gameObject.GetComponent<Text>().text=="Reject")
             {
                 //拒绝添加好友
-                string res = WebController.Post("http://127.0.0.1:8080/api/reject_friend/", JsonConvert.SerializeObject(new Dictionary<string, string>
+                string res = WebController.Post(WebController.rootIP + API_Local.rejectFrient, JsonConvert.SerializeObject(new Dictionary<string, string>
                 {
                     {"nickname1",transform.parent.Find("Name").gameObject.GetComponent<Text>().text },
                     {"nickname2",AllMessageContainer.playerInfo.playerName }

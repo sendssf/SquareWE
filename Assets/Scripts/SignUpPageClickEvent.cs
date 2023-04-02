@@ -41,7 +41,7 @@ public class SignUpPageClickEvent : MonoBehaviour
             { "nickname",AllMessageContainer.loginInfo.nickname},
             { "password",AllMessageContainer.loginInfo.password}
         };
-        string response=WebController.Post("http://127.0.0.1:8080/api/login/", JsonConvert.SerializeObject(json));
+        string response=WebController.Post(WebController.rootIP + API_Local.login, JsonConvert.SerializeObject(json));
         switch (response)
         {
             case WebController.Success:
@@ -80,7 +80,7 @@ public class SignUpPageClickEvent : MonoBehaviour
                     else
                     {
                         //从server拉取文件
-                        string resp2 = WebController.Post("http://127.0.0.1:8080/api/all_info/",
+                        string resp2 = WebController.Post(WebController.rootIP + API_Local.allInfo,
                             JsonConvert.SerializeObject(new Dictionary<string, string>
                             {
                                 { "nickname",AllMessageContainer.loginInfo.nickname}
@@ -152,7 +152,7 @@ public class SignUpPageClickEvent : MonoBehaviour
 
     private void UpdateAllInfo(string nickname)        //尽力从server更新玩家全部信息
     {
-        string res = WebController.Post("http://127.0.0.1:8080/api/all_info/", JsonConvert.SerializeObject(new Dictionary<string, string>
+        string res = WebController.Post(WebController.rootIP + API_Local.allInfo, JsonConvert.SerializeObject(new Dictionary<string, string>
         {
             {"nickname",nickname }
         }));

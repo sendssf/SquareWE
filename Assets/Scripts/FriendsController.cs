@@ -125,7 +125,7 @@ public class FriendsController : MonoBehaviour
         List<string> reqname;
         List<string> reqmes;
         var res=new Dictionary<string,string>();
-        result =WebController.Post("http://127.0.0.1:8080/api/all_requests/", JsonConvert.SerializeObject(new Dictionary<string, string>
+        result =WebController.Post(WebController.rootIP + API_Local.allRequest, JsonConvert.SerializeObject(new Dictionary<string, string>
             {
                 {"nickname",AllMessageContainer.playerInfo.playerName }
             }));
@@ -174,7 +174,7 @@ public class FriendsController : MonoBehaviour
     public IEnumerator GetFriendImageAsync(string nickname,GameObject item)
     {
         
-        using (UnityWebRequest webRequest = new UnityWebRequest("http://127.0.0.1:8080/api/send_avatar/", UnityWebRequest.kHttpVerbPOST))
+        using (UnityWebRequest webRequest = new UnityWebRequest(WebController.rootIP + API_Local.sendAvater, UnityWebRequest.kHttpVerbPOST))
         {
             Dictionary<string, string> req = new Dictionary<string, string>
         {
@@ -256,7 +256,7 @@ public class FriendsController : MonoBehaviour
         {
             case SearchMode.Exact:  //搜到的玩家唯一
                 string result = WebController.
-                    Post("http://127.0.0.1:8080/api/all_info/", JsonConvert.SerializeObject(new Dictionary<string, string>
+                    Post(WebController.rootIP + API_Local.allInfo, JsonConvert.SerializeObject(new Dictionary<string, string>
                 {
                     {"nickname",newFriendSearchInfo }
                 }));
@@ -275,7 +275,7 @@ public class FriendsController : MonoBehaviour
                     item.transform.Find("Name").gameObject.GetComponent<Text>().text=newFriendSearchInfo;
                     item.transform.Find("Info").gameObject.GetComponent<Text>().text=
                         $"Level:{SearchInfo["level"]}    Rank:{SearchInfo["rank"]}    Word Number:{SearchInfo["wordnumber"]}";
-                    string res = WebController.GetHeadImage("http://127.0.0.1:8080/api/send_avatar/", newFriendSearchInfo);
+                    string res = WebController.GetHeadImage(WebController.rootIP + API_Local.sendAvater, newFriendSearchInfo);
                     if (res==WebController.FileNotExist)        //未上传头像文件
                     {
                         item.transform.Find("Image").gameObject.GetComponent<Image>().sprite = normalHead;
@@ -334,7 +334,7 @@ public class FriendsController : MonoBehaviour
     {
         //发送好友请求
         string result = WebController
-            .Post("http://127.0.0.1:8080/api/add_friend/", JsonConvert.SerializeObject(new Dictionary<string, string>{
+            .Post(WebController.rootIP + API_Local.addFriend, JsonConvert.SerializeObject(new Dictionary<string, string>{
                 {"nickname1", AllMessageContainer.playerInfo.playerName},
                 {"nickname2", addFriendname},
                 {"verification", validateInfo}
@@ -400,7 +400,7 @@ public class FriendsController : MonoBehaviour
 
     public void DeleteFriend(string nickname,GameObject item)
     {
-        string res = WebController.Post("http://127.0.0.1:8080/api/delete_friend/", JsonConvert.
+        string res = WebController.Post(WebController.rootIP + API_Local.deleteFriend, JsonConvert.
             SerializeObject(new Dictionary<string, string>
             {
                 {"nickname1",AllMessageContainer.playerInfo.playerName },
