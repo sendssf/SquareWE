@@ -13,7 +13,11 @@ public enum WebStatus
     ServerNotFound,
     PlayerNotExist,
     PasswordError,
-    NicknameExist
+    NicknameExist,
+
+    Nomessage,
+    SendFailed,
+
 }
 
 public class WebException : ApplicationException//由用户程序引发，用于派生自定义的异常类型
@@ -47,6 +51,9 @@ public class WebController : MonoBehaviour
     public const string NicknameExist = "NicknameExist";
     public const string FileNotExist = "FileNotExist";
 
+    public const string SendSuccessful = "SendSuccessful";
+    public const string Nomessage = "Nomessage";
+    public const string SendFailed = "SendFailed";
     void Start()
     {
         
