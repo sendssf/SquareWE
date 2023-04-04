@@ -337,4 +337,20 @@ public class AllMessageContainer : MonoBehaviour
             }));
         return res;
     }
+
+    static public void UpdateLevel()
+    {
+        for(; ; )
+        {
+            if (playerInfo.experience >= fullExp[playerInfo.level])
+            {
+                playerInfo.level++;
+                playerInfo.experience -=fullExp[playerInfo.level - 1];
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
 }

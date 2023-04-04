@@ -10,6 +10,9 @@ public class Face : MonoBehaviour
     public int times;//点击次数
     public Collider coll;//碰撞器
 
+    public bool _isClicked = false;
+    public bool _isVisited = false;     //生成字母的时候用
+
     void Start()
     {
         letter = alphabet[Random.Range(0, 26)];//随机赋字母

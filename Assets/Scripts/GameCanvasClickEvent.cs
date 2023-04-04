@@ -8,6 +8,7 @@ public class GameCanvasClickEvent : MonoBehaviour
 {
     // Start is called before the first frame update
     AsyncOperation operation;
+    public AudioClip combine;
     void Start()
     {
         ShowMoney();
@@ -72,7 +73,7 @@ public class GameCanvasClickEvent : MonoBehaviour
         }
     }
 
-    void ShowMoney()
+    public void ShowMoney()
     {
         transform.Find("Money").Find("CoinNum").Find("Number").gameObject.GetComponent<Text>().text=
             AllMessageContainer.playerInfo.coin.ToString();

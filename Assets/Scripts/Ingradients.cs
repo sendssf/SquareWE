@@ -5,6 +5,7 @@ using UnityEngine;
 public class Ingradients : MonoBehaviour
 {
     public GameObject cube;
+    public ParticleSystem particle;
     // Start is called before the first frame update
     private void Awake()
     {
@@ -215,6 +216,7 @@ public class Ingradients : MonoBehaviour
             }
         }
         gameObject.AddComponent<WholeCube>();
+        gameObject.AddComponent<CubeClickEvent>();
     }
 
     void Generate(int num, params int[] arr)//��ά������
@@ -244,6 +246,7 @@ public class Ingradients : MonoBehaviour
             DestroyImmediate(transform.Find("cube"+i).gameObject);
         }
         gameObject.AddComponent<WholeCube>();
+        gameObject.AddComponent<CubeClickEvent>();
     }
 
     int[] GetRandomInts(int len,int max)

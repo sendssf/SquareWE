@@ -36,7 +36,7 @@ public class BreakThroughClickEvent : MonoBehaviour
 
     public void ReturnLastPage()
     {
-        StartCoroutine(loadScene("ChooseModelUI"));
+        StartCoroutine(loadScene("ChooseModeUI"));
     }
 
     public void GotoLevel1()

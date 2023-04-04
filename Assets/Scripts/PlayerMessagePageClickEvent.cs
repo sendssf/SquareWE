@@ -74,6 +74,7 @@ public class PlayerMessagePageClickEvent : MonoBehaviour
 
     public void LoadPage()
     {
+        AllMessageContainer.UpdateLevel();
         transform.Find("Upleft").Find("BasicInfo").gameObject.GetComponent<Text>().text=
             $"{AllMessageContainer.playerInfo.playerName}\n{AllMessageContainer.playerInfo.playerAccount}";
         transform.Find("Upleft").Find("Level").Find("Num").gameObject.GetComponent<Text>().text=
