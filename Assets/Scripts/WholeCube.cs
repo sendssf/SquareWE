@@ -1,8 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Management.Instrumentation;
+using System.Runtime.InteropServices;
 using Unity.VisualScripting;
 using UnityEngine;
 //using System;
+
+public class CubeInfo
+{
+    public Vector3 pos = new Vector3();
+    public Dictionary<GameObject,Vector3> quadPos = new Dictionary<GameObject,Vector3>();
+}
 
 public class WholeCube : MonoBehaviour
 {
@@ -24,11 +32,13 @@ public class WholeCube : MonoBehaviour
     public static List<string> SelectedWord = new List<string>();
     private MeshRenderer meshRenderer;
     private Texture texture;
+    public static float xMinEdge, xMaxEdge, yMinEdge, yMaxEdge, zMinEdge, zMaxEdge;
      
     public static char[] alphabet = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
     private static List<int> haveGenWordIndex= new List<int>();
     public Dictionary<Vector3,GameObject> cubeDict= new Dictionary<Vector3,GameObject>();
-    
+
+    public static Dictionary<GameObject, CubeInfo> cubeMatchQuad = new Dictionary<GameObject, CubeInfo>(); 
     //使27个立方体组成一个大立方体
 
     void DFS_Start()
@@ -115,7 +125,7 @@ public class WholeCube : MonoBehaviour
             }
         }
         _isCleared = false;
-    }
+    } 
     private void Awake()
     {
         
@@ -126,11 +136,36 @@ public class WholeCube : MonoBehaviour
         int beginIndex = Random.Range(0, transform.childCount);
         int quadBeginIndex = Random.Range(0, 6);
         MakeLettersInOrder(transform.GetChild(beginIndex).GetChild(quadBeginIndex).gameObject);
+        UpdateCubeQuadMatch();
+        UpdateEdges();
     }
 
     Transform getSquad(Vector3 cube, int squad)
     {
         return this.transform.GetChild((int)(cube.x * 9 + cube.y * 3 + cube.z)).GetChild(squad);
+    }
+
+    void UpdateCubeQuadMatch()
+    {
+        GameObject mainCube = GameObject.Find("Third-orderCube");
+        for(int i=0;i<mainCube.transform.childCount;i++)
+        {
+            CubeInfo cubeInfo = new CubeInfo();
+            GameObject cube = mainCube.transform.GetChild(i).gameObject;
+            cubeInfo.pos.x=cube.transform.localPosition.x;
+            cubeInfo.pos.y=cube.transform.localPosition.y;
+            cubeInfo.pos.z=cube.transform.localPosition.z;
+            for(int x = 0; x<cube.transform.childCount; x++)
+            {
+                Vector3 quadposition = new Vector3();
+                quadposition.x=cube.transform.GetChild(x).localPosition.x;
+                quadposition.y=cube.transform.GetChild(x).localPosition.y;
+                quadposition.z=cube.transform.GetChild(x).localPosition.z;
+                cubeInfo.quadPos.Add(cube.transform.GetChild(x).gameObject, quadposition);
+            }
+
+            cubeMatchQuad.Add(cube, cubeInfo);
+        }
     }
 
     void dfs(Vector3 cube, int squad)//参数为访问哪个立方体和访问立方体的哪个面
@@ -611,6 +646,71 @@ public class WholeCube : MonoBehaviour
         return res;
     } 
 
+    void UpdateEdges()
+    {
+        xMinEdge = 0;xMaxEdge = 0;
+        yMinEdge = 0; yMaxEdge = 0;
+        zMinEdge = 0; zMaxEdge = 0;
+        GameObject mainCube = GameObject.Find("Third-orderCube");
+        foreach(KeyValuePair<GameObject,CubeInfo> pairs in cubeMatchQuad)
+        {
+            if (pairs.Value.pos.x>=xMaxEdge)
+            {
+                xMaxEdge = pairs.Value.pos.x;
+            }
+            if (pairs.Value.pos.y>=yMaxEdge)
+            {
+                yMaxEdge = pairs.Value.pos.y;
+            }
+            if (pairs.Value.pos.z>=zMaxEdge)
+            {
+                zMaxEdge = pairs.Value.pos.z;
+            }
+            if (pairs.Value.pos.x<=xMinEdge)
+            {
+                xMinEdge= pairs.Value.pos.x;
+            }
+            if(pairs.Value.pos.y<=yMinEdge)
+            {
+                yMinEdge= pairs.Value.pos.y;
+            }
+            if (pairs.Value.pos.z<=zMinEdge)
+            {
+                zMinEdge= pairs.Value.pos.z;
+            }
+        }
+    }
+
+    public static List<string> IsEdge(GameObject cube)
+    {
+        List<string> result = new List<string>(); 
+        if (Mathf.Abs(cube.transform.localPosition.x-xMinEdge)<=0.2)
+        {
+            result.Add("X-");
+        }
+        if (Mathf.Abs(cube.transform.localPosition.x-xMaxEdge)<=0.2)
+        {
+            result.Add("X+");
+        }
+        if(Mathf.Abs(cube.transform.localPosition.y-yMinEdge)<=0.2)
+        {
+            result.Add("Y-");
+        }
+        if (Mathf.Abs(cube.transform.localPosition.y-yMaxEdge)<=0.2)
+        {
+            result.Add("Y+");
+        }
+        if(Mathf.Abs(cube.transform.localPosition.z-zMinEdge)<=0.2)
+        {
+            result.Add("Z-");
+        }
+        if (Mathf.Abs(cube.transform.localPosition.z-zMaxEdge)<=0.2)
+        {
+            result.Add("Z+");
+        }
+        return result;
+    }
+
     string GenerateRandomWord(char mustContain='\0')
     {
         int allWordNum = WordList.Count;
@@ -644,6 +744,98 @@ public class WholeCube : MonoBehaviour
                 }
             }
         }
+    }
+
+    public List<GameObject> GetNeighbor_Safe(GameObject begin)
+    {
+        List<GameObject> result = new List<GameObject>();
+
+        GameObject cube = begin.transform.parent.gameObject;
+        Vector3 beginLocalPos = cubeMatchQuad[cube].quadPos[begin];
+        List<Vector3> choice;
+
+        //本身相邻项
+        choice = GetChoice(beginLocalPos);
+        foreach (Vector3 pos in choice)
+        {
+            foreach(GameObject obj in cubeMatchQuad[cube].quadPos.Keys)
+            {
+                if (cubeMatchQuad[cube].quadPos[obj]== pos)
+                {
+                    result.Add(obj);
+                    break;
+                }
+            }
+        }
+         
+        //共面相邻项
+        foreach (Vector3 pos in choice)
+        {
+            Vector3 otherCubePos = cubeMatchQuad[cube].pos + 2*pos;
+            foreach(GameObject obj in cubeMatchQuad.Keys)
+            {
+                if (cubeMatchQuad[obj].pos==otherCubePos)
+                {
+                    for(int i = 0; i<obj.transform.childCount; i++)
+                    {
+                        if (cubeMatchQuad[obj].quadPos[obj.transform.GetChild(i).gameObject]==beginLocalPos)
+                        {
+                            result.Add(obj.transform.GetChild(i).gameObject);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        //
+        foreach (Vector3 dic in choice)
+        {
+            Vector3 otherCubePos = cubeMatchQuad[cube].pos + 2 * beginLocalPos + 2 * dic;
+            foreach (GameObject otherCube in cubeMatchQuad.Keys)
+            {
+                if (cubeMatchQuad[otherCube].pos==otherCubePos)
+                {
+                    for(int i=0;i< otherCube.transform.childCount; i++)
+                    {
+                        if (cubeMatchQuad[otherCube].quadPos[otherCube.transform.GetChild(i).gameObject]==-dic)
+                        {
+                            result.Add(otherCube.transform.GetChild(i).gameObject);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    List<Vector3> GetChoice(Vector3 vec)
+    {
+        List<Vector3> result= new List<Vector3>();
+
+        if(vec==new Vector3(0.5f,0,0)||vec==new Vector3(-0.5f,0,0))
+        {
+            result.Add(new Vector3(0, 0.5f, 0));
+            result.Add(new Vector3(0, -0.5f, 0));
+            result.Add(new Vector3(0, 0, 0.5f));
+            result.Add(new Vector3(0, 0, -0.5f));
+        }
+        else if(vec==new Vector3(0, 0.5f, 0)||vec==new Vector3(0, -0.5f, 0))
+        {
+            result.Add(new Vector3(0.5f, 0, 0));
+            result.Add(new Vector3(-0.5f, 0, 0));
+            result.Add(new Vector3(0, 0, 0.5f));
+            result.Add(new Vector3(0, 0, -0.5f));
+        }
+        else
+        {
+            result.Add(new Vector3(0.5f, 0, 0));
+            result.Add(new Vector3(-0.5f, 0, 0));
+            result.Add(new Vector3(0, 0.5f, 0));
+            result.Add(new Vector3(0, -0.5f, 0));
+        }
+        return result;
     }
 
     public List<GameObject> GetNeighbor(GameObject begin)
@@ -717,10 +909,10 @@ public class WholeCube : MonoBehaviour
             Vector3 otherCubePos = new Vector3();
             for (int x = 0; x<=3; x++)
             {
-                otherCubePos=begin.transform.parent.localPosition+2*choice[x];
-                if (cubeDict.ContainsKey(otherCubePos))
+                otherCubePos=begin.transform.parent.localPosition+2*(choice[x]);
+                if (cubeDict.ContainsKey(NormalizeCubeVec3(otherCubePos)))
                 {
-                    GameObject otherCube = cubeDict[otherCubePos];
+                    GameObject otherCube = cubeDict[NormalizeCubeVec3(otherCubePos)];
                     for (int i = 0; i<otherCube.transform.childCount; i++)
                     {
                         otherDict.Add(otherCube.transform.GetChild(i).localPosition, otherCube.transform.GetChild(i).gameObject);
@@ -734,7 +926,7 @@ public class WholeCube : MonoBehaviour
         return result;
     }
 
-    Vector3 NormalizeCubeVec3(Vector3 normal)
+    public static Vector3 NormalizeCubeVec3(Vector3 normal)
     {
         if (Mathf.Abs(normal.x)>=0.9f)
         {
@@ -785,9 +977,9 @@ public class WholeCube : MonoBehaviour
         return normal;
     }
 
-    Vector3 NormalizeVec3(Vector3 normal)
+    public static Vector3 NormalizeVec3(Vector3 normal)
     {
-        if (Mathf.Abs(normal.x)>=0.4f)
+        if (Mathf.Abs(normal.x)>=0.25f)
         {
             if (normal.x>0)
             {
@@ -802,7 +994,7 @@ public class WholeCube : MonoBehaviour
         {
             normal.x=0f;
         }
-        if (Mathf.Abs(normal.y)>=0.4f)
+        if (Mathf.Abs(normal.y)>=0.25f)
         {
             if (normal.y>0)
             {
@@ -817,7 +1009,7 @@ public class WholeCube : MonoBehaviour
         {
             normal.y=0f;
         }
-        if (Mathf.Abs(normal.z)>=0.4f)
+        if (Mathf.Abs(normal.z)>=0.25f)
         {
 
             if (normal.z > 0)

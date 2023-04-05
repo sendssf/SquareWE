@@ -5,11 +5,13 @@ using UnityEngine;
 public class Ingradients : MonoBehaviour
 {
     public GameObject cube;
+    public static int num;
     // Start is called before the first frame update
     void Start()
     {
         int[] arr = new int[10] {0,2,5,6,8,9,14,25,16,21};
-        Generate(3);
+        num = 3;
+        Generate(num,arr);
     }
 
     void Generate(int num)//几维正方体
