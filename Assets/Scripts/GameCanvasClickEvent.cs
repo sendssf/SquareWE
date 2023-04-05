@@ -8,6 +8,7 @@ public class GameCanvasClickEvent : MonoBehaviour
 {
     // Start is called before the first frame update
     AsyncOperation operation;
+    public AudioClip combine;
     void Start()
     {
         ShowMoney();
@@ -40,9 +41,6 @@ public class GameCanvasClickEvent : MonoBehaviour
     {
         switch (AllMessageContainer.gameStatus.gameMode)
         {
-            case GameMode.Endless:
-
-                break;
             case GameMode.BreakThrough_1:
             case GameMode.BreakThrough_2:
             case GameMode.BreakThrough_3:
@@ -65,10 +63,17 @@ public class GameCanvasClickEvent : MonoBehaviour
             case GameMode.BreakThrough_21:
                 StartCoroutine(loadScene("BreakThrough"));
                 break;
+            case GameMode.CustomOthers:
+            case GameMode.CustomRandom:
+                StartCoroutine(loadScene("CustomMode"));
+                break;
+            case GameMode.Endless:
+                StartCoroutine(loadScene("ChooseModeUI"));
+                break;
         }
     }
 
-    void ShowMoney()
+    public void ShowMoney()
     {
         transform.Find("Money").Find("CoinNum").Find("Number").gameObject.GetComponent<Text>().text=
             AllMessageContainer.playerInfo.coin.ToString();

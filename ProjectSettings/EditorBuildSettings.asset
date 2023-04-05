@@ -26,4 +26,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/3DOverlayer.unity
     guid: 00f187373ce04204d9b1c2d35498478e
+  - enabled: 1
+    path: Assets/Scenes/CustomMode.unity
+    guid: 93a77cf3438f98d4ab5f86aef4ad3dd5
   m_configObjects: {}

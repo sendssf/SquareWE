@@ -65,7 +65,7 @@ public class SignInPageClickEvent : MonoBehaviour
             { "account", AllMessageContainer.registInfo.account }
         };
         //WebController.Post("http://127.0.0.1:8080/api/signup/", JsonConvert.SerializeObject(json));
-        string response = WebController.Post("http://127.0.0.1:8080/api/signup/", JsonConvert.SerializeObject(json));
+        string response = WebController.Post(WebController.rootIP + API_Local.sign_up, JsonConvert.SerializeObject(json));
         switch (response)
         {
             case WebController.NicknameExist:
@@ -102,7 +102,7 @@ public class SignInPageClickEvent : MonoBehaviour
                     transform.parent.gameObject.GetComponent<PlayerMessagePageClickEvent>().LoadPage();
                 }
                 AllMessageContainer.gameStatus.iflogin= true;
-                WebController.Post("http://127.0.0.1:8080/api/post_settings/", JsonConvert.SerializeObject(new Dictionary<string, string>
+                WebController.Post(WebController.rootIP + API_Local.postSettings, JsonConvert.SerializeObject(new Dictionary<string, string>
                 {
                     {"nickname",AllMessageContainer.playerInfo.playerName },
                     {"totalSoundOpen",AllMessageContainer.settingsInfo.totalSoundOpen.ToString() },

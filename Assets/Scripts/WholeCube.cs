@@ -20,7 +20,7 @@ public class WholeCube : MonoBehaviour
     private int pastedNum = 0;
     public static List<string> Matched = new List<string>();
     public static string selectedWord = string.Empty;
-    public static Dictionary<string, string> WordList = ReadCsv.ReadCsvFile("word6.csv");
+    public static Dictionary<string, string> WordList;
 
     public bool _isCleared = false;
     public Dictionary<Vector3, int> position= new Dictionary<Vector3, int>() ;
@@ -38,7 +38,8 @@ public class WholeCube : MonoBehaviour
     private static List<int> haveGenWordIndex= new List<int>();
     public Dictionary<Vector3,GameObject> cubeDict= new Dictionary<Vector3,GameObject>();
 
-    public static Dictionary<GameObject, CubeInfo> cubeMatchQuad = new Dictionary<GameObject, CubeInfo>(); 
+    public static Dictionary<GameObject, CubeInfo> cubeMatchQuad = new Dictionary<GameObject, CubeInfo>();
+    public static List<string> hasLinked = new List<string>();
     //使27个立方体组成一个大立方体
 
     void DFS_Start()
@@ -132,12 +133,29 @@ public class WholeCube : MonoBehaviour
     }
     void Start()
     {
+        cubeMatchQuad.Clear();
+        cubeDict.Clear();
+        Slected.Clear();
+        position.Clear();
         haveGenWordIndex.Clear();
+        hasLinked.Clear();
+        if (AllMessageContainer.gameStatus.ifExternList)
+        {
+            WordList = ReadCsv.ReadCsvFile_Extern(AllMessageContainer.gameStatus.wordFileName);
+            AllMessageContainer.gameStatus.ifExternList = false;
+        }
+        else
+        {
+            WordList = ReadCsv.ReadCsvFile(AllMessageContainer.gameStatus.wordFileName);
+        }
+        haveGenWordIndex.Clear();
+        //GameObject.Find("Third-orderCube").gameObject.GetComponent<Ingradients>().InitCubeShape();
         int beginIndex = Random.Range(0, transform.childCount);
         int quadBeginIndex = Random.Range(0, 6);
         MakeLettersInOrder(transform.GetChild(beginIndex).GetChild(quadBeginIndex).gameObject);
         UpdateCubeQuadMatch();
         UpdateEdges();
+        //Debug.Log(cubeMatchQuad.Count);
     }
 
     Transform getSquad(Vector3 cube, int squad)
@@ -145,7 +163,7 @@ public class WholeCube : MonoBehaviour
         return this.transform.GetChild((int)(cube.x * 9 + cube.y * 3 + cube.z)).GetChild(squad);
     }
 
-    void UpdateCubeQuadMatch()
+    public void UpdateCubeQuadMatch()
     {
         GameObject mainCube = GameObject.Find("Third-orderCube");
         for(int i=0;i<mainCube.transform.childCount;i++)
@@ -646,7 +664,7 @@ public class WholeCube : MonoBehaviour
         return res;
     } 
 
-    void UpdateEdges()
+    public void UpdateEdges()
     {
         xMinEdge = 0;xMaxEdge = 0;
         yMinEdge = 0; yMaxEdge = 0;
@@ -928,52 +946,9 @@ public class WholeCube : MonoBehaviour
 
     public static Vector3 NormalizeCubeVec3(Vector3 normal)
     {
-        if (Mathf.Abs(normal.x)>=0.9f)
-        {
-            if (normal.x>0)
-            {
-                normal.x=1f;
-            }
-            else
-            {
-                normal.x=-1f;
-            }
-        }
-        else
-        {
-            normal.x=0f;
-        }
-        if (Mathf.Abs(normal.y)>=0.9f)
-        {
-            if (normal.y>0)
-            {
-                normal.y=1f;
-            }
-            else
-            {
-                normal.y=-1f;
-            }
-        }
-        else
-        {
-            normal.y=0f;
-        }
-        if (Mathf.Abs(normal.z)>=0.9f)
-        {
-
-            if (normal.z > 0)
-            {
-                normal.z = 1f;
-            }
-            else
-            {
-                normal.z = -1f;
-            }
-        }
-        else
-        {
-            normal.z=0f;
-        }
+        normal.x=Mathf.Round(normal.x);
+        normal.y=Mathf.Round(normal.y);
+        normal.z=Mathf.Round(normal.z);
         return normal;
     }
 

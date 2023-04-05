@@ -18,5 +18,20 @@ public class ReadCsv : MonoBehaviour
             }
         }
         return res;
-    } 
+    }
+
+    public static Dictionary<string, string> ReadCsvFile_Extern(string filename)
+    {
+        var res = new Dictionary<string, string>();
+        using (var sr = new StreamReader(filename))
+        {
+            while (!sr.EndOfStream)
+            {
+                string line = sr.ReadLine();
+                string[] value = line.Split(",");
+                res.Add(value[0], value[1]);
+            }
+        }
+        return res;
+    }
 }

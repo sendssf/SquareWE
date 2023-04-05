@@ -33,10 +33,7 @@ public enum GameMode
     BreakThrough_13=13, BreakThrough_14=14, BreakThrough_15=15,BreakThrough_16=16,
     BreakThrough_17=17, BreakThrough_18=18, BreakThrough_19=19, BreakThrough_20=20,
     BreakThrough_21=21, 
-    Custom3_3CubeEasy=22,Custom3_3CubeDiff=23,
-    Custom4_4CubeEasy=24,Custom4_4CubeDiff=25,
-    Custom5_5CubeEasy=26,Custom5_5CubeDiff=27,
-    Custom6_6CubeEasy=28,Custom6_6CubeDiff=29,
+    CustomOthers=22,
     CustomRandom=30,
     Endless = 31
 }
@@ -90,6 +87,8 @@ public struct GameStatus
     public GameMode gameMode;
     public bool ifUpdateFriendImage;
     public bool changeFriendInfo;
+    public string wordFileName;
+    public bool ifExternList;
 }
 
 public class AllMessageContainer : MonoBehaviour
@@ -119,6 +118,7 @@ public class AllMessageContainer : MonoBehaviour
         gameStatus.ifInit=true;
         gameStatus.ifUpdateFriendImage=false;
         gameStatus.changeFriendInfo=false;
+        gameStatus.ifExternList=false;
         fullExp=new int[31];
         fullExp[0]=0; fullExp[1]=(int)LevelFullExp.Level1; fullExp[2]=(int)LevelFullExp.Level2;
         fullExp[3]=(int)LevelFullExp.Level3; fullExp[4]=(int)LevelFullExp.Level4; fullExp[5]=(int)LevelFullExp.Level5;
@@ -301,7 +301,7 @@ public class AllMessageContainer : MonoBehaviour
     public static Dictionary<string,string> GetFriendsInfoFromServer(string nickname)
     {
         var res=new Dictionary<string,string>();
-        string result = WebController.Post("http://127.0.0.1:8080/api/all_info/",
+        string result = WebController.Post(WebController.rootIP + API_Local.allInfo,
             JsonConvert.SerializeObject(new Dictionary<string, string>
             {
                 {"nickname",nickname }
@@ -321,5 +321,36 @@ public class AllMessageContainer : MonoBehaviour
             res.Add("wordnumber", wordlst.Count.ToString());
         }
         return res;
+    }
+
+    public static string SendBasicInfo()
+    {
+        string res = WebController.Post(WebController.rootIP + API_Local.postInfo,
+            JsonConvert.SerializeObject(new Dictionary<string, string>
+            {
+                {"nickname",playerInfo.playerName },
+                {"coin",playerInfo.coin.ToString() },
+                {"crystal",playerInfo.crystal.ToString() },
+                {"level",playerInfo.level.ToString() },
+                {"experience",playerInfo.experience.ToString() },
+                {"rank",playerInfo.experience.ToString() }
+            }));
+        return res;
+    }
+
+    static public void UpdateLevel()
+    {
+        for(; ; )
+        {
+            if (playerInfo.experience >= fullExp[playerInfo.level])
+            {
+                playerInfo.level++;
+                playerInfo.experience -=fullExp[playerInfo.level - 1];
+            }
+            else
+            {
+                break;
+            }
+        }
     }
 }
