@@ -5,6 +5,7 @@ using UnityEngine;
 public class Cube : MonoBehaviour
 {
     //将六个面组成一个立方体
+    public ParticleSystem particle;
 
     private void Awake()
     {

@@ -40,6 +40,27 @@ public class WebException : ApplicationException//由用户程序引发，用于派生自定义
     // : base(info, context) { }
 }
 
+public class API_Local
+{
+    public const string sign_up = "/api/signup/";
+    public const string login = "/api/login/";
+    public const string postAvater = "/api/post_avatar/";
+    public const string sendAvater = "/api/send_avatar/";
+    public const string postSettings = "/api/post_settings/";
+    public const string postInfo = "/api/post_info/";
+    public const string postWord = "/api/post_word/";
+    public const string postObject = "/api/post_object/";
+    public const string allInfo = "/api/all_info/";
+    public const string addFriend = "/api/add_friend/";
+    public const string acceptFriend = "/api/accept_friend/";
+    public const string rejectFrient = "/api/reject_friend/";
+    public const string allRequest = "/api/all_requests/";
+    public const string deleteObject = "/api/delete_object/";
+    public const string deleteFriend = "/api/delete_friend/";
+    public const string sendMessage = "/api/send_message/";
+    public const string getMessage = "/api/get_messages/";
+}
+
 //挂载在UI
 public class WebController : MonoBehaviour
 {
@@ -50,10 +71,11 @@ public class WebController : MonoBehaviour
     public const string PasswordError = "PasswordError";
     public const string NicknameExist = "NicknameExist";
     public const string FileNotExist = "FileNotExist";
-
-    public const string SendSuccessful = "SendSuccessful";
     public const string Nomessage = "Nomessage";
     public const string SendFailed = "SendFailed";
+    public const string rootIP = "http://127.0.0.1:8080";
+    
+
     void Start()
     {
         

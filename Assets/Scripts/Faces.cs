@@ -15,6 +15,9 @@ public class Faces : MonoBehaviour
     public char letter = new char();
     public int times = 0;//点击次数
     public bool visited=false;
+
+    public bool _isClicked = false;
+    public bool _isVisited = false;     //生成字母的时候用
     private void Awake()
     {
         meshRenderer = GetComponent<MeshRenderer>();

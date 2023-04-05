@@ -293,7 +293,7 @@ public class CuttingController : MonoBehaviour
         File.WriteAllBytes($"{Application.persistentDataPath}\\{AllMessageContainer.playerInfo.playerName}.png", data);
 
         //WebController.PostPicture("http://127.0.0.1:8080/api/post_avatar/", $"{Application.persistentDataPath}\\{AllMessageContainer.playerInfo.playerName}.png");
-        PostPicture("http://127.0.0.1:8080/api/post_avatar/", $"{Application.persistentDataPath}\\{AllMessageContainer.playerInfo.playerName}.png");
+        PostPicture(WebController.rootIP + API_Local.postAvater, $"{Application.persistentDataPath}\\{AllMessageContainer.playerInfo.playerName}.png");
 
         transform.parent.gameObject.GetComponent<PlayerMessagePageClickEvent>().LoadHeadImage(false);
         transform.gameObject.SetActive(false);
