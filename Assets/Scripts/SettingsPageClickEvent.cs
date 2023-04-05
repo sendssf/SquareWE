@@ -113,14 +113,7 @@ public class SettingsPageClickEvent : MonoBehaviour
 
     public void QuitSettings()      //退出设置
     {
-        if (transform.parent.name=="Overlayer")
-        {
-            StartCoroutine(unloadScene("3DOverlayer"));
-        }
-        else
-        {
-            transform.gameObject.SetActive(false);
-        }
+        transform.gameObject.SetActive(false);
     }
 
     IEnumerator unloadScene(string name)
@@ -132,7 +125,7 @@ public class SettingsPageClickEvent : MonoBehaviour
     public void SettingsOK()        //完成设置
     {
         //add something to operate the input data
-
+        AllMessageContainer.SendSettingsInfo();
         transform.gameObject.SetActive(false);
     }
 

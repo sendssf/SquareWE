@@ -89,6 +89,8 @@ public struct GameStatus
     public bool changeFriendInfo;
     public string wordFileName;
     public bool ifExternList;
+    public string overlayerName;
+    public bool finalTry;
 }
 
 public class AllMessageContainer : MonoBehaviour
@@ -119,6 +121,7 @@ public class AllMessageContainer : MonoBehaviour
         gameStatus.ifUpdateFriendImage=false;
         gameStatus.changeFriendInfo=false;
         gameStatus.ifExternList=false;
+        gameStatus.finalTry=false;
         fullExp=new int[31];
         fullExp[0]=0; fullExp[1]=(int)LevelFullExp.Level1; fullExp[2]=(int)LevelFullExp.Level2;
         fullExp[3]=(int)LevelFullExp.Level3; fullExp[4]=(int)LevelFullExp.Level4; fullExp[5]=(int)LevelFullExp.Level5;
@@ -338,6 +341,22 @@ public class AllMessageContainer : MonoBehaviour
         return res;
     }
 
+    public static string SendSettingsInfo()
+    {
+        string res = WebController.Post(WebController.rootIP + API_Local.postSettings,
+            JsonConvert.SerializeObject(new Dictionary<string, string>
+            {
+                {"nickname",AllMessageContainer.playerInfo.playerName },
+                {"totalSoundOpen",AllMessageContainer.settingsInfo.totalSoundOpen.ToString() },
+                {"backSoundOpen",AllMessageContainer.settingsInfo.backSoundOpen.ToString() },
+                {"effectSoundOpen",AllMessageContainer.settingsInfo.effectSoundOpen.ToString() },
+                {"totalSoundValue",AllMessageContainer.settingsInfo.totalSoundValue.ToString() },
+                {"backSoundValue",AllMessageContainer.settingsInfo.backSoundValue.ToString()},
+                {"effectSoundValue",AllMessageContainer.settingsInfo.effectSoundValue.ToString()}
+            }));
+        return res;
+    }
+
     static public void UpdateLevel()
     {
         for(; ; )
@@ -346,6 +365,9 @@ public class AllMessageContainer : MonoBehaviour
             {
                 playerInfo.level++;
                 playerInfo.experience -=fullExp[playerInfo.level - 1];
+                playerInfo.crystal += 10;
+                playerInfo.coin += 100;
+                SendBasicInfo();
             }
             else
             {

@@ -437,6 +437,32 @@ public class FriendsController : MonoBehaviour
         LoadFriends();
     }
 
+    public void CloseInviteTips()
+    {
+        transform.Find("InviteTips").gameObject.SetActive(false);
+    }
+
+    public async void ShowInviteTips(string state)
+    {
+        transform.Find("InviteTips").gameObject.SetActive(true);
+        if(state == "disagree")
+        {
+            transform.Find("InviteTips").Find("Info").gameObject.GetComponent<Text>().text =
+                $"The player{/*who?*/""} has disagreed your invitation!";
+        }
+        else if(state == "agree")
+        {
+            transform.Find("InviteTips").Find("Info").gameObject.GetComponent<Text>().text =
+                $"The player{/*who?*/""} has agreed your invitation! You will enter the game later...";
+            await Task.Delay(2000);
+        }
+        else if(state == "Timeout")
+        {
+            transform.Find("InviteTips").Find("Info").gameObject.GetComponent<Text>().text =
+                $"The player{/*who?*/""} has not response your invitation! Please try again later.";
+        }
+    }
+
     public void RejectSuccess(string nickname)
     {
         waitList.Remove(nickname);

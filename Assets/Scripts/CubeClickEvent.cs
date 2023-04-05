@@ -16,6 +16,7 @@ public class CubeClickEvent : MonoBehaviour
     string link = "";
     void Awake()
     {
+        AllMessageContainer.gameStatus.finalTry = false;
         m_Raycaster = FindObjectOfType<PhysicsRaycaster>();
         if (m_Raycaster == null)
         {
@@ -164,10 +165,22 @@ public class CubeClickEvent : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             await PressSpaceToSure();
-            if (transform.childCount<=3)
+            if (transform.childCount<=3 && !AllMessageContainer.gameStatus.finalTry)
             {
-
+                await VictoryPrimary();
             }
+            if(transform.childCount == 0)
+            {
+                await VictoryFinally();
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.LeftAlt))
+        {
+            await VictoryPrimary();
+        }
+        if (Input.GetKeyDown(KeyCode.RightAlt))
+        {
+            await VictoryFinally();
         }
     }
 
@@ -234,6 +247,24 @@ public class CubeClickEvent : MonoBehaviour
     private void ShowError(string message)
     {
         GameObject.Find("Error").GetComponent<Text>().text = message;
+    }
+
+    private async Task VictoryPrimary()
+    {
+        AddExperience(500);
+        AddMoney(50, 3);
+        AllMessageContainer.SendBasicInfo();
+        await GameObject.Find("BackgroundCavas").gameObject.GetComponent<GameCanvasClickEvent>().VictoryShow();
+        return;
+    }
+
+    private async Task VictoryFinally()
+    {
+        AddExperience(1000);
+        AddMoney(150, 15);
+        AllMessageContainer.SendBasicInfo();
+        await GameObject.Find("BackgroundCavas").gameObject.GetComponent<GameCanvasClickEvent>().FinalVictory();
+        return;
     }
 
     public void CombineWord(string word)
