@@ -67,6 +67,7 @@ public class WebController : MonoBehaviour
     public const string PasswordError = "PasswordError";
     public const string NicknameExist = "NicknameExist";
     public const string FileNotExist = "FileNotExist";
+    public const string NoMessage = "NoMessage";
 
     public const string rootIP = "http://127.0.0.1:8080";
     
@@ -256,6 +257,8 @@ public class WebController : MonoBehaviour
                         return Success;
                     case "Reject successfully":
                         return Success;
+                    case "No message":
+                        return NoMessage;
                     default:
                         return webRequest.downloadHandler.text;
                 }

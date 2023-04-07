@@ -150,8 +150,10 @@ public class SettingsPageClickEvent : MonoBehaviour
         }
         AllMessageContainer.gameStatus.iflogin=false;
         AllMessageContainer.gameStatus.changeFriendInfo=true;
+        AllMessageContainer.loginInfo.password = string.Empty;
+        AllMessageContainer.loginInfo.nickname = string.Empty;
+        FriendsController.friendMessageAll.Clear();
         transform.gameObject.SetActive(false);
-
     }
 
     public void TotalVolumeChange(float volume)
