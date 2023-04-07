@@ -16,6 +16,7 @@ public class OnlineMode: MonoBehaviour
     bool ifagreed = false;
     bool ifPrepared = false;
     string otherName = null;
+    float waitTime = 0;
     void Start()
     {
         
@@ -24,10 +25,13 @@ public class OnlineMode: MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if(ifSendInvi)
+        {
+            waitTime += Time.deltaTime;
+        }
     }
 
-    public void PressInviteButton()       //邀请
+    public void PressInviteButton()       //挂载Invite按钮
     {
         var json = new Dictionary<string, string>
         {
@@ -141,6 +145,7 @@ public class OnlineMode: MonoBehaviour
         switch (responses)
         {
             case WebController.Success:
+                StartCoroutine(loadScene("OnlineMode"));
                 break;
             case WebController.ServerNotFound:
                 if (File.Exists($"{Application.persistentDataPath}\\{AllMessageContainer.loginInfo.nickname}.json"))
@@ -226,7 +231,8 @@ public class OnlineMode: MonoBehaviour
         var json = new Dictionary<string, string>
         {
             { "nickname1",AllMessageContainer.playerInfo.playerName},
-            { "nickname2",otherName}/////需要修改
+            { "nickname2",otherName},/////需要修改
+            {"time", waitTime.ToString()}
         };
         string response = WebController.Post(WebController.rootIP + API_Local.allRequest, JsonConvert.SerializeObject(json));
         switch (response)

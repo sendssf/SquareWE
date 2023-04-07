@@ -217,7 +217,7 @@ public class CubeClickEvent : MonoBehaviour
                         father.transform.GetChild(i).gameObject.GetComponent<Faces>().rb.useGravity = true;
                     }
                     father.transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
-                    GameObject.Find("Explosion").gameObject.AddComponent<Expolosion>().explosionPos = GameObject.Find("cube13").transform;
+                    GameObject.Find("Explosion").gameObject.AddComponent<Expolosion>().explosionPos = GameObject.Find("Third-orderCube").transform;
                     var ps = Instantiate(father.GetComponent<Cube>().particle,father.transform);
                     ps.transform.localPosition = Vector3.zero;
                     ps.Play();
