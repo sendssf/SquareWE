@@ -43,7 +43,9 @@ public class FriendNameGetter : MonoBehaviour,IPointerDownHandler,IPointerUpHand
             }
             else if (transform.Find("Name").gameObject.GetComponent<Text>().text=="Message")
             {
-
+                FriendsController.lookWhoMessage = frdname;
+                FriendsController.messageButtonHandler = transform.gameObject;
+                transform.parent.parent.parent.parent.parent.gameObject.GetComponent<FriendsController>().PressMessageButton();
             }
         }
         else if (transform.parent.parent.parent.parent.parent.name=="ApplicationPage")

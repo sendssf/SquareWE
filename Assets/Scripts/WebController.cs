@@ -1,3 +1,4 @@
+
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using System;
@@ -13,17 +14,13 @@ public enum WebStatus
     ServerNotFound,
     PlayerNotExist,
     PasswordError,
-    NicknameExist,
-
-    Nomessage,
-    SendFailed,
-
+    NicknameExist
 }
 
-public class WebException : ApplicationException//ÓÉÓÃ»§³ÌĞòÒı·¢£¬ÓÃÓÚÅÉÉú×Ô¶¨ÒåµÄÒì³£ÀàĞÍ
+public class WebException : ApplicationException//ç”±ç”¨æˆ·ç¨‹åºå¼•å‘ï¼Œç”¨äºæ´¾ç”Ÿè‡ªå®šä¹‰çš„å¼‚å¸¸ç±»å‹
 {
     /// <summary>
-    /// Ä¬ÈÏ¹¹Ôìº¯Êı
+    /// é»˜è®¤æ„é€ å‡½æ•°
     /// </summary>
     public WebException() { }
 
@@ -64,7 +61,7 @@ public class API_Local
     public const string respondInvitation = "/api/respond_invi/";
 }
 
-//¹ÒÔØÔÚUI
+//æŒ‚è½½åœ¨UI
 public class WebController : MonoBehaviour
 {
     // Start is called before the first frame update
@@ -74,8 +71,9 @@ public class WebController : MonoBehaviour
     public const string PasswordError = "PasswordError";
     public const string NicknameExist = "NicknameExist";
     public const string FileNotExist = "FileNotExist";
-    public const string Nomessage = "Nomessage";
+    public const string NoMessage = "NoMessage";
     public const string SendFailed = "SendFailed";
+    
     public const string rootIP = "http://127.0.0.1:8080";
     
 
@@ -264,6 +262,8 @@ public class WebController : MonoBehaviour
                         return Success;
                     case "Reject successfully":
                         return Success;
+                    case "No message":
+                        return NoMessage;
                     default:
                         return webRequest.downloadHandler.text;
                 }

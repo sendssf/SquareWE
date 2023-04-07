@@ -7,6 +7,7 @@ using System.IO;
 using System.Net;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
@@ -27,21 +28,28 @@ public class FriendsController : MonoBehaviour
     public GameObject applicationItem;
     public GameObject addFriendObj;     //点击添加按钮对应的对象
     public Sprite normalHead;
+    public GameObject friendMessageBox;
     private Dictionary<string,string> applicationList;
     private SearchMode searchMode;
     private string newFriendSearchInfo;
     private string validateInfo;
     public string addFriendname;
     float time;
+    float messageTime;
     static List<string> waitList;              //等待同意的好友昵称
     private List<string> friendsHaveLoaded=new List<string>();     //已经加载的好友
     GameObject friendlist;
     GameObject newFriendList;   //添加好友栏
+    public static Dictionary<string, List<string>> friendMessageAll = new Dictionary<string, List<string>>();
+    string sendingMessage;
+    public static string lookWhoMessage;      //正在看谁的消息
+    public static GameObject messageButtonHandler;
 
     void Start()
     {
         waitList = new List<string>();
         time=0;
+        messageTime = 0;
         friendlist=transform.Find("FriendList").Find("Viewport").Find("Content").gameObject;
         newFriendList=transform.Find("AddPage").Find("FriendList").Find("Viewport").Find("Content").gameObject;
         for(int i = 0; i<friendlist.transform.childCount; i++)
@@ -76,6 +84,7 @@ public class FriendsController : MonoBehaviour
     void Update()
     {
         time+=Time.deltaTime;
+        messageTime+=Time.deltaTime;
         if (time>=30)
         {
             time=0; 
@@ -116,6 +125,11 @@ public class FriendsController : MonoBehaviour
             waitList.Clear();
             friendsHaveLoaded.Clear();
             LoadFriends();
+        }
+        if (messageTime>=5)
+        {
+            messageTime = 0;
+            UpdateMessageList();
         }
     }
 
@@ -159,6 +173,7 @@ public class FriendsController : MonoBehaviour
             if (!friendsHaveLoaded.Contains(frd))
             {
                 var item = Instantiate(friendItem, friendlist.transform);
+                item.transform.name = frd;
                 item.transform.Find("Image").gameObject.GetComponent<Image>().sprite= normalHead;
                 item.transform.Find("Name").gameObject.GetComponent<Text>().text= frd;
 
@@ -207,6 +222,123 @@ public class FriendsController : MonoBehaviour
                }
            }
         }
+    }
+
+    public void UpdateMessageList()
+    {
+        foreach(string frdname in AllMessageContainer.playerInfo.friendList)
+        {
+            string res = WebController.Post(WebController.rootIP + API_Local.getMessage, JsonConvert.SerializeObject(new Dictionary<string, string>
+            {
+                {"nickname1",frdname },
+                {"nickname2",AllMessageContainer.playerInfo.playerName }
+            }));
+            switch(res)
+            {
+                case WebController.ServerNotFound:
+                    FriendPageShowError("Network Error! Please check and try again!");
+                    return;
+                case WebController.NoMessage:
+                    return;
+            }
+            List<string> message = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(res)["content"];
+            if (friendMessageAll.ContainsKey(frdname))
+            {
+                foreach(string each in message)
+                {
+                    friendMessageAll[frdname].Add(each);
+                }
+            }
+            else
+            {
+                friendMessageAll.Add(frdname, message);
+            }
+            transform.Find("FriendList").Find("Viewport").Find("Content").Find(frdname).Find("Message").
+                gameObject.GetComponent<MessageNumManager>().newMessageNum += message.Count;
+            if(transform.Find("FriendMessage").gameObject.activeInHierarchy && frdname == lookWhoMessage)
+            {
+                transform.Find("FriendList").Find("Viewport").Find("Content").Find(frdname).Find("Message").
+                    gameObject.GetComponent<MessageNumManager>().newMessageNum = 0;
+                foreach(string mes in message)
+                {
+                    var item = Instantiate(friendMessageBox, transform.Find("FriendMessage").Find("View").Find("Viewport").Find("Content"));
+                    StartCoroutine(GetFriendImageAsync(lookWhoMessage, item));
+                    item.transform.Find("Mes").gameObject.GetComponent<Text>().text = mes;
+                }
+            }
+        }
+    }
+
+    public void PressSendToSendMessage()
+    {
+        if (sendingMessage!=null && sendingMessage.Length>0)
+        {
+            string res = WebController.Post(WebController.rootIP + API_Local.sendMessage, JsonConvert.SerializeObject(new Dictionary<string, string>
+            {
+                {"nickname1",AllMessageContainer.playerInfo.playerName },
+                {"nickname2",lookWhoMessage },
+                {"content",sendingMessage }
+            }));
+            switch(res) 
+            { 
+                case WebController.ServerNotFound:
+                    FriendMessageShowError("Network Error! Please check and try again later!");
+                    break;
+            }
+
+            if (friendMessageAll.ContainsKey(lookWhoMessage))
+            {
+                friendMessageAll[lookWhoMessage].Add("$@$"+sendingMessage);
+            }
+            else
+            {
+                friendMessageAll.Add(lookWhoMessage,new List<string> {"$@$"+sendingMessage});
+            }
+            //更新消息框
+            var item = Instantiate(friendMessageBox, transform.Find("FriendMessage").Find("View").Find("Viewport").Find("Content"));
+            StartCoroutine(GetFriendImageAsync(AllMessageContainer.playerInfo.playerName, item));
+            item.transform.Find("Mes").gameObject.GetComponent<Text>().text = sendingMessage;
+        }
+    }
+
+    public void PressMessageButton()
+    {
+        transform.Find("FriendMessage").gameObject.SetActive(true);
+        messageButtonHandler.GetComponent<MessageNumManager>().newMessageNum = 0;
+        if (friendMessageAll.ContainsKey(lookWhoMessage))
+        {
+            foreach(string mes in friendMessageAll[lookWhoMessage])
+            {
+                if (mes.Substring(0,2) == "$@$")
+                {
+                    //自己发出去的消息
+                    var item = Instantiate(friendMessageBox, transform.Find("FriendMessage").Find("View").Find("Viewport").Find("Content"));
+                    StartCoroutine(GetFriendImageAsync(AllMessageContainer.playerInfo.playerName, item));
+                    item.transform.Find("Mes").gameObject.GetComponent<Text>().text = mes.Substring(3);
+                }
+                else
+                {
+                    var item = Instantiate(friendMessageBox, transform.Find("FriendMessage").Find("View").Find("Viewport").Find("Content"));
+                    StartCoroutine(GetFriendImageAsync(lookWhoMessage, item));
+                    item.transform.Find("Mes").gameObject.GetComponent<Text>().text = mes;
+                }
+            }
+        }
+    }
+
+    public void CloseFriendMessagePage()
+    {
+        transform.Find("FriendMessage").gameObject.SetActive(false);
+    }
+
+    private void FriendMessageShowError(string msg)
+    {
+        transform.Find("FriendMessage").Find("Error").gameObject.GetComponent<Text>().text = msg;
+    }
+
+    public void UpdateSendingMessage(string message)
+    {
+        sendingMessage = message;
     }
 
     public void ChangeSearchMode(int num)
@@ -435,6 +567,32 @@ public class FriendsController : MonoBehaviour
                 .GetComponent<Text>().text=applicationList.Count.ToString();
         }
         LoadFriends();
+    }
+
+    public void CloseInviteTips()
+    {
+        transform.Find("InviteTips").gameObject.SetActive(false);
+    }
+
+    public async void ShowInviteTips(string state)
+    {
+        transform.Find("InviteTips").gameObject.SetActive(true);
+        if(state == "disagree")
+        {
+            transform.Find("InviteTips").Find("Info").gameObject.GetComponent<Text>().text =
+                $"The player{/*who?*/""} has disagreed your invitation!";
+        }
+        else if(state == "agree")
+        {
+            transform.Find("InviteTips").Find("Info").gameObject.GetComponent<Text>().text =
+                $"The player{/*who?*/""} has agreed your invitation! You will enter the game later...";
+            await Task.Delay(2000);
+        }
+        else if(state == "Timeout")
+        {
+            transform.Find("InviteTips").Find("Info").gameObject.GetComponent<Text>().text =
+                $"The player{/*who?*/""} has not response your invitation! Please try again later.";
+        }
     }
 
     public void RejectSuccess(string nickname)
