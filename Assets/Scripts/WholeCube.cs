@@ -126,7 +126,7 @@ public class WholeCube : MonoBehaviour
             }
         }
         _isCleared = false;
-    }
+    } 
     private void Awake()
     {
         
