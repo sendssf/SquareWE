@@ -161,7 +161,7 @@ public class CustomModeClickEvent : MonoBehaviour
             }
         }
         AllMessageContainer.gameStatus.gameMode=GameMode.CustomOthers;
-        StartCoroutine(loadScene("GamePage"));
+        StartCoroutine(loadScene("GamePage")); 
     }
 
     void ShowError(string message)

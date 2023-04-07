@@ -383,9 +383,19 @@ public class ShopPageClickEvent : MonoBehaviour
         }
     }
 
-    private void UpdateRemainMoney()
+    public void UpdateRemainMoney()
     {
         transform.Find("Panel").Find("CoinNum").Find("Number").gameObject.GetComponent<Text>().text=AllMessageContainer.playerInfo.coin.ToString();
         transform.Find("Panel").Find("CrystalNum").Find("Number").gameObject.GetComponent<Text>().text=AllMessageContainer.playerInfo.crystal.ToString();
+    }
+
+    public void CoinPlus()
+    {
+        transform.Find("CrystalToCoin").gameObject.SetActive(true);
+    }
+
+    public void CrystalPlus()
+    {
+        transform.Find("CoinToCrystal").gameObject.SetActive(true) ;
     }
 }

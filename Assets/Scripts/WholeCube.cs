@@ -644,7 +644,7 @@ public class WholeCube : MonoBehaviour
         return alphabet[num];
     }
 
-    private void StackLetter(char letter,GameObject quad)
+    public void StackLetter(char letter,GameObject quad)
     {
         Texture2D texture;
         texture=Resources.Load<Texture2D>(letter.ToString().ToUpper());

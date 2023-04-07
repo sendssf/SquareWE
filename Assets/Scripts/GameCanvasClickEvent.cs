@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -73,6 +74,12 @@ public class GameCanvasClickEvent : MonoBehaviour
         }
     }
 
+    public void PlusButton()
+    {
+        AllMessageContainer.gameStatus.overlayerName = "Tips";
+        StartCoroutine(loadScene("3DOverlayer", LoadSceneMode.Additive));
+    }
+
     public void ShowMoney()
     {
         transform.Find("Money").Find("CoinNum").Find("Number").gameObject.GetComponent<Text>().text=
@@ -82,6 +89,40 @@ public class GameCanvasClickEvent : MonoBehaviour
     }
     public void GotoSettings()
     {
+        AllMessageContainer.gameStatus.overlayerName = "Settings";
         StartCoroutine(loadScene("3DOverlayer", LoadSceneMode.Additive));
+    }
+    public async Task VictoryShow()
+    {
+        GameObject.Find("VictoryEffect").transform.Find("YellowFire").gameObject.SetActive(true);
+        await Task.Delay(200);
+        GameObject.Find("VictoryEffect").transform.Find("PurpleFire").gameObject.SetActive(true);
+        await Task.Delay(200);
+        GameObject.Find("VictoryEffect").transform.Find("GreenFire").gameObject.SetActive(true);
+        await Task.Delay(1000);
+        AllMessageContainer.gameStatus.overlayerName = "Victory";
+        StartCoroutine(loadScene("3DOverlayer", LoadSceneMode.Additive));
+        GameObject.Find("VictoryEffect").transform.Find("YellowFire").gameObject.SetActive(false);
+        GameObject.Find("VictoryEffect").transform.Find("PurpleFire").gameObject.SetActive(false);
+        GameObject.Find("VictoryEffect").transform.Find("GreenFire").gameObject.SetActive(false);
+        return;
+    }
+
+    public async Task FinalVictory()
+    {
+        GameObject.Find("VictoryEffect").transform.Find("YellowFire").gameObject.SetActive(true);
+        await Task.Delay(200);
+        GameObject.Find("VictoryEffect").transform.Find("PurpleFire").gameObject.SetActive(true);
+        await Task.Delay(200);
+        GameObject.Find("VictoryEffect").transform.Find("GreenFire").gameObject.SetActive(true);
+        await Task.Delay(800);
+        AllMessageContainer.gameStatus.overlayerName = "FinalVictory";
+        StartCoroutine(loadScene("3DOverlayer", LoadSceneMode.Additive));
+        await Task.Delay(2000);
+        GameObject.Find("VictoryEffect").transform.Find("YellowFire").gameObject.SetActive(false);
+        GameObject.Find("VictoryEffect").transform.Find("PurpleFire").gameObject.SetActive(false);
+        GameObject.Find("VictoryEffect").transform.Find("GreenFire").gameObject.SetActive(false);
+        StartCoroutine(loadScene("ChooseModeUI"));
+        return;
     }
 }

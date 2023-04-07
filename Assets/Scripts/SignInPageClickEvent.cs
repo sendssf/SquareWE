@@ -110,7 +110,7 @@ public class SignInPageClickEvent : MonoBehaviour
                     {"effectSoundOpen",AllMessageContainer.settingsInfo.effectSoundOpen.ToString() },
                     {"totalSoundValue",AllMessageContainer.settingsInfo.totalSoundValue.ToString() },
                     {"backSoundValue",AllMessageContainer.settingsInfo.backSoundValue.ToString() },
-                    {"effectSoundOpen",AllMessageContainer.settingsInfo.effectSoundValue.ToString() }
+                    {"effectSoundValue",AllMessageContainer.settingsInfo.effectSoundValue.ToString() }
                 }));
                 transform.Find("OK").gameObject.SetActive(false);
                 break;
