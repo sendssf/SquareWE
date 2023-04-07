@@ -8,11 +8,10 @@ public class Ingradients1 : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        int[] arr = new int[10] { 0, 2, 5, 6, 8, 9, 14, 25, 16, 21 };
-        Generate(3);
+        
     }
 
-    void Generate(int num)//几维正方体
+    public void Generate(int num)//几维正方体
     {
         for (int i = 0; i < num * num * num; i++)
         {

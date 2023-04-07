@@ -84,6 +84,7 @@ public struct GameStatus
     public bool iflogin;
     public bool ifStartGame;
     public bool ifInit;
+    public bool ifonline;
     public GameMode gameMode;
     public bool ifUpdateFriendImage;
     public bool changeFriendInfo;
@@ -119,6 +120,7 @@ public class AllMessageContainer : MonoBehaviour
         gameStatus.ifUpdateFriendImage=false;
         gameStatus.changeFriendInfo=false;
         gameStatus.ifExternList=false;
+        gameStatus.ifonline = false;
         fullExp=new int[31];
         fullExp[0]=0; fullExp[1]=(int)LevelFullExp.Level1; fullExp[2]=(int)LevelFullExp.Level2;
         fullExp[3]=(int)LevelFullExp.Level3; fullExp[4]=(int)LevelFullExp.Level4; fullExp[5]=(int)LevelFullExp.Level5;

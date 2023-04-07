@@ -27,6 +27,7 @@ public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
     string moveCubeType = null;
     float hasMoved = 0;
     List<float> hasRotate=new List<float>();
+    OnlineMode onlineMode;
     void Start()
     {
         mainCube=GameObject.Find("Third-orderCube");
@@ -46,6 +47,10 @@ public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
             if (transform.name=="RotateScreen" && pressState==PressState.RotateScreen)
             {
                 mainCube.transform.Rotate(-30*Time.deltaTime, 0, 30*Time.deltaTime,Space.World);
+                if(AllMessageContainer.gameStatus.ifonline == true)
+                {
+                    onlineMode.TransmitStatus("rotate screen", "", "W," + (30 * Time.deltaTime).ToString());
+                }
             }
         }
         else if(Input.GetKey(KeyCode.S))
@@ -53,6 +58,10 @@ public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
             if (transform.name=="RotateScreen" && pressState==PressState.RotateScreen)
             {
                 mainCube.transform.Rotate(30*Time.deltaTime, 0, -30*Time.deltaTime,Space.World);
+                if (AllMessageContainer.gameStatus.ifonline == true)
+                {
+                    onlineMode.TransmitStatus("rotate screen", "", "S," + (30 * Time.deltaTime).ToString());
+                }
             }
         }
         else if(Input.GetKey(KeyCode.D))
@@ -60,6 +69,10 @@ public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
             if (transform.name=="RotateScreen" && pressState==PressState.RotateScreen)
             {
                 mainCube.transform.Rotate(30*Time.deltaTime, 0, 30*Time.deltaTime, Space.World);
+                if (AllMessageContainer.gameStatus.ifonline == true)
+                {
+                    onlineMode.TransmitStatus("rotate screen", "", "D," + (30 * Time.deltaTime).ToString());
+                }
             }
         }
         else if(Input.GetKey(KeyCode.A))
@@ -67,6 +80,10 @@ public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
             if (transform.name=="RotateScreen" && pressState==PressState.RotateScreen)
             {
                 mainCube.transform.Rotate(-30*Time.deltaTime, 0, -30*Time.deltaTime, Space.World);
+                if (AllMessageContainer.gameStatus.ifonline == true)
+                {
+                    onlineMode.TransmitStatus("rotate screen", "", "A," + (30 * Time.deltaTime).ToString());
+                }
             }
         }
         else if(Input.GetKey(KeyCode.Q))
@@ -74,6 +91,10 @@ public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
             if (transform.name=="RotateScreen" && pressState==PressState.RotateScreen)
             {
                 mainCube.transform.Rotate(0, 30*Time.deltaTime, 0,Space.World);
+                if (AllMessageContainer.gameStatus.ifonline == true)
+                {
+                    onlineMode.TransmitStatus("rotate screen", "", "Q," + (30 * Time.deltaTime).ToString());
+                }
             }
         }
         else if(Input.GetKey(KeyCode.E))
@@ -81,6 +102,10 @@ public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
             if (transform.name=="RotateScreen" && pressState==PressState.RotateScreen)
             {
                 mainCube.transform.Rotate(0, -30*Time.deltaTime, 0, Space.World);
+                if (AllMessageContainer.gameStatus.ifonline == true)
+                {
+                    onlineMode.TransmitStatus("rotate screen", "", "E," + (30 * Time.deltaTime).ToString());
+                }
             }
         }
 
@@ -96,6 +121,10 @@ public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
                         rotateCubeDict.Add(cube, "Z+");
                         rotateCubeList.Add(cube);
                         hasRotate.Add(0);
+                        if (AllMessageContainer.gameStatus.ifonline == true)
+                        {
+                            onlineMode.TransmitStatus("rotate cube", cube.name.Substring(4), "Z+");
+                        }
                     }
                 }
             }
@@ -121,6 +150,10 @@ public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
                     {
                         moveCube=WholeCube.Slected[0].transform.parent.gameObject;
                         moveCubeType="Y+";
+                        if (AllMessageContainer.gameStatus.ifonline == true)
+                        {
+                            onlineMode.TransmitStatus("move cube", moveCube.name.Substring(4), "Y+");
+                        }
                     }
                 }
             }
@@ -137,6 +170,10 @@ public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
                         rotateCubeDict.Add(cube, "Z-");
                         rotateCubeList.Add(cube);
                         hasRotate.Add(0);
+                        if (AllMessageContainer.gameStatus.ifonline == true)
+                        {
+                            onlineMode.TransmitStatus("rotate cube", cube.name.Substring(4), "Z-");
+                        }
                     }
                 }
             }
@@ -164,6 +201,10 @@ public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
                     {
                         moveCube=WholeCube.Slected[0].transform.parent.gameObject;
                         moveCubeType="Y-";
+                        if (AllMessageContainer.gameStatus.ifonline == true)
+                        {
+                            onlineMode.TransmitStatus("move cube", moveCube.name.Substring(4), "Y-");
+                        }
                     }
                 }
             }
@@ -181,6 +222,10 @@ public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
                         rotateCubeDict.Add(cube, "X-");
                         rotateCubeList.Add(cube);
                         hasRotate.Add(0);
+                        if (AllMessageContainer.gameStatus.ifonline == true)
+                        {
+                            onlineMode.TransmitStatus("rotate cube", cube.name.Substring(4), "X-");
+                        }
                     }
                 }
             }
@@ -208,6 +253,10 @@ public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
                     {
                         moveCube=WholeCube.Slected[0].transform.parent.gameObject;
                         moveCubeType="X+";
+                        if (AllMessageContainer.gameStatus.ifonline == true)
+                        {
+                            onlineMode.TransmitStatus("move cube", moveCube.name.Substring(4), "X+");
+                        }
                     }
                 }
             }
@@ -225,6 +274,10 @@ public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
                         rotateCubeDict.Add(cube, "X+");
                         rotateCubeList.Add(cube);
                         hasRotate.Add(0);
+                        if (AllMessageContainer.gameStatus.ifonline == true)
+                        {
+                            onlineMode.TransmitStatus("rotate cube", cube.name.Substring(4), "X+");
+                        }
                     }
                 }
             }
@@ -252,6 +305,10 @@ public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
                     {
                         moveCube=WholeCube.Slected[0].transform.parent.gameObject;
                         moveCubeType="X-";
+                        if (AllMessageContainer.gameStatus.ifonline == true)
+                        {
+                            onlineMode.TransmitStatus("move cube", moveCube.name.Substring(4), "X-");
+                        }
                     }
                 }
             }
@@ -268,6 +325,10 @@ public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
                         rotateCubeDict.Add(cube, "Y+");
                         rotateCubeList.Add(cube);
                         hasRotate.Add(0);
+                        if (AllMessageContainer.gameStatus.ifonline == true)
+                        {
+                            onlineMode.TransmitStatus("rotate cube", cube.name.Substring(4), "Y+");
+                        }
                     }
                 }
             }
@@ -295,6 +356,10 @@ public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
                     {
                         moveCube=WholeCube.Slected[0].transform.parent.gameObject;
                         moveCubeType="Z-";
+                        if (AllMessageContainer.gameStatus.ifonline == true)
+                        {
+                            onlineMode.TransmitStatus("move cube", moveCube.name.Substring(4), "Z-");
+                        }
                     }
                 }
             }
@@ -311,6 +376,10 @@ public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
                         rotateCubeDict.Add(cube, "Y-");
                         rotateCubeList.Add(cube);
                         hasRotate.Add(0);
+                        if (AllMessageContainer.gameStatus.ifonline == true)
+                        {
+                            onlineMode.TransmitStatus("rotate cube", cube.name.Substring(4), "Y-");
+                        }
                     }
                 }
             }
@@ -338,6 +407,10 @@ public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
                     {
                         moveCube=WholeCube.Slected[0].transform.parent.gameObject;
                         moveCubeType="Z+";
+                        if (AllMessageContainer.gameStatus.ifonline == true)
+                        {
+                            onlineMode.TransmitStatus("move cube", moveCube.name.Substring(4), "Z+");
+                        }
                     }
                 }
             }

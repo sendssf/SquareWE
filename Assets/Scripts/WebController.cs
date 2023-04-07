@@ -59,6 +59,9 @@ public class API_Local
     public const string deleteFriend = "/api/delete_friend/";
     public const string sendMessage = "/api/send_message/";
     public const string getMessage = "/api/get_messages/";
+    public const string sendInvitation = "/api/send_invitation/";
+    public const string allInvitations = "/api/all_invitations/";
+    public const string respondInvitation = "/api/respond_invi/";
 }
 
 //¹ÒÔØÔÚUI

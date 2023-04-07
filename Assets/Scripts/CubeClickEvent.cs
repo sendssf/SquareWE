@@ -14,6 +14,7 @@ public class CubeClickEvent : MonoBehaviour
     private AudioSource audioSource1, audioSource2;
     string prepareWord = "";
     string link = "";
+    OnlineMode onlineMode;
     void Awake()
     {
         m_Raycaster = FindObjectOfType<PhysicsRaycaster>();
@@ -36,11 +37,11 @@ public class CubeClickEvent : MonoBehaviour
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit, 100.0F))//检测到碰撞
-            {
+            { 
                 audioSource1.PlayOneShot(audioSource1.clip);
                 if (hit.transform.GetComponent<Faces>()._isClicked)
                 {
-                    int beginIndex = WholeCube.Slected.IndexOf(hit.transform.gameObject);
+                    int beginIndex = WholeCube.Slected.IndexOf(hit.transform.gameObject); 
                     for (int i = WholeCube.Slected.Count - 1; i >= beginIndex; i--)
                     {
                         WholeCube.Slected[i].GetComponent<Faces>()._isClicked = false;
@@ -186,6 +187,10 @@ public class CubeClickEvent : MonoBehaviour
             foreach (GameObject _isSelected in WholeCube.Slected)
             {
                 _isSelected.GetComponent<Faces>().TimeUp();
+                if (AllMessageContainer.gameStatus.ifonline == true)
+                {
+                    onlineMode.TransmitStatus("point cube", _isSelected.transform.parent.gameObject.name.Substring(4)+","+_isSelected.name, "");//可能延时出问题
+                }
             }
             foreach (GameObject _isSelected in WholeCube.Slected)
             {
