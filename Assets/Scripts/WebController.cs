@@ -1,3 +1,4 @@
+
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using System;
@@ -16,10 +17,10 @@ public enum WebStatus
     NicknameExist
 }
 
-public class WebException : ApplicationException//ÓÉÓÃ»§³ÌĞòÒı·¢£¬ÓÃÓÚÅÉÉú×Ô¶¨ÒåµÄÒì³£ÀàĞÍ
+public class WebException : ApplicationException//ç”±ç”¨æˆ·ç¨‹åºå¼•å‘ï¼Œç”¨äºæ´¾ç”Ÿè‡ªå®šä¹‰çš„å¼‚å¸¸ç±»å‹
 {
     /// <summary>
-    /// Ä¬ÈÏ¹¹Ôìº¯Êı
+    /// é»˜è®¤æ„é€ å‡½æ•°
     /// </summary>
     public WebException() { }
 
@@ -55,9 +56,12 @@ public class API_Local
     public const string deleteFriend = "/api/delete_friend/";
     public const string sendMessage = "/api/send_message/";
     public const string getMessage = "/api/get_messages/";
+    public const string sendInvitation = "/api/send_invitation/";
+    public const string allInvitations = "/api/all_invitations/";
+    public const string respondInvitation = "/api/respond_invi/";
 }
 
-//¹ÒÔØÔÚUI
+//æŒ‚è½½åœ¨UI
 public class WebController : MonoBehaviour
 {
     // Start is called before the first frame update
@@ -68,7 +72,8 @@ public class WebController : MonoBehaviour
     public const string NicknameExist = "NicknameExist";
     public const string FileNotExist = "FileNotExist";
     public const string NoMessage = "NoMessage";
-
+    public const string SendFailed = "SendFailed";
+    
     public const string rootIP = "http://127.0.0.1:8080";
     
 

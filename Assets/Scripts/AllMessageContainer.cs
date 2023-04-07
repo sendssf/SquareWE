@@ -5,7 +5,7 @@ using System.IO;
 using Newtonsoft.Json;
 using System;
 
-public enum ReadInfoState   //¶ÁÈ¡ÎÄ¼ş×´Ì¬
+public enum ReadInfoState   //è¯»å–æ–‡ä»¶çŠ¶æ€
 {
     Success,
     FileNotExit,
@@ -14,7 +14,7 @@ public enum ReadInfoState   //¶ÁÈ¡ÎÄ¼ş×´Ì¬
     PasswordError
 }
 
-public enum LevelFullExp    //Ã¿Ò»¼¶µÄ×î´ó¾­ÑéÖµ
+public enum LevelFullExp    //æ¯ä¸€çº§çš„æœ€å¤§ç»éªŒå€¼
 {
     Level1=100, Level2=200, Level3=400,
     Level4=800, Level5=1200,Level6=1800,Level7=2500,Level8=3000,
@@ -46,7 +46,7 @@ public struct PlayerInfo
     public string email;
     public Dictionary<string,string> worldList;
     public Dictionary<string, string> objectList;
-    public List<string> friendList;   //¼üÎªêÇ³Æ£¬ÖµÎªinfo×Öµä
+    public List<string> friendList;   //é”®ä¸ºæ˜µç§°ï¼Œå€¼ä¸ºinfoå­—å…¸
     public int level;
     public int experience;
     public int rank;
@@ -84,6 +84,7 @@ public struct GameStatus
     public bool iflogin;
     public bool ifStartGame;
     public bool ifInit;
+    public bool ifonline;
     public GameMode gameMode;
     public bool ifUpdateFriendImage;
     public bool changeFriendInfo;
@@ -97,9 +98,9 @@ public class AllMessageContainer : MonoBehaviour
 {
     // Start is called before the first frame update
     public static PlayerInfo playerInfo = new PlayerInfo();
-    public static RegistInfo registInfo = new RegistInfo();         //×¢²áÊ±ÓÃµ½µÄĞÅÏ¢
+    public static RegistInfo registInfo = new RegistInfo();         //æ³¨å†Œæ—¶ç”¨åˆ°çš„ä¿¡æ¯
     public static SettingsInfo settingsInfo = new SettingsInfo();
-    public static LoginInfo loginInfo = new LoginInfo();              //µÇÂ¼Ê±ÓÃµ½µÄĞÅÏ¢
+    public static LoginInfo loginInfo = new LoginInfo();              //ç™»å½•æ—¶ç”¨åˆ°çš„ä¿¡æ¯
     public static GameStatus gameStatus = new GameStatus();
     public static int[] fullExp;
     void Start()
@@ -121,6 +122,7 @@ public class AllMessageContainer : MonoBehaviour
         gameStatus.ifUpdateFriendImage=false;
         gameStatus.changeFriendInfo=false;
         gameStatus.ifExternList=false;
+        gameStatus.ifonline = false;
         gameStatus.finalTry=false;
         fullExp=new int[31];
         fullExp[0]=0; fullExp[1]=(int)LevelFullExp.Level1; fullExp[2]=(int)LevelFullExp.Level2;
@@ -139,7 +141,7 @@ public class AllMessageContainer : MonoBehaviour
         playerInfo.objectList=new Dictionary<string, string>();
         playerInfo.friendList=new List<string>();
         var files = new DirectoryInfo(Application.persistentDataPath).GetFiles("*.json");
-        if (files.Length==0)    //Èç¹ûÃ»±£´æÓÃ»§µÄÊı¾İ
+        if (files.Length==0)    //å¦‚æœæ²¡ä¿å­˜ç”¨æˆ·çš„æ•°æ®
         {
             settingsInfo.totalSoundValue=1.0f;
             settingsInfo.backSoundValue=0.25f;
@@ -150,13 +152,13 @@ public class AllMessageContainer : MonoBehaviour
         }
         else
         {
-            //¶ÔÎÄ¼ş°´ÕÕĞ´ÈëÊ±¼äÅÅĞò
+            //å¯¹æ–‡ä»¶æŒ‰ç…§å†™å…¥æ—¶é—´æ’åº
             Array.Sort(files,delegate(FileInfo x,FileInfo y)
             {
                 return y.LastWriteTime.CompareTo(x.LastWriteTime);
             });
 
-            //È¡×î½üÒ»´ÎĞ´ÈëµÄÎÄ¼şÔØÈë
+            //å–æœ€è¿‘ä¸€æ¬¡å†™å…¥çš„æ–‡ä»¶è½½å…¥
             ReadInfoFromFile(files[0].Name);
         }
     }
@@ -222,7 +224,7 @@ public class AllMessageContainer : MonoBehaviour
 
     public static ReadInfoState ReadInfoFromFile(string filename)
     {
-        //Çå³ıÒÑ¾­ÔØÈëµÄ×ÖµäÊı¾İ
+        //æ¸…é™¤å·²ç»è½½å…¥çš„å­—å…¸æ•°æ®
         if(playerInfo.worldList.Count!=0)
         {
             playerInfo.worldList.Clear();
@@ -292,7 +294,7 @@ public class AllMessageContainer : MonoBehaviour
 
     public static void ResetPlayerInfo()
     {
-        playerInfo.playerName="NickName"; //º¯Êı½áÊøºóÒÀÈ»ÎªÕâ¸öËµÃ÷ÔØÈëÊ§°Ü»òÃ»ÓĞÎÄ¼ş
+        playerInfo.playerName="NickName"; //å‡½æ•°ç»“æŸåä¾ç„¶ä¸ºè¿™ä¸ªè¯´æ˜è½½å…¥å¤±è´¥æˆ–æ²¡æœ‰æ–‡ä»¶
         playerInfo.playerAccount="Account";
         playerInfo.coin=0;
         playerInfo.crystal=0;
