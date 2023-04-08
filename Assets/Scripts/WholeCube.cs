@@ -166,6 +166,7 @@ public class WholeCube : MonoBehaviour
 
     public void UpdateCubeQuadMatch()
     {
+        cubeMatchQuad.Clear();
         GameObject mainCube = GameObject.Find("Third-orderCube");
         for(int i=0;i<mainCube.transform.childCount;i++)
         {
