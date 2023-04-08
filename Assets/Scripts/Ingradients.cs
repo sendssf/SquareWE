@@ -84,7 +84,7 @@ public class Ingradients : MonoBehaviour
             {"nickname2",OnlineMode.playWith },
             {"info",info }
         };
-        string response = WebController.Post(WebController.rootIP + API_Local.allRequest, JsonConvert.SerializeObject(cubeInfo));
+        string response = WebController.Post(WebController.rootIP + API_Local.checkSquareInfo, JsonConvert.SerializeObject(cubeInfo));
         switch (response)
         {
             case WebController.Success:
@@ -303,7 +303,7 @@ public class Ingradients : MonoBehaviour
             { "nickname1",OnlineMode.playWith},
             {"nickname2",AllMessageContainer.playerInfo.playerName}
         };
-        string response = WebController.Post(WebController.rootIP + API_Local.allRequest, JsonConvert.SerializeObject(json));
+        string response = WebController.Post(WebController.rootIP + API_Local.checkSquareInfo, JsonConvert.SerializeObject(json));
         switch (response)
         {
             case WebController.NoMessage:
