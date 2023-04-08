@@ -298,8 +298,8 @@ public class OnlineMode: MonoBehaviour
     public void generateCube()
     {
         Dictionary<string, Dictionary<string, string>> cube = new Dictionary<string, Dictionary<string, string>>();
-        Transform Cube = gameObject.transform.Find("Third-orderCube");
-        for (int i = 0; i < Cube.childCount; i++)
+        GameObject Cube = GameObject.Find("Third-orderCube"), other = GameObject.Find("OtherCube");
+        for (int i = 0; i < Cube.transform.childCount; i++)
         {
             var cubei = new Dictionary<string, string>
             {
@@ -321,34 +321,7 @@ public class OnlineMode: MonoBehaviour
                 ifPrepared = true;
                 break;
             case WebController.ServerNotFound:
-                if (File.Exists($"{Application.persistentDataPath}\\{AllMessageContainer.loginInfo.nickname}.json"))
-                {
-                    var info = JsonConvert.DeserializeObject<Dictionary<string, object>>
-                        (File.ReadAllText($"{Application.persistentDataPath}\\{AllMessageContainer.loginInfo.nickname}.json"));
-                    var playerInfo = JsonConvert.DeserializeObject<Dictionary<string, string>>(info["playerInfo"].ToString());
-                    if (playerInfo["password"] == AllMessageContainer.loginInfo.password)
-                    {
-                        transform.Find("Contain").Find("Viewport").Find("Content").Find("ErrorTips")
-                            .gameObject.GetComponent<Text>().text = "Log in success! But the server connection is error. " +
-                            "You can play the game normally and we will try to upload your data later";
-                        AllMessageContainer.gameStatus.iflogin = true;
-                        if (transform.parent.name == "PlayerMessage")
-                        {
-                            transform.parent.gameObject.GetComponent<PlayerMessagePageClickEvent>().LoadPage();
-                        }
-                    }
-                    else
-                    {
-                        transform.Find("Contain").Find("Viewport").Find("Content").Find("ErrorTips")
-                            .gameObject.GetComponent<Text>().text = "The password is error! Please check the nickname and the password. ";
-                    }
-                }
-                else
-                {
-                    transform.Find("Contain").Find("Viewport").Find("Content").Find("ErrorTips")
-                        .gameObject.GetComponent<Text>().text = "Server connection error, and the player has no local record. " +
-                        "So you cannot log in this account";
-                }
+                
                 break;
         }
     }
@@ -399,12 +372,13 @@ public class OnlineMode: MonoBehaviour
                 var mes = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, string>>>(response);
                 Dictionary<string, string> num;
                 string opt;
-                Transform OtherCube = GameObject.Find("OtherCube").transform;
+                Transform MyCube = GameObject.Find("Third-orderCube").transform, OtherCube = GameObject.Find("OtherCube").transform;
                 List<string> name = new List<string>();
                 if (mes.TryGetValue("cube0", out num))
                 {
                     num.TryGetValue("num", out opt);
-                    OtherCube.gameObject.GetComponent<Ingradients1>().Generate(int.Parse(opt));
+                    MyCube.gameObject.GetComponent<Ingradients>().Generate(int.Parse(opt));
+                    OtherCube.gameObject.GetComponent<Ingradients>().Generate(int.Parse(opt));
                 }
                 foreach (Dictionary<string, string> cube in mes.Values)
                 {
@@ -415,9 +389,26 @@ public class OnlineMode: MonoBehaviour
                 }
                 foreach (Dictionary<string, string> cube in mes.Values)
                 {
-                    for(int i = 0; i < OtherCube.childCount; i++)
+                    for(int i = 0; i < MyCube.childCount; i++)
                     {
-                        if(name.Contains(OtherCube.GetChild(i).name.Substring(5)))
+                        if(name.Contains(MyCube.GetChild(i).name.Substring(4)))
+                        {
+                            whole.StackLetter(cube["up"].ToCharArray()[0], MyCube.GetChild(i).GetChild(0).gameObject);
+                            whole.StackLetter(cube["down"].ToCharArray()[0], MyCube.GetChild(i).GetChild(1).gameObject);
+                            whole.StackLetter(cube["left"].ToCharArray()[0], MyCube.GetChild(i).GetChild(2).gameObject);
+                            whole.StackLetter(cube["right"].ToCharArray()[0], MyCube.GetChild(i).GetChild(3).gameObject);
+                            whole.StackLetter(cube["front"].ToCharArray()[0], MyCube.GetChild(i).GetChild(4).gameObject);
+                            whole.StackLetter(cube["back"].ToCharArray()[0], MyCube.GetChild(i).GetChild(5).gameObject);
+                            break;
+                        }
+                        else
+                        {
+                            DestroyImmediate(MyCube.GetChild(i).gameObject);
+                        }
+                    }
+                    for (int i = 0; i < OtherCube.childCount; i++)
+                    {
+                        if (name.Contains(OtherCube.GetChild(i).name.Substring(5)))
                         {
                             whole.StackLetter(cube["up"].ToCharArray()[0], OtherCube.GetChild(i).GetChild(0).gameObject);
                             whole.StackLetter(cube["down"].ToCharArray()[0], OtherCube.GetChild(i).GetChild(1).gameObject);
