@@ -92,6 +92,7 @@ public struct GameStatus
     public bool ifExternList;
     public string overlayerName;
     public bool finalTry;
+    public bool ifHost;
 }
 
 public class AllMessageContainer : MonoBehaviour
@@ -124,6 +125,7 @@ public class AllMessageContainer : MonoBehaviour
         gameStatus.ifExternList=false;
         gameStatus.ifonline = false;
         gameStatus.finalTry=false;
+        gameStatus.ifHost=false;
         fullExp=new int[31];
         fullExp[0]=0; fullExp[1]=(int)LevelFullExp.Level1; fullExp[2]=(int)LevelFullExp.Level2;
         fullExp[3]=(int)LevelFullExp.Level3; fullExp[4]=(int)LevelFullExp.Level4; fullExp[5]=(int)LevelFullExp.Level5;

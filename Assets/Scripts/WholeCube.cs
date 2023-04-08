@@ -133,6 +133,7 @@ public class WholeCube : MonoBehaviour
     }
     void Start()
     {
+        //pastedNum = 0;
         cubeMatchQuad.Clear();
         cubeDict.Clear();
         Slected.Clear();

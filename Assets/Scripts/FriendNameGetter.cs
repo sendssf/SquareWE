@@ -39,7 +39,8 @@ public class FriendNameGetter : MonoBehaviour,IPointerDownHandler,IPointerUpHand
             }
             else if (transform.Find("Name").gameObject.GetComponent<Text>().text=="Invite")
             {
-
+                OnlineMode.inviteWhoToPlay = transform.parent.name;
+                transform.parent.parent.parent.parent.parent.gameObject.GetComponent<OnlineMode>().PressInviteButton();
             }
             else if (transform.Find("Name").gameObject.GetComponent<Text>().text=="Message")
             {
@@ -91,6 +92,18 @@ public class FriendNameGetter : MonoBehaviour,IPointerDownHandler,IPointerUpHand
                         .RejectSuccess(transform.parent.Find("Name").gameObject.GetComponent<Text>().text);
                     Destroy(transform.parent.gameObject);
                 }
+            }
+        }
+        else if(transform.parent.parent.parent.parent.parent.name == "InvitationPage")
+        {
+            OnlineMode.operateWhoInv = transform.parent.Find("Name").gameObject.GetComponent<Text>().text;
+            if(transform.name == "Agree")
+            {
+                transform.parent.parent.parent.parent.parent.parent.gameObject.GetComponent<OnlineMode>().AgreeInvite();
+            }
+            else if(transform.name == "Reject")
+            {
+                transform.parent.parent.parent.parent.parent.parent.gameObject.GetComponent<OnlineMode>().DisagreeInvite();
             }
         }
     }

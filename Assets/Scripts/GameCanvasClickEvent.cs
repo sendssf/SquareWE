@@ -10,9 +10,17 @@ public class GameCanvasClickEvent : MonoBehaviour
     // Start is called before the first frame update
     AsyncOperation operation;
     public AudioClip combine;
+    bool isbBeginWaiting = false;
     void Start()
     {
         ShowMoney();
+        if(AllMessageContainer.gameStatus.ifonline && 
+            !AllMessageContainer.gameStatus.ifHost && !OnlineMode.ifPrepared && isbBeginWaiting == false)
+        {
+            AllMessageContainer.gameStatus.overlayerName = "waiting";
+            isbBeginWaiting =true;
+            StartCoroutine(loadScene("3DOverlayer", LoadSceneMode.Additive));
+        }
     }
 
     // Update is called once per frame
@@ -40,37 +48,46 @@ public class GameCanvasClickEvent : MonoBehaviour
 
     public void ReturnPage()
     {
-        switch (AllMessageContainer.gameStatus.gameMode)
+        if (!AllMessageContainer.gameStatus.ifonline)
         {
-            case GameMode.BreakThrough_1:
-            case GameMode.BreakThrough_2:
-            case GameMode.BreakThrough_3:
-            case GameMode.BreakThrough_4:
-            case GameMode.BreakThrough_5:    
-            case GameMode.BreakThrough_6:
-            case GameMode.BreakThrough_7:
-            case GameMode.BreakThrough_8:     
-            case GameMode.BreakThrough_9:    
-            case GameMode.BreakThrough_10:
-            case GameMode.BreakThrough_11:
-            case GameMode.BreakThrough_12:
-            case GameMode.BreakThrough_13:
-            case GameMode.BreakThrough_14:
-            case GameMode.BreakThrough_15:
-            case GameMode.BreakThrough_16:
-            case GameMode.BreakThrough_17:
-            case GameMode.BreakThrough_18:
-            case GameMode.BreakThrough_19:
-            case GameMode.BreakThrough_21:
-                StartCoroutine(loadScene("BreakThrough"));
-                break;
-            case GameMode.CustomOthers:
-            case GameMode.CustomRandom:
-                StartCoroutine(loadScene("CustomMode"));
-                break;
-            case GameMode.Endless:
-                StartCoroutine(loadScene("ChooseModeUI"));
-                break;
+            switch (AllMessageContainer.gameStatus.gameMode)
+            {
+                case GameMode.BreakThrough_1:
+                case GameMode.BreakThrough_2:
+                case GameMode.BreakThrough_3:
+                case GameMode.BreakThrough_4:
+                case GameMode.BreakThrough_5:
+                case GameMode.BreakThrough_6:
+                case GameMode.BreakThrough_7:
+                case GameMode.BreakThrough_8:
+                case GameMode.BreakThrough_9:
+                case GameMode.BreakThrough_10:
+                case GameMode.BreakThrough_11:
+                case GameMode.BreakThrough_12:
+                case GameMode.BreakThrough_13:
+                case GameMode.BreakThrough_14:
+                case GameMode.BreakThrough_15:
+                case GameMode.BreakThrough_16:
+                case GameMode.BreakThrough_17:
+                case GameMode.BreakThrough_18:
+                case GameMode.BreakThrough_19:
+                case GameMode.BreakThrough_21:
+                    StartCoroutine(loadScene("BreakThrough"));
+                    break;
+                case GameMode.CustomOthers:
+                case GameMode.CustomRandom:
+                    StartCoroutine(loadScene("CustomMode"));
+                    break;
+                case GameMode.Endless:
+                    StartCoroutine(loadScene("ChooseModeUI"));
+                    break;
+            }
+        }
+        else
+        {
+            AllMessageContainer.gameStatus.ifonline = false;
+            //Ã·«∞Ω· ¯
+            StartCoroutine(loadScene("PlayerMessageUI"));
         }
     }
 
