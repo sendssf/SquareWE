@@ -168,7 +168,15 @@ public class CubeClickEvent : MonoBehaviour
             await PressSpaceToSure();
             if (transform.childCount<=3 && !AllMessageContainer.gameStatus.finalTry)
             {
-                await VictoryPrimary();
+                if (AllMessageContainer.gameStatus.ifonline == false)
+                {
+                    await VictoryPrimary();
+                }
+                else
+                {
+                    OnlineMode.Victory();
+                    await VictoryFinally();
+                }
             }
             if(transform.childCount == 0)
             {
