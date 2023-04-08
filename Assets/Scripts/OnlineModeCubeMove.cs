@@ -149,7 +149,7 @@ public class OnlineModeCubeMove : MonoBehaviour
         }
     }
 
-    public void MoveCube(GameObject cube, string option)
+    static public void MoveCube(GameObject cube, string option)
     {
         CubeMoveHelper helper = new CubeMoveHelper();
         helper.option = option;

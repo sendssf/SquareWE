@@ -36,7 +36,14 @@ public class CustomModeClickEvent : MonoBehaviour
     public void RandomBegin()
     {
         AllMessageContainer.gameStatus.gameMode=GameMode.CustomRandom;
-        StartCoroutine(loadScene("GamePage"));
+        if (AllMessageContainer.gameStatus.ifHost)
+        {
+            StartCoroutine(loadScene("OnlineMode"));
+        }
+        else
+        {
+            StartCoroutine(loadScene("GamePage"));
+        }
     }
 
     public void GotoSettings()
@@ -161,7 +168,14 @@ public class CustomModeClickEvent : MonoBehaviour
             }
         }
         AllMessageContainer.gameStatus.gameMode=GameMode.CustomOthers;
-        StartCoroutine(loadScene("GamePage")); 
+        if (AllMessageContainer.gameStatus.ifHost)
+        {
+            StartCoroutine(loadScene("OnlineMode"));
+        }
+        else
+        {
+            StartCoroutine(loadScene("GamePage"));
+        }
     }
 
     void ShowError(string message)

@@ -1,5 +1,7 @@
+using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Ingradients : MonoBehaviour
@@ -15,7 +17,56 @@ public class Ingradients : MonoBehaviour
     {
         //int[] arr = new int[10] {0,2,5,6,8,9,14,25,16,21};
         //Generate(5);
-        InitCubeShape();
+        if (!(AllMessageContainer.gameStatus.ifonline && !AllMessageContainer.gameStatus.ifHost))
+        {
+            InitCubeShape();
+        }
+        if(AllMessageContainer.gameStatus.ifonline && AllMessageContainer.gameStatus.ifHost)
+        {
+            GenerateCubePost();
+        }
+    }
+
+    private void Update()
+    {
+        if(AllMessageContainer.gameStatus.ifonline && AllMessageContainer.gameStatus.ifHost)
+        {
+            if (OnlineMode.ifPrepared)
+            {
+
+            }
+        }
+    }
+
+    public void GenerateCubePost()
+    {
+        Dictionary<string, Dictionary<string, string>> cube = new Dictionary<string, Dictionary<string, string>>();
+        Transform Cube = GameObject.Find("Third-orderCube").transform;
+        for (int i = 0; i < Cube.childCount; i++)
+        {
+            var cubei = new Dictionary<string, string>
+            {
+                {"num", Ingradients.num.ToString()},
+                {"name", Cube.GetChild(i).name.Substring(4)},
+                {"up", Cube.GetChild(i).GetChild(0).GetComponent<Faces>().letter.ToString()},
+                {"down",Cube.GetChild(i).GetChild(1).GetComponent<Faces>().letter.ToString() },
+                {"left",Cube.GetChild(i).GetChild(2).GetComponent<Faces>().letter.ToString() },
+                {"right", Cube.GetChild(i).GetChild(3).GetComponent<Faces>().letter.ToString()},
+                {"front", Cube.GetChild(i).GetChild(4).GetComponent<Faces>().letter.ToString()},
+                {"back", Cube.GetChild(i).GetChild(5).GetComponent<Faces>().letter.ToString()}
+            };
+            cube.Add("cube"+i, cubei);
+        }
+        string response = WebController.Post(WebController.rootIP + API_Local.allRequest, JsonConvert.SerializeObject(cube));
+        switch (response)
+        {
+            case WebController.Success:
+                OnlineMode.ifPrepared = true;
+                break;
+            case WebController.ServerNotFound:
+                break;
+        }
+
     }
 
     public void InitCubeShape()
@@ -219,7 +270,91 @@ public class Ingradients : MonoBehaviour
         }
     }
 
-    void Generate(int num)//��ά������
+    public void ReceiveCube()
+    {
+        var json = new Dictionary<string, string>
+        {
+            { "nickname",OnlineMode.playWith}/////需要修改
+        };
+        string response = WebController.Post(WebController.rootIP + API_Local.allRequest, JsonConvert.SerializeObject(json));
+        switch (response)
+        {
+            case WebController.NoMessage:
+                ///进入等待状态
+                break;
+            case WebController.ServerNotFound:
+                break;
+            default:
+                var mes = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, string>>>(response);
+                Dictionary<string, string> num;
+                string opt;
+                Transform MyCube = GameObject.Find("Third-orderCube").transform, OtherCube = GameObject.Find("OtherCube").transform;
+                List<string> name = new List<string>();
+                if (mes.TryGetValue("cube0", out num))
+                {
+                    num.TryGetValue("num", out opt);
+                    MyCube.gameObject.GetComponent<Ingradients>().Generate(int.Parse(opt));
+                    OtherCube.gameObject.GetComponent<Ingradients>().Generate(int.Parse(opt));
+                }
+                foreach (Dictionary<string, string> cube in mes.Values)
+                {
+                    if (cube.TryGetValue("name", out opt))
+                    {
+                        name.Add(opt);
+                    }
+                }
+                foreach (Dictionary<string, string> cube in mes.Values)
+                {
+                    for (int i = 0; i < MyCube.childCount; i++)
+                    {
+                        if (name.Contains(MyCube.GetChild(i).name.Substring(4)))
+                        {
+                            StackLetter(cube["up"].ToCharArray()[0], MyCube.GetChild(i).GetChild(0).gameObject);
+                            StackLetter(cube["down"].ToCharArray()[0], MyCube.GetChild(i).GetChild(1).gameObject);
+                            StackLetter(cube["left"].ToCharArray()[0], MyCube.GetChild(i).GetChild(2).gameObject);
+                            StackLetter(cube["right"].ToCharArray()[0], MyCube.GetChild(i).GetChild(3).gameObject);
+                            StackLetter(cube["front"].ToCharArray()[0], MyCube.GetChild(i).GetChild(4).gameObject);
+                            StackLetter(cube["back"].ToCharArray()[0], MyCube.GetChild(i).GetChild(5).gameObject);
+                            break;
+                        }
+                        else
+                        {
+                            DestroyImmediate(MyCube.GetChild(i).gameObject);
+                        }
+                    }
+                    for (int i = 0; i < OtherCube.childCount; i++)
+                    {
+                        if (name.Contains(OtherCube.GetChild(i).name.Substring(5)))
+                        {
+                            StackLetter(cube["up"].ToCharArray()[0], OtherCube.GetChild(i).GetChild(0).gameObject);
+                            StackLetter(cube["down"].ToCharArray()[0], OtherCube.GetChild(i).GetChild(1).gameObject);
+                            StackLetter(cube["left"].ToCharArray()[0], OtherCube.GetChild(i).GetChild(2).gameObject);
+                            StackLetter(cube["right"].ToCharArray()[0], OtherCube.GetChild(i).GetChild(3).gameObject);
+                            StackLetter(cube["front"].ToCharArray()[0], OtherCube.GetChild(i).GetChild(4).gameObject);
+                            StackLetter(cube["back"].ToCharArray()[0], OtherCube.GetChild(i).GetChild(5).gameObject);
+                            break;
+                        }
+                        else
+                        {
+                            DestroyImmediate(OtherCube.GetChild(i).gameObject);
+                        }
+                    }
+                }
+                OnlineMode.ifPrepared = true;
+                break;
+        }
+    }
+
+    public void StackLetter(char letter, GameObject quad)
+    {
+        Texture2D texture;
+        texture=Resources.Load<Texture2D>(letter.ToString().ToUpper());
+        quad.GetComponent<MeshRenderer>().material.SetTexture("_MainTex", texture);
+        quad.GetComponent<Faces>().letter= letter;
+        quad.GetComponent<Faces>().visited= true;
+    }
+
+    public void Generate(int num)//��ά������
     {
         for (int i = 0; i < num*num*num; i++)
         {
@@ -300,7 +435,7 @@ public class Ingradients : MonoBehaviour
     int[] DeleteSameNumber(int[] arr)
     {
         List<int> ints = new List<int>();
-        for(int i=0;i<arr.Length; i++)
+        for(int i=0;i<arr.Length; i++) 
         {
             if (!ints.Contains(arr[i]))
             {
@@ -308,5 +443,109 @@ public class Ingradients : MonoBehaviour
             }
         }
         return ints.ToArray();
+    }
+
+    public void DataCallBack()
+    {
+        var json = new Dictionary<string, string>
+        {
+            {"nickname1",AllMessageContainer.playerInfo.playerName },
+            { "nickname2",OnlineMode.playWith}/////需要修改
+        };
+        string response = WebController.Post(WebController.rootIP + API_Local.allRequest, JsonConvert.SerializeObject(json));
+        switch (response)
+        {
+            case WebController.NoMessage:
+                ///进入等待状态
+                break;
+            case WebController.ServerNotFound:
+                break;
+            default:
+                var mes = JsonConvert.DeserializeObject<Dictionary<string, string>>(response);
+                string opt;
+                if (mes.TryGetValue("option", out opt))
+                {
+                    if (opt == "move cube")
+                    {
+                        OnlineModeCubeMove.MoveCube(GameObject.Find("cube*"+mes["object"]), mes["body"]);
+                    }
+                    else if (opt == "rotate cube")
+                    {
+                        //wait
+                        OnlineModeCubeMove.RotateCube(new List<GameObject> { GameObject.Find("cube*"+mes["object"]) }, mes["body"]);
+                    }
+                    else if (opt == "rotate screen")
+                    {
+                        //wait
+                        var rot = mes["body"].Split(",");
+                        OnlineModeCubeMove.RotateScreen(GameObject.Find("OtherCube"), rot[0], (float)System.Convert.ToDouble(rot[0]));
+                    }
+                    else if (opt == "point cube")
+                    {
+                        string[] result = mes["object"].Split(new char[] { ',' });
+                        int i = 0;
+                        GameObject c = null;
+                        List<GameObject> bg = new List<GameObject>();
+                        foreach (string s in result)
+                        {
+                            if (i % 2 == 0)
+                            {
+                                c = GameObject.Find("cube*" + s);
+                            }
+                            else
+                            {
+                                c.transform.Find(s).GetComponent<Faces>().TimeUp();
+                                if (c.transform.Find(s).GetComponent<Faces>().Times() == 1)
+                                {
+                                    c.transform.Find(s).GetComponent<MeshRenderer>().material.color = new Color(1, 0.6f, 0.6f);//点击改变面颜色
+                                }
+                                else if (c.transform.Find(s).GetComponent<Faces>().Times() == 2)
+                                {
+                                    c.transform.Find(s).gameObject.GetComponent<MeshRenderer>().material.color = new Color(0, 1, 0.6f);//点击改变面颜色
+                                }
+                                else if (c.transform.Find(s).GetComponent<Faces>().Times() == 3)
+                                {
+                                    GameObject father = c.transform.Find(s).transform.parent.gameObject;
+                                    father.transform.parent.GetComponent<WholeCube>().position.Remove(father.transform.position);
+                                    father.transform.parent.GetComponent<WholeCube>()._isCleared = true;
+                                    for (int j = 0; j < 6; j++)
+                                    {
+                                        father.transform.GetChild(i).gameObject.GetComponent<Faces>().rb.isKinematic = false;
+                                        father.transform.GetChild(i).gameObject.GetComponent<Faces>().rb.useGravity = true;
+                                    }
+                                    father.transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
+                                    GameObject.Find("Explosion").gameObject.AddComponent<Expolosion>().explosionPos = GameObject.Find("OtherCube").transform;
+                                    var ps = Instantiate(father.GetComponent<Cube>().particle, father.transform);
+                                    ps.transform.localPosition = Vector3.zero;
+                                    ps.Play();
+                                    Destroy(father);
+                                }
+                            }
+                            i++;
+                        }
+                    }
+                    else if (opt == "destroy cube")
+                    {
+                        string[] result = mes["object"].Split(new char[] { ',' });
+                        foreach (string s in result)
+                        {
+                            Destroy(GameObject.Find("cube*" + s));
+                        }
+                    }
+                    else if (opt == "change color")
+                    {
+                        //弹出对话框
+                    }
+                    else if (opt == "get word")
+                    {
+                        //弹出对话框
+                    }
+                    else if (opt == "quit")
+                    {
+                        //弹出对话框
+                    }
+                }
+                break;
+        }
     }
 }
