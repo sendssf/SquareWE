@@ -139,7 +139,17 @@ public class GameCanvasClickEvent : MonoBehaviour
         GameObject.Find("VictoryEffect").transform.Find("YellowFire").gameObject.SetActive(false);
         GameObject.Find("VictoryEffect").transform.Find("PurpleFire").gameObject.SetActive(false);
         GameObject.Find("VictoryEffect").transform.Find("GreenFire").gameObject.SetActive(false);
-        StartCoroutine(loadScene("ChooseModeUI"));
+        if (AllMessageContainer.gameStatus.ifonline)
+        {
+            AllMessageContainer.gameStatus.ifonline = false;
+            AllMessageContainer.gameStatus.ifStartGame = false;
+            AllMessageContainer.gameStatus.ifHost = false;
+            StartCoroutine(loadScene("PlayerMessageUI"));
+        }
+        else
+        {
+            StartCoroutine(loadScene("ChooseModeUI"));
+        }
         return;
     }
 }
