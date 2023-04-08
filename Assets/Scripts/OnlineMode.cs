@@ -67,34 +67,6 @@ public class OnlineMode: MonoBehaviour
                     .gameObject.GetComponent<Text>().text = "The player is not exist. Please check your nickname";
                 break;
             case WebController.ServerNotFound:
-                if (File.Exists($"{Application.persistentDataPath}\\{AllMessageContainer.loginInfo.nickname}.json"))
-                {
-                    var info = JsonConvert.DeserializeObject<Dictionary<string, object>>
-                        (File.ReadAllText($"{Application.persistentDataPath}\\{AllMessageContainer.loginInfo.nickname}.json"));
-                    var playerInfo = JsonConvert.DeserializeObject<Dictionary<string, string>>(info["playerInfo"].ToString());
-                    if (playerInfo["password"] == AllMessageContainer.loginInfo.password)
-                    {
-                        transform.Find("Contain").Find("Viewport").Find("Content").Find("ErrorTips")
-                            .gameObject.GetComponent<Text>().text = "Log in success! But the server connection is error. " +
-                            "You can play the game normally and we will try to upload your data later";
-                        AllMessageContainer.gameStatus.iflogin = true;
-                        if (transform.parent.name == "PlayerMessage")
-                        {
-                            transform.parent.gameObject.GetComponent<PlayerMessagePageClickEvent>().LoadPage();
-                        }
-                    }
-                    else
-                    {
-                        transform.Find("Contain").Find("Viewport").Find("Content").Find("ErrorTips")
-                            .gameObject.GetComponent<Text>().text = "The password is error! Please check the nickname and the password. ";
-                    }
-                }
-                else
-                {
-                    transform.Find("Contain").Find("Viewport").Find("Content").Find("ErrorTips")
-                        .gameObject.GetComponent<Text>().text = "Server connection error, and the player has no local record. " +
-                        "So you cannot log in this account";
-                }
                 break;
         }
     }
@@ -253,7 +225,7 @@ public class OnlineMode: MonoBehaviour
             { "nickname2",inviteWhoToPlay},/////ÐèÒªÐÞ¸Ä
             {"time", waitTime.ToString()}
         };
-        string response = WebController.Post(WebController.rootIP + API_Local.allRequest, JsonConvert.SerializeObject(json));
+        string response = WebController.Post(WebController.rootIP + API_Local.getCondition, JsonConvert.SerializeObject(json));
         switch (response)
         {
             case WebController.NoMessage:

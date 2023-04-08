@@ -59,6 +59,8 @@ public class API_Local
     public const string sendInvitation = "/api/send_invitation/";
     public const string allInvitations = "/api/all_invitations/";
     public const string respondInvitation = "/api/respond_invi/";
+    public const string getCondition = "/api/get_condition/";
+    public const string checkSquareInfo = "/check_squareinfo/";
 }
 
 //挂载在UI
