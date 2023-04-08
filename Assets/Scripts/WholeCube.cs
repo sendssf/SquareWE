@@ -126,13 +126,14 @@ public class WholeCube : MonoBehaviour
             }
         }
         _isCleared = false;
-    }
+    } 
     private void Awake()
     {
         
     }
     void Start()
     {
+        //pastedNum = 0;
         cubeMatchQuad.Clear();
         cubeDict.Clear();
         Slected.Clear();

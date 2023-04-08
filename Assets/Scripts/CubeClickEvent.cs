@@ -14,6 +14,7 @@ public class CubeClickEvent : MonoBehaviour
     private AudioSource audioSource1, audioSource2;
     string prepareWord = "";
     string link = "";
+    OnlineMode onlineMode;
     void Awake()
     {
         AllMessageContainer.gameStatus.finalTry = false;
@@ -37,11 +38,11 @@ public class CubeClickEvent : MonoBehaviour
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit, 100.0F))//检测到碰撞
-            {
+            { 
                 audioSource1.PlayOneShot(audioSource1.clip);
                 if (hit.transform.GetComponent<Faces>()._isClicked)
                 {
-                    int beginIndex = WholeCube.Slected.IndexOf(hit.transform.gameObject);
+                    int beginIndex = WholeCube.Slected.IndexOf(hit.transform.gameObject); 
                     for (int i = WholeCube.Slected.Count - 1; i >= beginIndex; i--)
                     {
                         WholeCube.Slected[i].GetComponent<Faces>()._isClicked = false;
@@ -199,6 +200,10 @@ public class CubeClickEvent : MonoBehaviour
             foreach (GameObject _isSelected in WholeCube.Slected)
             {
                 _isSelected.GetComponent<Faces>().TimeUp();
+                if (AllMessageContainer.gameStatus.ifonline == true)
+                {
+                    onlineMode.TransmitStatus("point cube", _isSelected.transform.parent.gameObject.name.Substring(4)+","+_isSelected.name, "");//可能延时出问题
+                }
             }
             foreach (GameObject _isSelected in WholeCube.Slected)
             {
@@ -225,7 +230,7 @@ public class CubeClickEvent : MonoBehaviour
                         father.transform.GetChild(i).gameObject.GetComponent<Faces>().rb.useGravity = true;
                     }
                     father.transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
-                    GameObject.Find("Explosion").gameObject.AddComponent<Expolosion>().explosionPos = GameObject.Find("cube13").transform;
+                    GameObject.Find("Explosion").gameObject.AddComponent<Expolosion>().explosionPos = GameObject.Find("Third-orderCube").transform;
                     var ps = Instantiate(father.GetComponent<Cube>().particle,father.transform);
                     ps.transform.localPosition = Vector3.zero;
                     ps.Play();

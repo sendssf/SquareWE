@@ -15,7 +15,11 @@ public class OverlayerManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if(AllMessageContainer.gameStatus.ifonline && !AllMessageContainer.gameStatus.ifHost && OnlineMode.ifPrepared)
+        {
+            transform.Find(AllMessageContainer.gameStatus.overlayerName).gameObject.SetActive(false);
+            StartCoroutine(unloadScene("3DOverlayer"));
+        }
     }
 
     public void SureFinalTry()

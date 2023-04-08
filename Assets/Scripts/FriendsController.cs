@@ -29,6 +29,7 @@ public class FriendsController : MonoBehaviour
     public GameObject addFriendObj;     //点击添加按钮对应的对象
     public Sprite normalHead;
     public GameObject friendMessageBox;
+    public GameObject invitationItem;
     private Dictionary<string,string> applicationList;
     private SearchMode searchMode;
     private string newFriendSearchInfo;
@@ -437,7 +438,12 @@ public class FriendsController : MonoBehaviour
         transform.Find("AddPage").Find("ErrorInfo").gameObject.GetComponent<Text>().text=info;
     }
 
-    private void FriendPageShowError(string info)
+    public void InvitationPageShowError(string info)
+    {
+        transform.Find("InvitationPage").Find("ErrorInfo").gameObject.GetComponent<Text>().text = info;
+    }
+
+    public void FriendPageShowError(string info)
     {
         transform.Find("Tips").gameObject.GetComponent<Text>().text= info;
     }
@@ -609,5 +615,27 @@ public class FriendsController : MonoBehaviour
             transform.Find("Application").Find("Mask").Find("Back").Find("Number").gameObject
                 .GetComponent<Text>().text=applicationList.Count.ToString();
         }
+    }
+
+    public void OpenInvitationPage()
+    {
+        transform.Find("InvitationPage").gameObject.SetActive(true);
+        GameObject content = transform.Find("InvitationPage").Find("FriendList")
+                        .Find("Viewport").Find("Content").gameObject;
+        for (int i = 0; i< content.transform.childCount; i++)
+        {
+            Destroy(content.transform.GetChild(i).gameObject);
+        }
+        foreach(var pair in OnlineMode.allInvitations)
+        {
+            var item = Instantiate(invitationItem, content.transform);
+            item.transform.Find("Name").gameObject.GetComponent<Text>().text = pair.Key;
+            StartCoroutine(GetFriendImageAsync(pair.Key, item));
+        }
+    }
+
+    public void CloseInvitationPage()
+    {
+        transform.Find("InvitationPage").gameObject.SetActive(false);
     }
 }
