@@ -92,7 +92,7 @@ public class OnlineMode: MonoBehaviour
         string response = WebController.Post(WebController.rootIP + API_Local.allInvitations, JsonConvert.SerializeObject(json));
         switch (response)
         {
-            case WebController.Nomessage:
+            case WebController.NoMessage:
                 break;
             case WebController.ServerNotFound:
                 if (File.Exists($"{Application.persistentDataPath}\\{AllMessageContainer.loginInfo.nickname}.json"))
@@ -237,7 +237,7 @@ public class OnlineMode: MonoBehaviour
         string response = WebController.Post(WebController.rootIP + API_Local.allRequest, JsonConvert.SerializeObject(json));
         switch (response)
         {
-            case WebController.Nomessage:
+            case WebController.NoMessage:
                 ///进入等待状态
                 break;
             case WebController.ServerNotFound:
@@ -362,7 +362,7 @@ public class OnlineMode: MonoBehaviour
         string response = WebController.Post(WebController.rootIP + API_Local.allRequest, JsonConvert.SerializeObject(json));
         switch (response)
         {
-            case WebController.Nomessage:
+            case WebController.NoMessage:
                 ///进入等待状态
                 break;
             case WebController.ServerNotFound:
@@ -448,7 +448,7 @@ public class OnlineMode: MonoBehaviour
         string response = WebController.Post(WebController.rootIP + API_Local.allRequest, JsonConvert.SerializeObject(json));
         switch (response)
         {
-            case WebController.Nomessage:
+            case WebController.NoMessage:
                 ///进入等待状态
                 break;
             case WebController.ServerNotFound:
