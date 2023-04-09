@@ -30,7 +30,7 @@ public class FriendsController : MonoBehaviour
     public Sprite normalHead;
     public GameObject friendMessageBox;
     public GameObject invitationItem;
-    private Dictionary<string,string> applicationList;
+    private Dictionary<string,string> applicationList= new Dictionary<string,string>();
     private SearchMode searchMode;
     private string newFriendSearchInfo;
     private string validateInfo;
@@ -130,6 +130,7 @@ public class FriendsController : MonoBehaviour
         if (messageTime>=5)
         {
             messageTime = 0;
+            UpdateIncomeFriends();
             UpdateMessageList();
         }
     }
@@ -202,6 +203,7 @@ public class FriendsController : MonoBehaviour
                 LoadFriends();
             }
         }
+        List<string> waitDelete = new List<string>();
         foreach(string frd in AllMessageContainer.playerInfo.friendList)
         {
             if (frd=="0")
@@ -215,10 +217,16 @@ public class FriendsController : MonoBehaviour
                     if (friendlist.transform.GetChild(i).name==frd)
                     {
                         Destroy(friendlist.transform.GetChild(i).gameObject);
+                        friendsHaveLoaded.Remove(frd);
+                        waitDelete.Add(frd);
                         break;
                     }
                 }
             }
+        }
+        foreach(string frd in waitDelete)
+        {
+            AllMessageContainer.playerInfo.friendList.Remove(frd);
         }
     }
 
