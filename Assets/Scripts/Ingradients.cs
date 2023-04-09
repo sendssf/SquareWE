@@ -9,6 +9,8 @@ public class Ingradients : MonoBehaviour
     public GameObject cube;
     public static int num;
     public int[] arr;
+    bool ifThirdComplete = false;
+
     public ParticleSystem particle;
     // Start is called before the first frame update
     private void Awake()
@@ -23,23 +25,11 @@ public class Ingradients : MonoBehaviour
             if (!(AllMessageContainer.gameStatus.ifonline && !AllMessageContainer.gameStatus.ifHost))
             {
                 InitCubeShape();
+                ifThirdComplete = true;
             }
             if (AllMessageContainer.gameStatus.ifonline && AllMessageContainer.gameStatus.ifHost)
             {
                 GenerateCubePost();
-            }
-        }
-        else
-        {
-            Generate(num, arr);
-            Transform mycube = GameObject.Find("Third-orderCube").transform;
-            for (int i = 0; i < mycube.childCount; i++)
-            {
-                Transform cube = mycube.GetChild(i), other = transform.GetChild(i);
-                for (int j = 0; j < 6; j++)
-                {
-                    StackLetter(cube.GetChild(j).GetComponent<Faces>().letter, other.GetChild(j).gameObject);
-                }
             }
         }
     }
@@ -55,9 +45,26 @@ public class Ingradients : MonoBehaviour
                     DataCallBack();
                 }
             }
-            if (AllMessageContainer.gameStatus.ifonline && !AllMessageContainer.gameStatus.ifHost)
+            if (AllMessageContainer.gameStatus.ifonline && !AllMessageContainer.gameStatus.ifHost && !OnlineMode.ifPrepared)
             {
                 ReceiveCube();
+            }
+        }
+        else
+        {
+            if (AllMessageContainer.gameStatus.ifHost && ifThirdComplete)
+            {
+                Generate(num, arr);
+                Transform mycube = GameObject.Find("Third-orderCube").transform;
+                for (int i = 0; i < mycube.childCount; i++)
+                {
+                    Transform cube = mycube.GetChild(i), other = transform.GetChild(i);
+                    for (int j = 0; j < 6; j++)
+                    {
+                        StackLetter(cube.GetChild(j).GetComponent<Faces>().letter, other.GetChild(j).gameObject);
+                    }
+                }
+                ifThirdComplete = false;
             }
         }
     }
@@ -312,10 +319,13 @@ public class Ingradients : MonoBehaviour
         {
             case WebController.NoMessage:
                 ///进入等待状态
+                Debug.Log("nomes");
                 break;
             case WebController.ServerNotFound:
+                Debug.Log("ServerNot");
                 break;
             default:
+                Debug.Log("Enter");
                 var mes = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string,string>>>(response);
                 Dictionary<string, string> num;
                 string opt;
@@ -429,12 +439,6 @@ public class Ingradients : MonoBehaviour
             gameObject.AddComponent<CubeClickEvent>();
         }
     }
-        if (transform.name == "Third-orderCube")
-        {
-            gameObject.AddComponent<WholeCube>();
-            gameObject.AddComponent<CubeClickEvent>();
-        }
-    }
 
     void Generate(int num, params int[] arr)//��ά������
     {
@@ -483,12 +487,6 @@ public class Ingradients : MonoBehaviour
                 DestroyImmediate(transform.Find("cube" + i).gameObject);
             }
         }
-        if (transform.name == "Third-orderCube")
-        {
-            gameObject.AddComponent<WholeCube>();
-            gameObject.AddComponent<CubeClickEvent>();
-        }
-    }
         if (transform.name == "Third-orderCube")
         {
             gameObject.AddComponent<WholeCube>();
