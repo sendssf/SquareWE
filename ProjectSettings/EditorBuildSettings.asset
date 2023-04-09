@@ -29,4 +29,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/CustomMode.unity
     guid: 93a77cf3438f98d4ab5f86aef4ad3dd5
+  - enabled: 1
+    path: Assets/Scenes/OnlineMode.unity
+    guid: d7730dbfc7fe332429cedfff739051c0
   m_configObjects: {}
