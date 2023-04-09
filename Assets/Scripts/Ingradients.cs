@@ -384,10 +384,17 @@ public class Ingradients : MonoBehaviour
 
     public void Generate(int num)//��ά������
     {
-        for (int i = 0; i < num*num*num; i++)
+        for (int i = 0; i < num * num * num; i++)
         {
             GameObject cube1 = Instantiate(cube, this.transform);
-            cube1.name = "cube" + i.ToString();
+            if (transform.name == "OtherCube")
+            {
+                cube1.name = "cube*" + i.ToString();
+            }
+            else
+            {
+                cube1.name = "cube" + i.ToString();
+            }
             cube1.transform.parent = this.transform;
         }
         GameObject[] cube0 = new GameObject[num*num*num];
@@ -400,7 +407,14 @@ public class Ingradients : MonoBehaviour
                 {
                     a += 1;
                 }
-                cube0[i + j * num * num] = GameObject.Find("cube" + (i + j * num * num));
+                if (transform.name == "OtherCube")
+                { 
+                    cube0[i + j * num * num] = GameObject.Find("cube*" + (i + j * num * num)); 
+                }
+                else
+                {
+                    cube0[i + j * num * num] = GameObject.Find("cube" + (i + j * num * num));
+                }
                 Vector3 pos = new Vector3(i % num - (num - 1) / 2, (num - 1) / 2 - j, a);      
                 cube0[i + j * num * num].transform.localPosition = pos;
             }
@@ -417,7 +431,14 @@ public class Ingradients : MonoBehaviour
         for (int i = 0; i < num * num * num; i++)
         {
             GameObject cube1 = Instantiate(cube, this.transform);
-            cube1.name = "cube" + i.ToString();
+            if (transform.name == "OtherCube")
+            {
+                cube1.name = "cube*" + i.ToString();
+            }
+            else
+            {
+                cube1.name = "cube" + i.ToString();
+            }
         }
         GameObject[] cube0 = new GameObject[num * num * num];
         for (int j = 0; j < num; j++)
@@ -429,17 +450,34 @@ public class Ingradients : MonoBehaviour
                 {
                     a += 1;
                 }
-                cube0[i + j * num * num] = GameObject.Find("cube" + (i + j * num * num));
+                if (transform.name == "OtherCube")
+                {
+                    cube0[i + j * num * num] = GameObject.Find("cube*" + (i + j * num * num));
+                }
+                else
+                {
+                    cube0[i + j * num * num] = GameObject.Find("cube" + (i + j * num * num));
+                }    
                 Vector3 pos = new Vector3(i % num - (num - 1) / 2, (num - 1) / 2 - j, a);
-                cube0[i + j * num * num].transform.position = pos;
+                cube0[i + j * num * num].transform.localPosition = pos;
             }
         }
         foreach (int i in arr)
         {
-            DestroyImmediate(transform.Find("cube"+i).gameObject);
+            if (transform.name == "OtherCube")
+            {
+                DestroyImmediate(transform.Find("cube*" + i).gameObject);
+            }
+            else
+            {
+                DestroyImmediate(transform.Find("cube" + i).gameObject);
+            }
         }
-        gameObject.AddComponent<WholeCube>();
-        gameObject.AddComponent<CubeClickEvent>();
+        if (transform.name == "Third-orderCube")
+        {
+            gameObject.AddComponent<WholeCube>();
+            gameObject.AddComponent<CubeClickEvent>();
+        }
     }
 
     int[] GetRandomInts(int len,int max)
