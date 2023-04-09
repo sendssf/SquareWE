@@ -9,6 +9,7 @@ public class OverlayerManager : MonoBehaviour
     AsyncOperation operation;
     void Start()
     {
+        transform.Find("Failed").gameObject.SetActive(false);
         transform.Find(AllMessageContainer.gameStatus.overlayerName).gameObject.SetActive(true);
     }
 

@@ -298,7 +298,7 @@ public class OnlineMode: MonoBehaviour
             {"object", obj},
             {"body", body}
         };
-        string response = WebController.Post(WebController.rootIP + API_Local.allRequest, JsonConvert.SerializeObject(json));
+        string response = WebController.Post(WebController.rootIP + API_Local.sendPackage, JsonConvert.SerializeObject(json));
         switch (response)
         {
             case WebController.Success:

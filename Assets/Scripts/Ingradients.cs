@@ -10,6 +10,7 @@ public class Ingradients : MonoBehaviour
     public static int num;
     public int[] arr;
     public ParticleSystem particle;
+    bool ifThirdComplete = false;
     // Start is called before the first frame update
     private void Awake()
     {
@@ -23,10 +24,7 @@ public class Ingradients : MonoBehaviour
             if (!(AllMessageContainer.gameStatus.ifonline && !AllMessageContainer.gameStatus.ifHost))
             {
                 InitCubeShape();
-            }
-            if (AllMessageContainer.gameStatus.ifonline && AllMessageContainer.gameStatus.ifHost)
-            {
-                GenerateCubePost();
+                ifThirdComplete = true;
             }
         }
         else
@@ -50,14 +48,32 @@ public class Ingradients : MonoBehaviour
         {
             if (AllMessageContainer.gameStatus.ifonline && OnlineMode.ifPrepared)
             {
-                if (OnlineMode.ifPrepared)
-                {
-                    DataCallBack();
-                }
+                DataCallBack();
             }
             if (AllMessageContainer.gameStatus.ifonline && !AllMessageContainer.gameStatus.ifHost)
             {
                 ReceiveCube();
+            }
+            if (AllMessageContainer.gameStatus.ifonline && AllMessageContainer.gameStatus.ifHost && WholeCube.isFinished)
+            {
+                GenerateCubePost();
+            }
+        }
+        else
+        {
+            if (AllMessageContainer.gameStatus.ifHost && ifThirdComplete)
+            {
+                Generate(num, arr);
+                Transform mycube = GameObject.Find("Third-orderCube").transform;
+                for (int i = 0; i < mycube.childCount; i++)
+                {
+                    Transform cube = mycube.GetChild(i), other = transform.GetChild(i);
+                    for (int j = 0; j < 6; j++)
+                    {
+                        StackLetter(cube.GetChild(j).GetComponent<Faces>().letter, other.GetChild(j).gameObject);
+                    }
+                }
+                ifThirdComplete = false;
             }
         }
     }
@@ -88,13 +104,15 @@ public class Ingradients : MonoBehaviour
             {"nickname2",OnlineMode.playWith },
             {"info",info }
         };
-        string response = WebController.Post(WebController.rootIP + API_Local.checkSquareInfo, JsonConvert.SerializeObject(cubeInfo));
+        string response = WebController.Post(WebController.rootIP + API_Local.sendSquareInfo, JsonConvert.SerializeObject(cubeInfo));
         switch (response)
         {
             case WebController.Success:
                 OnlineMode.ifPrepared = true;
+                Debug.Log("Success");
                 break;
             case WebController.ServerNotFound:
+                Debug.Log("ServerNotFound");
                 break;
         }
 
@@ -429,12 +447,6 @@ public class Ingradients : MonoBehaviour
             gameObject.AddComponent<CubeClickEvent>();
         }
     }
-        if (transform.name == "Third-orderCube")
-        {
-            gameObject.AddComponent<WholeCube>();
-            gameObject.AddComponent<CubeClickEvent>();
-        }
-    }
 
     void Generate(int num, params int[] arr)//��ά������
     {
@@ -489,12 +501,6 @@ public class Ingradients : MonoBehaviour
             gameObject.AddComponent<CubeClickEvent>();
         }
     }
-        if (transform.name == "Third-orderCube")
-        {
-            gameObject.AddComponent<WholeCube>();
-            gameObject.AddComponent<CubeClickEvent>();
-        }
-    }
 
     int[] GetRandomInts(int len,int max)
     {
@@ -537,7 +543,7 @@ public class Ingradients : MonoBehaviour
             {"nickname1",AllMessageContainer.playerInfo.playerName },
             { "nickname2",OnlineMode.playWith}/////需要修改
         };
-        string response = WebController.Post(WebController.rootIP + API_Local.allRequest, JsonConvert.SerializeObject(json));
+        string response = WebController.Post(WebController.rootIP + API_Local.getPackage, JsonConvert.SerializeObject(json));
         switch (response)
         {
             case WebController.NoMessage:
