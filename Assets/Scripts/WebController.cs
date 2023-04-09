@@ -61,6 +61,9 @@ public class API_Local
     public const string respondInvitation = "/api/respond_invi/";
     public const string getCondition = "/api/get_condition/";
     public const string checkSquareInfo = "/api/check_squareinfo/";
+    public const string sendSquareInfo = "/api/send_squareinfo/";
+    public const string sendPackage = "/api/send_pkg/";
+    public const string getPackage = "/api/get_pkg";
 }
 
 //挂载在UI

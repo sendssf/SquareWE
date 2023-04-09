@@ -42,7 +42,7 @@ public class ChooseModePageClickEvent : MonoBehaviour
 
     public void GotoCustom()
     {
-
+        StartCoroutine(loadScene("CustomMode"));
     }
 
     public void GotoEndless()
