@@ -132,6 +132,7 @@ public class FriendsController : MonoBehaviour
             messageTime = 0;
             UpdateIncomeFriends();
             UpdateMessageList();
+            UpdateIncomeFriends();
         }
     }
 
