@@ -15,7 +15,6 @@ public class OnlineMode: MonoBehaviour
     bool ifSendInvi = false;
     bool ifagreed = false;
     public static bool ifPrepared = false;
-    string otherName = null;
     float waitTime = 0;
     float assureIfInviteTime = 0;
     public static Dictionary<string,float> allInvitations = new Dictionary<string,float>();

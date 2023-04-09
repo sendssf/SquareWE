@@ -274,7 +274,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 1095.5, y: 49.346962}
+  m_AnchoredPosition: {x: 1095.5, y: 49.346985}
   m_SizeDelta: {x: 2190.9, y: 98.694}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &291790959
@@ -562,7 +562,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.8524445}
   m_AnchorMax: {x: 1, y: 0.8524445}
-  m_AnchoredPosition: {x: -282.6501, y: -107.40696}
+  m_AnchoredPosition: {x: -282.6501, y: -107.40695}
   m_SizeDelta: {x: 565.28, y: 92.211}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &456996604
@@ -2423,7 +2423,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cube: {fileID: 7059981053139229753, guid: eef47770a619961428755ef9f1c332c6, type: 3}
-  arr: 
   particle: {fileID: 0}
 --- !u!82 &1229855388
 AudioSource:
@@ -3441,8 +3440,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee8f5ab326322314e8bec452b65c005a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cube: {fileID: 7059981053139229753, guid: eef47770a619961428755ef9f1c332c6, type: 3}
-  arr: 
+  cube: {fileID: 7059981053139229753, guid: 0f975777c0d34aa4babe9dfb4627a5e9, type: 3}
   particle: {fileID: 0}
 --- !u!1001 &1693419957
 PrefabInstance:
@@ -3878,7 +3876,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.8524445}
   m_AnchorMax: {x: 1, y: 0.8524445}
-  m_AnchoredPosition: {x: -282.6447, y: -30.572014}
+  m_AnchoredPosition: {x: -282.6447, y: -30.572021}
   m_SizeDelta: {x: 565.283, y: 60.826004}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2017737081

@@ -8,10 +8,9 @@ public class Ingradients : MonoBehaviour
 {
     public GameObject cube;
     public static int num;
-    public static int[] arr;
+    static public int[] arr;
     public ParticleSystem particle;
-    bool ifThirdComplete = false;
-    // Start is called before the first frame update
+    // Start is called before the first frame updat
     private void Awake()
     {
     }
@@ -24,7 +23,6 @@ public class Ingradients : MonoBehaviour
             if (!(AllMessageContainer.gameStatus.ifonline && !AllMessageContainer.gameStatus.ifHost))
             {
                 InitCubeShape();
-                ifThirdComplete = true;
             }
         }
     }
@@ -41,8 +39,8 @@ public class Ingradients : MonoBehaviour
             {
                 ReceiveCube();
             }
-            if (AllMessageContainer.gameStatus.ifonline && AllMessageContainer.gameStatus.ifHost &&
-                WholeCube.isFinished && !OnlineMode.ifPrepared)
+            if (AllMessageContainer.gameStatus.ifonline && AllMessageContainer.gameStatus.ifHost 
+                && WholeCube.isFinished && !OnlineMode.ifPrepared)
             {
                 GenerateCubePost();
             }
@@ -317,9 +315,11 @@ public class Ingradients : MonoBehaviour
         switch (response)
         {
             case WebController.NoMessage:
+                Debug.Log("NO");
                 ///进入等待状态
                 break;
             case WebController.ServerNotFound:
+                Debug.Log("NOt");
                 break;
             default:
                 var mes = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string,string>>>(response);
@@ -340,41 +340,50 @@ public class Ingradients : MonoBehaviour
                         name.Add(opt);
                     }
                 }
-                foreach (Dictionary<string, string> cube in mes.Values)
+                for (int i = 0; i < MyCube.childCount; i++)
                 {
-                    for (int i = 0; i < MyCube.childCount; i++)
+                    if (name.Contains(MyCube.GetChild(i).name.Substring(4)))
                     {
-                        if (name.Contains(MyCube.GetChild(i).name.Substring(4)))
+                        foreach (Dictionary<string, string> cube in mes.Values)
                         {
-                            StackLetter(cube["up"].ToCharArray()[0], MyCube.GetChild(i).GetChild(0).gameObject);
-                            StackLetter(cube["down"].ToCharArray()[0], MyCube.GetChild(i).GetChild(1).gameObject);
-                            StackLetter(cube["left"].ToCharArray()[0], MyCube.GetChild(i).GetChild(2).gameObject);
-                            StackLetter(cube["right"].ToCharArray()[0], MyCube.GetChild(i).GetChild(3).gameObject);
-                            StackLetter(cube["front"].ToCharArray()[0], MyCube.GetChild(i).GetChild(4).gameObject);
-                            StackLetter(cube["back"].ToCharArray()[0], MyCube.GetChild(i).GetChild(5).gameObject);
-                            break;
-                        }
-                        else
-                        {
-                            DestroyImmediate(MyCube.GetChild(i).gameObject);
+                            if (cube["name"] ==MyCube.GetChild(i).name.Substring(4))
+                            {
+                                StackLetter(cube["up"].ToCharArray()[0], MyCube.GetChild(i).GetChild(0).gameObject);
+                                StackLetter(cube["down"].ToCharArray()[0], MyCube.GetChild(i).GetChild(1).gameObject);
+                                StackLetter(cube["left"].ToCharArray()[0], MyCube.GetChild(i).GetChild(2).gameObject);
+                                StackLetter(cube["right"].ToCharArray()[0], MyCube.GetChild(i).GetChild(3).gameObject);
+                                StackLetter(cube["front"].ToCharArray()[0], MyCube.GetChild(i).GetChild(4).gameObject);
+                                StackLetter(cube["back"].ToCharArray()[0], MyCube.GetChild(i).GetChild(5).gameObject);
+                                break;
+                            }
                         }
                     }
-                    for (int i = 0; i < OtherCube.childCount; i++)
+                    else
                     {
-                        if (name.Contains(OtherCube.GetChild(i).name.Substring(5)))
+                        DestroyImmediate(MyCube.GetChild(i).gameObject);
+                    }
+                }
+                for (int i = 0; i < OtherCube.childCount; i++)
+                {
+                    if (name.Contains(OtherCube.GetChild(i).name.Substring(5)))
+                    {
+                        foreach (Dictionary<string, string> cube in mes.Values)
                         {
-                            StackLetter(cube["up"].ToCharArray()[0], OtherCube.GetChild(i).GetChild(0).gameObject);
-                            StackLetter(cube["down"].ToCharArray()[0], OtherCube.GetChild(i).GetChild(1).gameObject);
-                            StackLetter(cube["left"].ToCharArray()[0], OtherCube.GetChild(i).GetChild(2).gameObject);
-                            StackLetter(cube["right"].ToCharArray()[0], OtherCube.GetChild(i).GetChild(3).gameObject);
-                            StackLetter(cube["front"].ToCharArray()[0], OtherCube.GetChild(i).GetChild(4).gameObject);
-                            StackLetter(cube["back"].ToCharArray()[0], OtherCube.GetChild(i).GetChild(5).gameObject);
-                            break;
+                            if (cube["name"] == OtherCube.GetChild(i).name.Substring(5))
+                            {
+                                StackLetter(cube["up"].ToCharArray()[0], OtherCube.GetChild(i).GetChild(0).gameObject);
+                                StackLetter(cube["down"].ToCharArray()[0], OtherCube.GetChild(i).GetChild(1).gameObject);
+                                StackLetter(cube["left"].ToCharArray()[0], OtherCube.GetChild(i).GetChild(2).gameObject);
+                                StackLetter(cube["right"].ToCharArray()[0], OtherCube.GetChild(i).GetChild(3).gameObject);
+                                StackLetter(cube["front"].ToCharArray()[0], OtherCube.GetChild(i).GetChild(4).gameObject);
+                                StackLetter(cube["back"].ToCharArray()[0], OtherCube.GetChild(i).GetChild(5).gameObject);
+                                break;
+                            }
                         }
-                        else
-                        {
-                            DestroyImmediate(OtherCube.GetChild(i).gameObject);
-                        }
+                    }
+                    else
+                    {
+                        DestroyImmediate(OtherCube.GetChild(i).gameObject);
                     }
                 }
                 transform.gameObject.GetComponent<WholeCube>().UpdateCubeQuadMatch();
@@ -389,7 +398,6 @@ public class Ingradients : MonoBehaviour
         texture=Resources.Load<Texture2D>(letter.ToString().ToUpper());
         quad.GetComponent<MeshRenderer>().material.SetTexture("_MainTex", texture);
         quad.GetComponent<Faces>().letter= letter;
-        quad.GetComponent<Faces>().visited= true;
     }
 
     public void Generate(int num)//��ά������
@@ -633,3 +641,4 @@ public class Ingradients : MonoBehaviour
         }
     }
 }
+
