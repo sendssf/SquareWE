@@ -305,6 +305,26 @@ public class AllMessageContainer : MonoBehaviour
         playerInfo.level=1;
     }
 
+    public static List<string> GetFriendListFromServer(string nickname)
+    {
+        var res = new Dictionary<string, string>();
+        string result = WebController.Post(WebController.rootIP + API_Local.allInfo,
+            JsonConvert.SerializeObject(new Dictionary<string, string>
+            {
+                {"nickname",nickname }
+            }));
+        if (result==WebController.ServerNotFound||result==WebController.PlayerNotExist)
+        {
+            return null;
+        }
+        else
+        {
+            var allinfo = JsonConvert.DeserializeObject<Dictionary<string, object>>(result);
+            var frdList = JsonConvert.DeserializeObject<List<string>>(allinfo["friendList"].ToString());
+            return frdList;
+        }
+    }
+
     public static Dictionary<string,string> GetFriendsInfoFromServer(string nickname)
     {
         var res=new Dictionary<string,string>();
