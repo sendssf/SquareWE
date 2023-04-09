@@ -210,7 +210,7 @@ public class CubeClickEvent : MonoBehaviour
                 _isSelected.GetComponent<Faces>().TimeUp();
                 if (AllMessageContainer.gameStatus.ifonline == true)
                 {
-                    onlineMode.TransmitStatus("point cube", _isSelected.transform.parent.gameObject.name.Substring(4)+","+_isSelected.name, "");//可能延时出问题
+                    OnlineMode.TransmitStatus("point cube", _isSelected.transform.parent.gameObject.name.Substring(4)+","+_isSelected.name, "");//可能延时出问题
                 }
             }
             foreach (GameObject _isSelected in WholeCube.Slected)

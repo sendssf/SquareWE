@@ -8,7 +8,7 @@ public class Ingradients : MonoBehaviour
 {
     public GameObject cube;
     public static int num;
-    public int[] arr;
+    public static int[] arr;
     public ParticleSystem particle;
     bool ifThirdComplete = false;
     // Start is called before the first frame update
@@ -27,19 +27,6 @@ public class Ingradients : MonoBehaviour
                 ifThirdComplete = true;
             }
         }
-        else
-        {
-            Generate(num, arr);
-            Transform mycube = GameObject.Find("Third-orderCube").transform;
-            for (int i = 0; i < mycube.childCount; i++)
-            {
-                Transform cube = mycube.GetChild(i), other = transform.GetChild(i);
-                for (int j = 0; j < 6; j++)
-                {
-                    StackLetter(cube.GetChild(j).GetComponent<Faces>().letter, other.GetChild(j).gameObject);
-                }
-            }
-        }
     }
 
     private void Update()
@@ -50,18 +37,19 @@ public class Ingradients : MonoBehaviour
             {
                 DataCallBack();
             }
-            if (AllMessageContainer.gameStatus.ifonline && !AllMessageContainer.gameStatus.ifHost)
+            if (AllMessageContainer.gameStatus.ifonline && !AllMessageContainer.gameStatus.ifHost && !OnlineMode.ifPrepared)
             {
                 ReceiveCube();
             }
-            if (AllMessageContainer.gameStatus.ifonline && AllMessageContainer.gameStatus.ifHost && WholeCube.isFinished)
+            if (AllMessageContainer.gameStatus.ifonline && AllMessageContainer.gameStatus.ifHost &&
+                WholeCube.isFinished && !OnlineMode.ifPrepared)
             {
                 GenerateCubePost();
             }
         }
         else
         {
-            if (AllMessageContainer.gameStatus.ifHost && ifThirdComplete)
+            if (AllMessageContainer.gameStatus.ifHost && WholeCube.isFinished)
             {
                 Generate(num, arr);
                 Transform mycube = GameObject.Find("Third-orderCube").transform;
@@ -73,7 +61,7 @@ public class Ingradients : MonoBehaviour
                         StackLetter(cube.GetChild(j).GetComponent<Faces>().letter, other.GetChild(j).gameObject);
                     }
                 }
-                ifThirdComplete = false;
+                WholeCube.isFinished = false;
             }
         }
     }

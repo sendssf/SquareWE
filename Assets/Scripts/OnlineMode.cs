@@ -288,12 +288,12 @@ public class OnlineMode: MonoBehaviour
         }
     }
 
-    public void TransmitStatus(string option, string obj, string body)
+    static public void TransmitStatus(string option, string obj, string body)
     {
         var json = new Dictionary<string, string>
         {
             {"nickname1",AllMessageContainer.playerInfo.playerName },
-            { "nickname2",otherName},/////需要修改
+            { "nickname2",playWith},/////需要修改
             {"option", option},
             {"object", obj},
             {"body", body}
