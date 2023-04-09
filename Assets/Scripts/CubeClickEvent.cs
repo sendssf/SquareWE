@@ -38,66 +38,36 @@ public class CubeClickEvent : MonoBehaviour
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit, 100.0F))//检测到碰撞
-            { 
-                audioSource1.PlayOneShot(audioSource1.clip);
-                if (hit.transform.GetComponent<Faces>()._isClicked)
+            {
+                if (hit.transform.parent.parent.name == "Third-orderCube")
                 {
-                    int beginIndex = WholeCube.Slected.IndexOf(hit.transform.gameObject); 
-                    for (int i = WholeCube.Slected.Count - 1; i >= beginIndex; i--)
+                    audioSource1.PlayOneShot(audioSource1.clip);
+                    if (hit.transform.GetComponent<Faces>()._isClicked)
                     {
-                        WholeCube.Slected[i].GetComponent<Faces>()._isClicked = false;
-                        if (WholeCube.Slected[i].GetComponent<Faces>().Times() == 0)
+                        int beginIndex = WholeCube.Slected.IndexOf(hit.transform.gameObject);
+                        for (int i = WholeCube.Slected.Count - 1; i >= beginIndex; i--)
                         {
-                            WholeCube.Slected[i].GetComponent<MeshRenderer>().material.color = new Color(1, 1, 1);
+                            WholeCube.Slected[i].GetComponent<Faces>()._isClicked = false;
+                            if (WholeCube.Slected[i].GetComponent<Faces>().Times() == 0)
+                            {
+                                WholeCube.Slected[i].GetComponent<MeshRenderer>().material.color = new Color(1, 1, 1);
+                            }
+                            else if (WholeCube.Slected[i].GetComponent<Faces>().Times() == 1)
+                            {
+                                WholeCube.Slected[i].GetComponent<MeshRenderer>().material.color = new Color(1, 0.6f, 0.6f);
+                            }
+                            else if (WholeCube.Slected[i].GetComponent<Faces>().Times() == 2)
+                            {
+                                WholeCube.Slected[i].GetComponent<MeshRenderer>().material.color = new Color(0, 1, 0.6f);
+                            }
+                            WholeCube.Slected.RemoveAt(i);
                         }
-                        else if (WholeCube.Slected[i].GetComponent<Faces>().Times() == 1)
-                        {
-                            WholeCube.Slected[i].GetComponent<MeshRenderer>().material.color = new Color(1, 0.6f, 0.6f);
-                        }
-                        else if (WholeCube.Slected[i].GetComponent<Faces>().Times() == 2)
-                        {
-                            WholeCube.Slected[i].GetComponent<MeshRenderer>().material.color = new Color(0, 1, 0.6f);
-                        }
-                        WholeCube.Slected.RemoveAt(i);
-                    }
-                    foreach (GameObject _isSelected in WholeCube.Slected)
-                    {
-                        WholeCube.selectedWord += _isSelected.GetComponent<Faces>().letter;
-                    }
-                    Debug.Log(WholeCube.selectedWord);
-                    if (WholeCube.WordList.ContainsValue(WholeCube.selectedWord.ToLower()))   //回退导致新单词
-                    {
-                        link = "";
-                        foreach (GameObject _isSelected in WholeCube.Slected)
-                        {
-                            link += (_isSelected.transform.parent.name + _isSelected.name);
-                        }
-                        if (!WholeCube.hasLinked.Contains(link))
-                        {
-                            ShowCanCombine(WholeCube.selectedWord.ToLower());
-                            prepareWord = WholeCube.selectedWord.ToLower();
-                        }
-                    }
-                    WholeCube.selectedWord = string.Empty;
-                }
-                else
-                {
-                    List<GameObject> neighbor = new List<GameObject>();
-                    if (WholeCube.Slected.Count!=0)
-                    {
-                        neighbor = transform.gameObject.GetComponent<WholeCube>().GetNeighbor_Safe(WholeCube.Slected[WholeCube.Slected.Count-1]);
-                    }
-                    if (neighbor.Contains(hit.transform.gameObject)||WholeCube.Slected.Count==0)
-                    {
-                        hit.transform.GetComponent<Faces>()._isClicked = true;
-                        hit.transform.gameObject.GetComponent<MeshRenderer>().material.color = new Color(1, 0.6f, 0, 1);//点击改变面颜色
-                        WholeCube.Slected.Add(hit.transform.gameObject);
                         foreach (GameObject _isSelected in WholeCube.Slected)
                         {
                             WholeCube.selectedWord += _isSelected.GetComponent<Faces>().letter;
                         }
                         Debug.Log(WholeCube.selectedWord);
-                        if (WholeCube.WordList.ContainsValue(WholeCube.selectedWord.ToLower()))   //顺序导致新单词
+                        if (WholeCube.WordList.ContainsValue(WholeCube.selectedWord.ToLower()))   //回退导致新单词
                         {
                             link = "";
                             foreach (GameObject _isSelected in WholeCube.Slected)
@@ -106,40 +76,73 @@ public class CubeClickEvent : MonoBehaviour
                             }
                             if (!WholeCube.hasLinked.Contains(link))
                             {
-                                //Debug.Log("EnterShow");
                                 ShowCanCombine(WholeCube.selectedWord.ToLower());
                                 prepareWord = WholeCube.selectedWord.ToLower();
                             }
                         }
+                        WholeCube.selectedWord = string.Empty;
                     }
                     else
                     {
-                        foreach(GameObject gameObj in WholeCube.Slected)
+                        List<GameObject> neighbor = new List<GameObject>();
+                        if (WholeCube.Slected.Count != 0)
                         {
-                            if (gameObj.GetComponent<Faces>().Times() == 0)
-                            {
-                                gameObj.GetComponent<MeshRenderer>().material.color = new Color(1, 1, 1);
-                            }
-                            else if (gameObj.GetComponent<Faces>().Times() == 1)
-                            {
-                                gameObj.GetComponent<MeshRenderer>().material.color = new Color(1, 0.6f, 0.6f);
-                            }
-                            else if (gameObj.GetComponent<Faces>().Times() == 2)
-                            {
-                                gameObj.GetComponent<MeshRenderer>().material.color = new Color(0, 1, 0.6f);
-                            }
-                            gameObj.GetComponent<Faces>()._isClicked = false;
+                            neighbor = transform.gameObject.GetComponent<WholeCube>().GetNeighbor_Safe(WholeCube.Slected[WholeCube.Slected.Count - 1]);
                         }
-                        WholeCube.Slected.Clear();
-                        WholeCube.Slected.Add(hit.transform.gameObject);
-                        hit.transform.GetComponent<Faces>()._isClicked = true;
-                        hit.transform.gameObject.GetComponent<MeshRenderer>().material.color = new Color(1, 0.6f, 0, 1);//点击改变面颜色
-                        foreach (GameObject _isSelected in WholeCube.Slected)
+                        if (neighbor.Contains(hit.transform.gameObject) || WholeCube.Slected.Count == 0)
                         {
-                            WholeCube.selectedWord += _isSelected.GetComponent<Faces>().letter;
+                            hit.transform.GetComponent<Faces>()._isClicked = true;
+                            hit.transform.gameObject.GetComponent<MeshRenderer>().material.color = new Color(1, 0.6f, 0, 1);//点击改变面颜色
+                            WholeCube.Slected.Add(hit.transform.gameObject);
+                            foreach (GameObject _isSelected in WholeCube.Slected)
+                            {
+                                WholeCube.selectedWord += _isSelected.GetComponent<Faces>().letter;
+                            }
+                            Debug.Log(WholeCube.selectedWord);
+                            if (WholeCube.WordList.ContainsValue(WholeCube.selectedWord.ToLower()))   //顺序导致新单词
+                            {
+                                link = "";
+                                foreach (GameObject _isSelected in WholeCube.Slected)
+                                {
+                                    link += (_isSelected.transform.parent.name + _isSelected.name);
+                                }
+                                if (!WholeCube.hasLinked.Contains(link))
+                                {
+                                    //Debug.Log("EnterShow");
+                                    ShowCanCombine(WholeCube.selectedWord.ToLower());
+                                    prepareWord = WholeCube.selectedWord.ToLower();
+                                }
+                            }
                         }
+                        else
+                        {
+                            foreach (GameObject gameObj in WholeCube.Slected)
+                            {
+                                if (gameObj.GetComponent<Faces>().Times() == 0)
+                                {
+                                    gameObj.GetComponent<MeshRenderer>().material.color = new Color(1, 1, 1);
+                                }
+                                else if (gameObj.GetComponent<Faces>().Times() == 1)
+                                {
+                                    gameObj.GetComponent<MeshRenderer>().material.color = new Color(1, 0.6f, 0.6f);
+                                }
+                                else if (gameObj.GetComponent<Faces>().Times() == 2)
+                                {
+                                    gameObj.GetComponent<MeshRenderer>().material.color = new Color(0, 1, 0.6f);
+                                }
+                                gameObj.GetComponent<Faces>()._isClicked = false;
+                            }
+                            WholeCube.Slected.Clear();
+                            WholeCube.Slected.Add(hit.transform.gameObject);
+                            hit.transform.GetComponent<Faces>()._isClicked = true;
+                            hit.transform.gameObject.GetComponent<MeshRenderer>().material.color = new Color(1, 0.6f, 0, 1);//点击改变面颜色
+                            foreach (GameObject _isSelected in WholeCube.Slected)
+                            {
+                                WholeCube.selectedWord += _isSelected.GetComponent<Faces>().letter;
+                            }
+                        }
+                        WholeCube.selectedWord = string.Empty;
                     }
-                    WholeCube.selectedWord = string.Empty;
                 }
             }
             else
@@ -210,7 +213,7 @@ public class CubeClickEvent : MonoBehaviour
                 _isSelected.GetComponent<Faces>().TimeUp();
                 if (AllMessageContainer.gameStatus.ifonline == true)
                 {
-                    onlineMode.TransmitStatus("point cube", _isSelected.transform.parent.gameObject.name.Substring(4)+","+_isSelected.name, "");//可能延时出问题
+                    OnlineMode.TransmitStatus("point cube", _isSelected.transform.parent.gameObject.name.Substring(4)+","+_isSelected.name, "");//可能延时出问题
                 }
             }
             foreach (GameObject _isSelected in WholeCube.Slected)
