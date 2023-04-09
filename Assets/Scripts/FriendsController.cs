@@ -229,42 +229,45 @@ public class FriendsController : MonoBehaviour
     {
         foreach(string frdname in AllMessageContainer.playerInfo.friendList)
         {
-            string res = WebController.Post(WebController.rootIP + API_Local.getMessage, JsonConvert.SerializeObject(new Dictionary<string, string>
+            if (frdname != "0")
+            {
+                string res = WebController.Post(WebController.rootIP + API_Local.getMessage, JsonConvert.SerializeObject(new Dictionary<string, string>
             {
                 {"nickname1",frdname },
                 {"nickname2",AllMessageContainer.playerInfo.playerName }
             }));
-            switch(res)
-            {
-                case WebController.ServerNotFound:
-                    FriendPageShowError("Network Error! Please check and try again!");
-                    return;
-                case WebController.NoMessage:
-                    return;
-            }
-            List<string> message = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(res)["content"];
-            if (friendMessageAll.ContainsKey(frdname))
-            {
-                foreach(string each in message)
+                switch (res)
                 {
-                    friendMessageAll[frdname].Add(each);
+                    case WebController.ServerNotFound:
+                        FriendPageShowError("Network Error! Please check and try again!");
+                        return;
+                    case WebController.NoMessage:
+                        return;
                 }
-            }
-            else
-            {
-                friendMessageAll.Add(frdname, message);
-            }
-            transform.Find("FriendList").Find("Viewport").Find("Content").Find(frdname).Find("Message").
-                gameObject.GetComponent<MessageNumManager>().newMessageNum += message.Count;
-            if(transform.Find("FriendMessage").gameObject.activeInHierarchy && frdname == lookWhoMessage)
-            {
-                transform.Find("FriendList").Find("Viewport").Find("Content").Find(frdname).Find("Message").
-                    gameObject.GetComponent<MessageNumManager>().newMessageNum = 0;
-                foreach(string mes in message)
+                List<string> message = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(res)["content"];
+                if (friendMessageAll.ContainsKey(frdname))
                 {
-                    var item = Instantiate(friendMessageBox, transform.Find("FriendMessage").Find("View").Find("Viewport").Find("Content"));
-                    StartCoroutine(GetFriendImageAsync(lookWhoMessage, item));
-                    item.transform.Find("Mes").gameObject.GetComponent<Text>().text = mes;
+                    foreach (string each in message)
+                    {
+                        friendMessageAll[frdname].Add(each);
+                    }
+                }
+                else
+                {
+                    friendMessageAll.Add(frdname, message);
+                }
+                transform.Find("FriendList").Find("Viewport").Find("Content").Find(frdname).Find("Message").
+                    gameObject.GetComponent<MessageNumManager>().newMessageNum += message.Count;
+                if (transform.Find("FriendMessage").gameObject.activeInHierarchy && frdname == lookWhoMessage)
+                {
+                    transform.Find("FriendList").Find("Viewport").Find("Content").Find(frdname).Find("Message").
+                        gameObject.GetComponent<MessageNumManager>().newMessageNum = 0;
+                    foreach (string mes in message)
+                    {
+                        var item = Instantiate(friendMessageBox, transform.Find("FriendMessage").Find("View").Find("Viewport").Find("Content"));
+                        StartCoroutine(GetFriendImageAsync(lookWhoMessage, item));
+                        item.transform.Find("Mes").gameObject.GetComponent<Text>().text = mes;
+                    }
                 }
             }
         }

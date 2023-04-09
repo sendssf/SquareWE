@@ -10,7 +10,6 @@ public class Ingradients : MonoBehaviour
     public static int num;
     public int[] arr;
     public ParticleSystem particle;
-    int[] arr;
     // Start is called before the first frame update
     private void Awake()
     {
@@ -28,19 +27,6 @@ public class Ingradients : MonoBehaviour
             if (AllMessageContainer.gameStatus.ifonline && AllMessageContainer.gameStatus.ifHost)
             {
                 GenerateCubePost();
-            }
-        }
-        else
-        {
-            Generate(num, arr);
-            Transform mycube = GameObject.Find("Third-orderCube").transform;
-            for (int i = 0; i < mycube.childCount; i++)
-            {
-                Transform cube = mycube.GetChild(i), other = transform.GetChild(i);
-                for (int j = 0; j < 6; j++)
-                {
-                    StackLetter(cube.GetChild(j).GetComponent<Faces>().letter, other.GetChild(j).gameObject);
-                }
             }
         }
         else

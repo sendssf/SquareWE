@@ -76,7 +76,7 @@ public class WebController : MonoBehaviour
     public const string NoMessage = "NoMessage";
     public const string SendFailed = "SendFailed";
     
-    public const string rootIP = "http://127.0.0.1:8080";
+    public const string rootIP = "http://101.5.142.96:8000";
     
 
     void Start()
