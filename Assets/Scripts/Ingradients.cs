@@ -55,6 +55,10 @@ public class Ingradients : MonoBehaviour
                     DataCallBack();
                 }
             }
+            if (AllMessageContainer.gameStatus.ifonline && !AllMessageContainer.gameStatus.ifHost)
+            {
+                ReceiveCube();
+            }
         }
     }
 
@@ -405,8 +409,11 @@ public class Ingradients : MonoBehaviour
                 cube0[i + j * num * num].transform.localPosition = pos;
             }
         }
-        gameObject.AddComponent<WholeCube>();
-        gameObject.AddComponent<CubeClickEvent>();
+        if (transform.name == "Third-orderCube")
+        {
+            gameObject.AddComponent<WholeCube>();
+            gameObject.AddComponent<CubeClickEvent>();
+        }
     }
 
     void Generate(int num, params int[] arr)//��ά������
@@ -435,8 +442,11 @@ public class Ingradients : MonoBehaviour
         {
             DestroyImmediate(transform.Find("cube"+i).gameObject);
         }
-        gameObject.AddComponent<WholeCube>();
-        gameObject.AddComponent<CubeClickEvent>();
+        if (transform.name == "Third-orderCube")
+        {
+            gameObject.AddComponent<WholeCube>();
+            gameObject.AddComponent<CubeClickEvent>();
+        }
     }
 
     int[] GetRandomInts(int len,int max)
