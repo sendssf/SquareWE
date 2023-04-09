@@ -149,7 +149,6 @@ public class OnlineMode: MonoBehaviour
             { "nickname2",operateWhoInv},/////ÐèÒªÐÞ¸Ä
             { "option","agree" }
         };
-        otherName = transform.parent.Find("Name").gameObject.GetComponent<Text>().text;
         string responses = WebController.Post(WebController.rootIP + API_Local.respondInvitation, JsonConvert.SerializeObject(json));
         switch (responses)
         {
@@ -236,6 +235,7 @@ public class OnlineMode: MonoBehaviour
                 gameObject.GetComponent<FriendsController>().FriendPageShowError("Network Error! Please check and try again!");
                 break;
             default:
+                transform.Find("Waiting").gameObject.SetActive(false);
                 var mes = JsonConvert.DeserializeObject<Dictionary<string, string>>(response);
                 string opt;
                 ifSendInvi = false;
@@ -269,7 +269,7 @@ public class OnlineMode: MonoBehaviour
                         AllMessageContainer.gameStatus.ifHost = true;
                         ifagreed = true;
                         playWith = inviteWhoToPlay;
-                        StartCoroutine(loadScene("OnlineMode"));
+                        //StartCoroutine(loadScene("OnlineMode"));
                     }
                 }
                 break;

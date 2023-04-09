@@ -2260,6 +2260,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cube: {fileID: 7059981053139229753, guid: eef47770a619961428755ef9f1c332c6, type: 3}
+  arr: 
   particle: {fileID: 0}
 --- !u!82 &1229855388
 AudioSource:
@@ -3274,10 +3275,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1683734405}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 433eab721844ff64fa6d4b2f7627c617, type: 3}
+  m_Script: {fileID: 11500000, guid: ee8f5ab326322314e8bec452b65c005a, type: 3}
+  m_Script: {fileID: 11500000, guid: ee8f5ab326322314e8bec452b65c005a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   cube: {fileID: 7059981053139229753, guid: eef47770a619961428755ef9f1c332c6, type: 3}
+  particle: {fileID: 0}
 --- !u!1001 &1693419957
 PrefabInstance:
   m_ObjectHideFlags: 0
