@@ -266,6 +266,8 @@ public class WebController : MonoBehaviour
                         return Success;
                     case "No message":
                         return NoMessage;
+                    case "Delete successfully":
+                        return Success;
                     default:
                         return webRequest.downloadHandler.text;
                 }

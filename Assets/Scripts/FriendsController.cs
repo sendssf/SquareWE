@@ -86,7 +86,7 @@ public class FriendsController : MonoBehaviour
     {
         time+=Time.deltaTime;
         messageTime+=Time.deltaTime;
-        if (time>=30)
+        if (time>= 5)
         {
             time=0; 
             applicationList = GetFriendApplication();
@@ -131,6 +131,7 @@ public class FriendsController : MonoBehaviour
         {
             messageTime = 0;
             UpdateMessageList();
+            UpdateIncomeFriends();
         }
     }
 
@@ -186,6 +187,47 @@ public class FriendsController : MonoBehaviour
             }
         }
     }
+    
+    void UpdateIncomeFriends()
+    {
+        List<string> res = AllMessageContainer.GetFriendListFromServer(AllMessageContainer.playerInfo.playerName);
+        foreach(string frd in res)
+        {
+            if (frd=="0")
+            {
+                continue;
+            }
+            else if (!AllMessageContainer.playerInfo.friendList.Contains(frd))
+            {
+                AllMessageContainer.playerInfo.friendList.Add(frd);
+                LoadFriends();
+            }
+        }
+        List<string> waitDelete = new List<string>();
+        foreach(string frd in AllMessageContainer.playerInfo.friendList)
+        {
+            if (frd=="0")
+            {
+                continue;
+            }
+            else if (!res.Contains(frd))
+            {
+                for(int i=0;i<friendlist.transform.childCount;i++)
+                {
+                    if (friendlist.transform.GetChild(i).name==frd)
+                    {
+                        Destroy(friendlist.transform.GetChild(i).gameObject);
+                        waitDelete.Add(frd);
+                        break;
+                    }
+                }
+            }
+        }
+        foreach(string frd in waitDelete)
+        {
+            AllMessageContainer.playerInfo.friendList.Remove(frd);
+        }
+    }
 
     public IEnumerator GetFriendImageAsync(string nickname,GameObject item)
     {
@@ -229,13 +271,13 @@ public class FriendsController : MonoBehaviour
     {
         foreach(string frdname in AllMessageContainer.playerInfo.friendList)
         {
-            if (frdname != "0")
+            if (frdname!="0")
             {
                 string res = WebController.Post(WebController.rootIP + API_Local.getMessage, JsonConvert.SerializeObject(new Dictionary<string, string>
-            {
-                {"nickname1",frdname },
-                {"nickname2",AllMessageContainer.playerInfo.playerName }
-            }));
+                {
+                    {"nickname1",frdname },
+                    {"nickname2",AllMessageContainer.playerInfo.playerName }
+                }));
                 switch (res)
                 {
                     case WebController.ServerNotFound:
