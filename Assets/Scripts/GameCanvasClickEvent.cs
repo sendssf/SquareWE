@@ -38,12 +38,22 @@ public class GameCanvasClickEvent : MonoBehaviour
 
     public void GotoHome()
     {
+        if (AllMessageContainer.gameStatus.ifonline)
+        {
+            AllMessageContainer.gameStatus.ifonline = false;
+            AllMessageContainer.gameStatus.ifHost = false;
+            OnlineMode.QuitOnlineMode();
+        }
+        AllMessageContainer.gameStatus.ifStartGame = false;
         StartCoroutine(loadScene("BeginUI"));
     }
 
     public void GotoShop()
     {
-        StartCoroutine(loadScene("ShopUI"));
+        if (!AllMessageContainer.gameStatus.ifonline)
+        {
+            StartCoroutine(loadScene("ShopUI"));
+        }
     }
 
     public void ReturnPage()
@@ -86,7 +96,10 @@ public class GameCanvasClickEvent : MonoBehaviour
         else
         {
             AllMessageContainer.gameStatus.ifonline = false;
+            AllMessageContainer.gameStatus.ifHost = false;
+            AllMessageContainer.gameStatus.ifStartGame = false;
             //Ã·«∞Ω· ¯
+            OnlineMode.QuitOnlineMode();
             StartCoroutine(loadScene("PlayerMessageUI"));
         }
     }

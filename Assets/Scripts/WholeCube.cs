@@ -16,6 +16,7 @@ public class WholeCube : MonoBehaviour
 {
     public static List<GameObject> Slected = new List<GameObject>();
     public static bool _isUsed = false;
+    public static bool isFinished = false;
     private float width = 1f;
     private int pastedNum = 0;
     public static List<string> Matched = new List<string>();
@@ -134,6 +135,7 @@ public class WholeCube : MonoBehaviour
     void Start()
     {
         //pastedNum = 0;
+        isFinished = false;
         cubeMatchQuad.Clear();
         cubeDict.Clear();
         Slected.Clear();
@@ -156,6 +158,7 @@ public class WholeCube : MonoBehaviour
         MakeLettersInOrder(transform.GetChild(beginIndex).GetChild(quadBeginIndex).gameObject);
         UpdateCubeQuadMatch();
         UpdateEdges();
+        isFinished = true;
         //Debug.Log(cubeMatchQuad.Count);
     }
 

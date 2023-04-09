@@ -15,7 +15,6 @@ public class OnlineMode: MonoBehaviour
     bool ifSendInvi = false;
     bool ifagreed = false;
     public static bool ifPrepared = false;
-    string otherName = null;
     float waitTime = 0;
     float assureIfInviteTime = 0;
     public static Dictionary<string,float> allInvitations = new Dictionary<string,float>();
@@ -288,17 +287,17 @@ public class OnlineMode: MonoBehaviour
         }
     }
 
-    public void TransmitStatus(string option, string obj, string body)
+    static public void TransmitStatus(string option, string obj, string body)
     {
         var json = new Dictionary<string, string>
         {
             {"nickname1",AllMessageContainer.playerInfo.playerName },
-            { "nickname2",otherName},/////需要修改
+            { "nickname2",playWith},/////需要修改
             {"option", option},
             {"object", obj},
             {"body", body}
         };
-        string response = WebController.Post(WebController.rootIP + API_Local.allRequest, JsonConvert.SerializeObject(json));
+        string response = WebController.Post(WebController.rootIP + API_Local.sendPackage, JsonConvert.SerializeObject(json));
         switch (response)
         {
             case WebController.Success:
