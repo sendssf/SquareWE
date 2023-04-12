@@ -26,7 +26,7 @@ public class GameCanvasClickEvent : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        GameObject.Find("Axis").transform.rotation = GameObject.Find("Third-orderCube").transform.rotation;
     }
 
     private IEnumerator loadScene(string which,LoadSceneMode lmd=LoadSceneMode.Single)

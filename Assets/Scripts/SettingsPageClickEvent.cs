@@ -16,6 +16,8 @@ public class SettingsPageClickEvent : MonoBehaviour
     public GameObject Register;
     public GameObject Login;
     AsyncOperation operation;
+    string ipNew;
+    string portNew;
 
     Transform accounttrans;
     void Start()
@@ -98,6 +100,14 @@ public class SettingsPageClickEvent : MonoBehaviour
             transform.Find("Contain").Find("Viewport").Find("Content")
                .Find("EffectSound").Find("Slider").gameObject.GetComponent<Slider>().interactable= false;
         }
+        transform.Find("Contain").Find("Viewport").Find("Content").Find("IP").Find("OldValue").gameObject
+            .GetComponent<Text>().text = WebController.rootIP.Split("//")[1].Split(":")[0];
+        transform.Find("Contain").Find("Viewport").Find("Content").Find("IP").Find("OldPort").gameObject
+            .GetComponent<Text>().text = "Port:"+WebController.rootIP.Split(":")[2];
+        transform.Find("Contain").Find("Viewport").Find("Content").Find("IP").Find("GetIP").Find("IP")
+            .gameObject.GetComponent<Text>().text = "";
+        transform.Find("Contain").Find("Viewport").Find("Content").Find("IP").Find("GetPort").Find("Port")
+            .gameObject.GetComponent<Text>().text = "";
     }
 
     public void VolumeOnOff()   //更改总音量开关
@@ -171,6 +181,7 @@ public class SettingsPageClickEvent : MonoBehaviour
     public void SettingsOK()        //完成设置
     {
         //add something to operate the input data
+        WebController.rootIP = $"http://{ipNew}:{portNew}";
         AllMessageContainer.SendSettingsInfo();
         transform.gameObject.SetActive(false);
     }
@@ -215,5 +226,15 @@ public class SettingsPageClickEvent : MonoBehaviour
     public void EffectVolumeChange(float volume)
     {
         AllMessageContainer.settingsInfo.effectSoundValue=volume;
+    }
+
+    public void UpdateIP(string ip)
+    {
+        ipNew = ip;
+    }
+
+    public void UpdatePort(string port)
+    {
+        portNew = port;
     }
 }

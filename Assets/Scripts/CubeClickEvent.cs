@@ -179,14 +179,6 @@ public class CubeClickEvent : MonoBehaviour
         {
             await PressSpaceToSure();
         }
-        if (Input.GetKeyDown(KeyCode.LeftAlt))
-        {
-            await VictoryPrimary();
-        }
-        if (Input.GetKeyDown(KeyCode.RightAlt))
-        {
-            await VictoryFinally();
-        }
         if (transform.childCount<=3 && !AllMessageContainer.gameStatus.finalTry && !ifShowVictory 
             && !AllMessageContainer.gameStatus.finalTry)
         {
