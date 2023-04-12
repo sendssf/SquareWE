@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Ingradients : MonoBehaviour
 {
@@ -10,6 +11,9 @@ public class Ingradients : MonoBehaviour
     public static int num;
     static public int[] arr;
     public ParticleSystem particle;
+    public ParticleSystem[] particles;
+    public List<GameObject> destroyList = new List<GameObject>();
+    AsyncOperation operation;
     // Start is called before the first frame updat
     private void Awake()
     {
@@ -576,35 +580,45 @@ public class Ingradients : MonoBehaviour
                         List<GameObject> bg = new List<GameObject>();
                         foreach (string s in result)
                         {
+                            if(i == result.Length)
+                            {
+                                foreach(GameObject a in destroyList)
+                                {
+                                    Destroy(a);
+                                }
+                            }
                             if (i % 2 == 0)
                             {
                                 c = GameObject.Find("cube*" + s);
                             }
                             else
                             {
-                                c.transform.Find(s).GetComponent<Faces>().TimeUp();
-                                if (c.transform.Find(s).GetComponent<Faces>().Times() == 1)
+                                if (!destroyList.Contains(c))
                                 {
-                                    c.transform.Find(s).GetComponent<MeshRenderer>().material.color = new Color(1, 0.6f, 0.6f);//点击改变面颜色
-                                }
-                                else if (c.transform.Find(s).GetComponent<Faces>().Times() == 2)
-                                {
-                                    c.transform.Find(s).gameObject.GetComponent<MeshRenderer>().material.color = new Color(0, 1, 0.6f);//点击改变面颜色
-                                }
-                                else if (c.transform.Find(s).GetComponent<Faces>().Times() == 3)
-                                {
-                                    GameObject father = c.transform.Find(s).transform.parent.gameObject;
-                                    for (int j = 0; j < 6; j++)
+                                    c.transform.Find(s).GetComponent<Faces>().TimeUp();
+                                    if (c.transform.Find(s).GetComponent<Faces>().Times() == 1)
                                     {
-                                        father.transform.GetChild(i).gameObject.GetComponent<Faces>().rb.isKinematic = false;
-                                        father.transform.GetChild(i).gameObject.GetComponent<Faces>().rb.useGravity = true;
+                                        c.transform.Find(s).GetComponent<MeshRenderer>().material.color = new Color(1, 0.6f, 0.6f);//点击改变面颜色
                                     }
-                                    father.transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
-                                    GameObject.Find("Explosion").gameObject.AddComponent<Expolosion>().explosionPos = GameObject.Find("OtherCube").transform;
-                                    var ps = Instantiate(father.GetComponent<Cube>().particle, father.transform);
-                                    ps.transform.localPosition = Vector3.zero;
-                                    ps.Play();
-                                    Destroy(father);
+                                    else if (c.transform.Find(s).GetComponent<Faces>().Times() == 2)
+                                    {
+                                        c.transform.Find(s).gameObject.GetComponent<MeshRenderer>().material.color = new Color(0, 1, 0.6f);//点击改变面颜色
+                                    }
+                                    else if (c.transform.Find(s).GetComponent<Faces>().Times() == 3)
+                                    {
+                                        GameObject father = c.transform.Find(s).transform.parent.gameObject;
+                                        for (int j = 0; j < 6; j++)
+                                        {
+                                            father.transform.GetChild(i).gameObject.GetComponent<Faces>().rb.isKinematic = false;
+                                            father.transform.GetChild(i).gameObject.GetComponent<Faces>().rb.useGravity = true;
+                                        }
+                                        father.transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
+                                        GameObject.Find("Explosion").gameObject.AddComponent<Expolosion>().explosionPos = GameObject.Find("OtherCube").transform;
+                                        var ps = Instantiate(father.GetComponent<Cube>().particle, father.transform);
+                                        ps.transform.localPosition = Vector3.zero;
+                                        ps.Play();
+                                        destroyList.Add(father);
+                                    }
                                 }
                             }
                             i++;
@@ -629,15 +643,24 @@ public class Ingradients : MonoBehaviour
                     else if (opt == "quit")
                     {
                         //弹出对话框
-
+                        AllMessageContainer.gameStatus.overlayerName = "QuitOnline";
+                        StartCoroutine(loadScene("3DOverlayer", LoadSceneMode.Additive));
                     }
                     else if(opt == "win")
                     {
-
+                        AllMessageContainer.gameStatus.overlayerName = "Failed";
+                        StartCoroutine(loadScene("3DOverlayer", LoadSceneMode.Additive));
+                        CubeClickEvent.ifOnlineLoose = true;
                     }
                 }
                 break;
         }
+    }
+    private IEnumerator loadScene(string which, LoadSceneMode lmd = LoadSceneMode.Single)
+    {
+        operation=SceneManager.LoadSceneAsync(which, lmd);
+        operation.allowSceneActivation = true;
+        yield return operation;
     }
 }
 

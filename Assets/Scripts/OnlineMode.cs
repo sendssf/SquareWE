@@ -22,6 +22,10 @@ public class OnlineMode: MonoBehaviour
     public static string inviteWhoToPlay;   //ÕıÔÚÑûÇëË­
     public string inviteResult;
     public static string playWith;
+    private void Awake()
+    {
+        ifPrepared = false;
+    }
     void Start()
     {
         

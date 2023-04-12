@@ -155,7 +155,10 @@ public class WholeCube : MonoBehaviour
         //GameObject.Find("Third-orderCube").gameObject.GetComponent<Ingradients>().InitCubeShape();
         int beginIndex = Random.Range(0, transform.childCount);
         int quadBeginIndex = Random.Range(0, 6);
-        MakeLettersInOrder(transform.GetChild(beginIndex).GetChild(quadBeginIndex).gameObject);
+        if (!(AllMessageContainer.gameStatus.ifonline && !AllMessageContainer.gameStatus.ifHost))
+        {
+            MakeLettersInOrder(transform.GetChild(beginIndex).GetChild(quadBeginIndex).gameObject);
+        }
         UpdateCubeQuadMatch();
         UpdateEdges();
         isFinished = true;

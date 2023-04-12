@@ -26,7 +26,7 @@ public class OverlayerManager : MonoBehaviour
     public void SureFinalTry()
     {
         AllMessageContainer.gameStatus.finalTry = true;
-        CubeClickEvent.ifShowVictory = false;
+        CubeClickEvent.ifShowVictory = false; 
         transform.Find("Victory").gameObject.SetActive(false);
         StartCoroutine(unloadScene("3DOverlayer"));
     }
@@ -59,5 +59,14 @@ public class OverlayerManager : MonoBehaviour
     {
         operation = SceneManager.LoadSceneAsync(name);
         yield return operation;
+    }
+
+    public void OtherPlayerQuitAndOK()
+    {
+        AllMessageContainer.gameStatus.ifonline = false;
+        AllMessageContainer.gameStatus.ifStartGame = false;
+        AllMessageContainer.gameStatus.ifHost = false;
+        OnlineMode.QuitOnlineMode();
+        StartCoroutine(loadScene("PlayerMessageUI"));
     }
 }

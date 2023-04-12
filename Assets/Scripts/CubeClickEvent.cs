@@ -16,6 +16,7 @@ public class CubeClickEvent : MonoBehaviour
     string link = "";
     public static bool ifShowVictory = false;
     private AudioClip combine;
+    public static bool ifOnlineLoose = false;
     OnlineMode onlineMode;
     void Awake()
     {
@@ -34,6 +35,7 @@ public class CubeClickEvent : MonoBehaviour
     private void Start()
     {
         ifShowVictory = false;
+        ifOnlineLoose = false;
     }
 
     // Update is called once per frame
@@ -204,6 +206,11 @@ public class CubeClickEvent : MonoBehaviour
             ifShowVictory = true;
             await VictoryFinally();
         }
+        if (ifOnlineLoose)
+        {
+            ifOnlineLoose = false;
+            await OnlineLoose();
+        }
     }
 
     async private Task PressSpaceToSure()
@@ -268,6 +275,12 @@ public class CubeClickEvent : MonoBehaviour
             }
             WholeCube.Slected.Clear();
         }
+    }
+
+    async Task OnlineLoose()
+    {
+        await Task.Delay(2000);
+        StartCoroutine("PlayerMessageUI");
     }
 
     private void ShowError(string message)
