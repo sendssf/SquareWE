@@ -9,7 +9,7 @@ public class GameCanvasClickEvent : MonoBehaviour
 {
     // Start is called before the first frame update
     AsyncOperation operation;
-    public AudioClip combine;
+    //public AudioClip combine;
     bool isbBeginWaiting = false;
     void Start()
     {

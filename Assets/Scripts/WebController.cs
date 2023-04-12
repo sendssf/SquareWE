@@ -63,7 +63,7 @@ public class API_Local
     public const string checkSquareInfo = "/api/check_squareinfo/";
     public const string sendSquareInfo = "/api/send_squareinfo/";
     public const string sendPackage = "/api/send_pkg/";
-    public const string getPackage = "/api/get_pkg";
+    public const string getPackage = "/api/get_pkg/";
 }
 
 //挂载在UI
@@ -79,7 +79,7 @@ public class WebController : MonoBehaviour
     public const string NoMessage = "NoMessage";
     public const string SendFailed = "SendFailed";
     
-    public const string rootIP = "http://101.5.142.96:8000";
+    public const string rootIP = "http://183.172.233.187:8080";
     
 
     void Start()

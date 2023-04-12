@@ -26,6 +26,7 @@ public class OverlayerManager : MonoBehaviour
     public void SureFinalTry()
     {
         AllMessageContainer.gameStatus.finalTry = true;
+        CubeClickEvent.ifShowVictory = false;
         transform.Find("Victory").gameObject.SetActive(false);
         StartCoroutine(unloadScene("3DOverlayer"));
     }

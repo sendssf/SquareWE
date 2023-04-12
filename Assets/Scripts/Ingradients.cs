@@ -37,6 +37,7 @@ public class Ingradients : MonoBehaviour
             }
             if (AllMessageContainer.gameStatus.ifonline && !AllMessageContainer.gameStatus.ifHost && !OnlineMode.ifPrepared)
             {
+                AllMessageContainer.gameStatus.wordFileName = "word6.csv";
                 ReceiveCube();
             }
             if (AllMessageContainer.gameStatus.ifonline && AllMessageContainer.gameStatus.ifHost 
@@ -340,7 +341,7 @@ public class Ingradients : MonoBehaviour
                         name.Add(opt);
                     }
                 }
-                for (int i = 0; i < MyCube.childCount; i++)
+                for (int i = MyCube.childCount - 1; i >= 0; i--)
                 {
                     if (name.Contains(MyCube.GetChild(i).name.Substring(4)))
                     {
@@ -363,7 +364,7 @@ public class Ingradients : MonoBehaviour
                         DestroyImmediate(MyCube.GetChild(i).gameObject);
                     }
                 }
-                for (int i = 0; i < OtherCube.childCount; i++)
+                for (int i = OtherCube.childCount - 1; i >= 0; i--)
                 {
                     if (name.Contains(OtherCube.GetChild(i).name.Substring(5)))
                     {
@@ -536,8 +537,8 @@ public class Ingradients : MonoBehaviour
     {
         var json = new Dictionary<string, string>
         {
-            {"nickname1",AllMessageContainer.playerInfo.playerName },
-            { "nickname2",OnlineMode.playWith}/////需要修改
+            {"nickname1", OnlineMode.playWith},
+            {"nickname2",AllMessageContainer.playerInfo.playerName}/////需要修改
         };
         string response = WebController.Post(WebController.rootIP + API_Local.getPackage, JsonConvert.SerializeObject(json));
         switch (response)
@@ -565,7 +566,7 @@ public class Ingradients : MonoBehaviour
                     {
                         //wait
                         var rot = mes["body"].Split(",");
-                        OnlineModeCubeMove.RotateScreen(GameObject.Find("OtherCube"), rot[0], (float)System.Convert.ToDouble(rot[0]));
+                        OnlineModeCubeMove.RotateScreen(GameObject.Find("OtherCube"), rot[0], (float)System.Convert.ToDouble(rot[1]));
                     }
                     else if (opt == "point cube")
                     {
@@ -593,8 +594,6 @@ public class Ingradients : MonoBehaviour
                                 else if (c.transform.Find(s).GetComponent<Faces>().Times() == 3)
                                 {
                                     GameObject father = c.transform.Find(s).transform.parent.gameObject;
-                                    father.transform.parent.GetComponent<WholeCube>().position.Remove(father.transform.position);
-                                    father.transform.parent.GetComponent<WholeCube>()._isCleared = true;
                                     for (int j = 0; j < 6; j++)
                                     {
                                         father.transform.GetChild(i).gameObject.GetComponent<Faces>().rb.isKinematic = false;

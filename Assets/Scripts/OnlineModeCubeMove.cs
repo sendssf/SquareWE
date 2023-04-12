@@ -19,8 +19,8 @@ public class OnlineModeCubeMove : MonoBehaviour
     }
 
     static Dictionary<GameObject, CubeRotateHelper> cubeRotateDict = new Dictionary<GameObject, CubeRotateHelper>();
-    static List<GameObject> cubeRotateList;
-    static List<GameObject> cubeeMoveList;
+    static List<GameObject> cubeRotateList = new List<GameObject>();
+    static List<GameObject> cubeeMoveList = new List<GameObject>();
     static Dictionary<GameObject, CubeMoveHelper> cubeMoveDict = new Dictionary<GameObject, CubeMoveHelper>();
 
     void Start()

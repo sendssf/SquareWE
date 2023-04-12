@@ -292,7 +292,7 @@ public class OnlineMode: MonoBehaviour
         var json = new Dictionary<string, string>
         {
             {"nickname1",AllMessageContainer.playerInfo.playerName },
-            { "nickname2",playWith},/////需要修改
+            {"nickname2",playWith},/////需要修改
             {"option", option},
             {"object", obj},
             {"body", body}

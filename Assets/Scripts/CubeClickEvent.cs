@@ -14,6 +14,8 @@ public class CubeClickEvent : MonoBehaviour
     private AudioSource audioSource1, audioSource2;
     string prepareWord = "";
     string link = "";
+    public static bool ifShowVictory = false;
+    private AudioClip combine;
     OnlineMode onlineMode;
     void Awake()
     {
@@ -27,6 +29,11 @@ public class CubeClickEvent : MonoBehaviour
         audioSource1.volume = AllMessageContainer.settingsInfo.effectSoundValue;
         audioSource2  = GameObject.Find("Explosion").gameObject.GetComponent<AudioSource>();
         audioSource2.volume = AllMessageContainer.settingsInfo.effectSoundValue;
+        combine = GameObject.Find("EventSystem").GetComponent<AudioSource>().clip;
+    }
+    private void Start()
+    {
+        ifShowVictory = false;
     }
 
     // Update is called once per frame
@@ -169,22 +176,6 @@ public class CubeClickEvent : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             await PressSpaceToSure();
-            if (transform.childCount<=3 && !AllMessageContainer.gameStatus.finalTry)
-            {
-                if (AllMessageContainer.gameStatus.ifonline == false)
-                {
-                    await VictoryPrimary();
-                }
-                else
-                {
-                    OnlineMode.Victory();
-                    await VictoryFinally();
-                }
-            }
-            if(transform.childCount == 0)
-            {
-                await VictoryFinally();
-            }
         }
         if (Input.GetKeyDown(KeyCode.LeftAlt))
         {
@@ -192,6 +183,25 @@ public class CubeClickEvent : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.RightAlt))
         {
+            await VictoryFinally();
+        }
+        if (transform.childCount<=3 && !AllMessageContainer.gameStatus.finalTry && !ifShowVictory 
+            && !AllMessageContainer.gameStatus.finalTry)
+        {
+            ifShowVictory = true;
+            if (AllMessageContainer.gameStatus.ifonline == false)
+            {
+                await VictoryPrimary();
+            }
+            else
+            {
+                OnlineMode.Victory();
+                await VictoryFinally();
+            }
+        }
+        if (transform.childCount == 0 && !ifShowVictory)
+        {
+            ifShowVictory = true;
             await VictoryFinally();
         }
     }
@@ -222,13 +232,13 @@ public class CubeClickEvent : MonoBehaviour
                 {
                     _isSelected.GetComponent<MeshRenderer>().material.color = new Color(1, 0.6f, 0.6f);//点击改变面颜色
                     _isSelected.GetComponent<Faces>()._isClicked = false;
-                    audioSource2.PlayOneShot(GameObject.Find("BackgroundCavas").GetComponent<GameCanvasClickEvent>().combine);
+                    audioSource2.PlayOneShot(combine);
                 }
                 else if (_isSelected.GetComponent<Faces>().Times() == 2)
                 {
                     _isSelected.gameObject.GetComponent<MeshRenderer>().material.color = new Color(0, 1, 0.6f);//点击改变面颜色
                     _isSelected.gameObject.GetComponent<Faces>()._isClicked = false;
-                    audioSource2.PlayOneShot(GameObject.Find("BackgroundCavas").GetComponent<GameCanvasClickEvent>().combine);
+                    audioSource2.PlayOneShot(combine);
                 }
                 else if (_isSelected.GetComponent<Faces>().Times() == 3)
                 {
