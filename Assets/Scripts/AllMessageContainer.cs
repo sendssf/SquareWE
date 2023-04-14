@@ -346,6 +346,7 @@ public class AllMessageContainer : MonoBehaviour
             res.Add("level", plyInfo["level"]);
             res.Add("rank", plyInfo["rank"]);
             res.Add("wordnumber", wordlst.Count.ToString());
+            res.Add("experience", plyInfo["experience"]);
         }
         return res;
     }

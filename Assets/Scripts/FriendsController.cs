@@ -183,7 +183,14 @@ public class FriendsController : MonoBehaviour
                 var msgInfo = AllMessageContainer.GetFriendsInfoFromServer(frd);
                 item.transform.Find("Info").gameObject.GetComponent<Text>().text=
                     $"Level:{msgInfo["level"]}    Rank:{msgInfo["rank"]}";
-                StartCoroutine(GetFriendImageAsync(frd, item));
+                try
+                {
+                    StartCoroutine(GetFriendImageAsync(frd, item));
+                }
+                catch
+                {
+
+                }
                 friendsHaveLoaded.Add(frd);
             }
         }
@@ -243,6 +250,7 @@ public class FriendsController : MonoBehaviour
             UploadHandler upload = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(req)));
             webRequest.uploadHandler= upload;
             webRequest.uploadHandler.contentType= "application/json";
+            webRequest.timeout = 5;
             DownloadHandler download = new DownloadHandlerBuffer();
             webRequest.downloadHandler= download;
             UnityWebRequestAsyncOperation operation = webRequest.SendWebRequest();
@@ -308,9 +316,32 @@ public class FriendsController : MonoBehaviour
                         gameObject.GetComponent<MessageNumManager>().newMessageNum = 0;
                     foreach (string mes in message)
                     {
-                        var item = Instantiate(friendMessageBox, transform.Find("FriendMessage").Find("View").Find("Viewport").Find("Content"));
-                        StartCoroutine(GetFriendImageAsync(lookWhoMessage, item));
-                        item.transform.Find("Mes").gameObject.GetComponent<Text>().text = mes;
+                        if (mes.Substring(0, 3)!="$@$")
+                        {
+                            var item = Instantiate(friendMessageBox, transform.Find("FriendMessage").Find("View").Find("Viewport").Find("Content"));
+                            try
+                            {
+                                StartCoroutine(GetFriendImageAsync(lookWhoMessage, item));
+                            }
+                            catch
+                            {
+
+                            }
+                            item.transform.Find("Mes").gameObject.GetComponent<Text>().text = mes;
+                        }
+                        else
+                        {
+                            var item = Instantiate(friendMessageBox, transform.Find("FriendMessage").Find("View").Find("Viewport").Find("Content"));
+                            try
+                            {
+                                StartCoroutine(GetFriendImageAsync(AllMessageContainer.playerInfo.playerName, item));
+                            }
+                            catch
+                            {
+
+                            }
+                            item.transform.Find("Mes").gameObject.GetComponent<Text>().text = mes.Substring(3);
+                        }
                     }
                 }
             }
@@ -344,7 +375,14 @@ public class FriendsController : MonoBehaviour
             }
             //更新消息框
             var item = Instantiate(friendMessageBox, transform.Find("FriendMessage").Find("View").Find("Viewport").Find("Content"));
-            StartCoroutine(GetFriendImageAsync(AllMessageContainer.playerInfo.playerName, item));
+            try
+            {
+                StartCoroutine(GetFriendImageAsync(AllMessageContainer.playerInfo.playerName, item));
+            }
+            catch
+            {
+
+            }
             item.transform.Find("Mes").gameObject.GetComponent<Text>().text = sendingMessage;
         }
     }
@@ -352,22 +390,42 @@ public class FriendsController : MonoBehaviour
     public void PressMessageButton()
     {
         transform.Find("FriendMessage").gameObject.SetActive(true);
+        GameObject list = transform.Find("FriendMessage").Find("View").Find("Viewport").Find("Content").gameObject;
+        for(int i = 0; i<list.transform.childCount; i++)
+        {
+            Destroy(list.transform.GetChild(i).gameObject);
+        }
         messageButtonHandler.GetComponent<MessageNumManager>().newMessageNum = 0;
         if (friendMessageAll.ContainsKey(lookWhoMessage))
         {
             foreach(string mes in friendMessageAll[lookWhoMessage])
             {
-                if (mes.Substring(0,2) == "$@$")
+                Debug.Log(mes.Substring(0,2));
+                if (mes.Substring(0,3) == "$@$")
                 {
                     //自己发出去的消息
                     var item = Instantiate(friendMessageBox, transform.Find("FriendMessage").Find("View").Find("Viewport").Find("Content"));
-                    StartCoroutine(GetFriendImageAsync(AllMessageContainer.playerInfo.playerName, item));
+                    try
+                    {
+                        StartCoroutine(GetFriendImageAsync(AllMessageContainer.playerInfo.playerName, item));
+                    }
+                    catch
+                    {
+
+                    }
                     item.transform.Find("Mes").gameObject.GetComponent<Text>().text = mes.Substring(3);
                 }
                 else
                 {
                     var item = Instantiate(friendMessageBox, transform.Find("FriendMessage").Find("View").Find("Viewport").Find("Content"));
-                    StartCoroutine(GetFriendImageAsync(lookWhoMessage, item));
+                    try
+                    {
+                        StartCoroutine(GetFriendImageAsync(lookWhoMessage, item));
+                    }
+                    catch
+                    {
+
+                    }
                     item.transform.Find("Mes").gameObject.GetComponent<Text>().text = mes;
                 }
             }
@@ -579,7 +637,14 @@ public class FriendsController : MonoBehaviour
             item.transform.Find("Info").gameObject.GetComponent<Text>().text=
                 $"Level:{info["level"]}    Rank:{info["rank"]}    Word number:{info["wordnumber"]}";
             item.transform.Find("Back").Find("VeriInfo").gameObject.GetComponent<Text>().text=apl.Value;
-            StartCoroutine(GetFriendImageAsync(apl.Key, item));
+            try
+            {
+                StartCoroutine(GetFriendImageAsync(apl.Key, item));
+            }
+            catch 
+            { 
+                
+            }
         }
     }
 
@@ -677,7 +742,14 @@ public class FriendsController : MonoBehaviour
         {
             var item = Instantiate(invitationItem, content.transform);
             item.transform.Find("Name").gameObject.GetComponent<Text>().text = pair.Key;
-            StartCoroutine(GetFriendImageAsync(pair.Key, item));
+            try
+            {
+                StartCoroutine(GetFriendImageAsync(pair.Key, item));
+            }
+            catch
+            {
+
+            }
         }
     }
 

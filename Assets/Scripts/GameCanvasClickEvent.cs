@@ -9,7 +9,7 @@ public class GameCanvasClickEvent : MonoBehaviour
 {
     // Start is called before the first frame update
     AsyncOperation operation;
-    public AudioClip combine;
+    //public AudioClip combine;
     bool isbBeginWaiting = false;
     void Start()
     {
@@ -26,7 +26,7 @@ public class GameCanvasClickEvent : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        GameObject.Find("Axis").transform.rotation = GameObject.Find("Third-orderCube").transform.rotation;
     }
 
     private IEnumerator loadScene(string which,LoadSceneMode lmd=LoadSceneMode.Single)

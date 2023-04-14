@@ -30,6 +30,10 @@ public class MainPageClickEvent : MonoBehaviour
     public void Exit()
     {
         SendInfoToServer();
+        if(AllMessageContainer.gameStatus.ifonline)
+        {
+            OnlineMode.QuitOnlineMode();
+        }
         AllMessageContainer.WriteInfoToFile(AllMessageContainer.playerInfo.playerName+".json");
         Application.Quit();
     }

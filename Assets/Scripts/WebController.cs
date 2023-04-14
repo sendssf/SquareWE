@@ -63,7 +63,9 @@ public class API_Local
     public const string checkSquareInfo = "/api/check_squareinfo/";
     public const string sendSquareInfo = "/api/send_squareinfo/";
     public const string sendPackage = "/api/send_pkg/";
-    public const string getPackage = "/api/get_pkg";
+    public const string getPackage = "/api/get_pkg/";
+    public const string getRank = "/api/get_rank/";
+    public const string updateRank = "/api/update_rank/";
 }
 
 //挂载在UI
@@ -79,9 +81,8 @@ public class WebController : MonoBehaviour
     public const string NoMessage = "NoMessage";
     public const string SendFailed = "SendFailed";
     
-    public const string rootIP = "http://101.5.142.96:8000";
+    public static string rootIP = "http://183.172.236.10:8080";
     
-
     void Start()
     {
         
@@ -100,50 +101,58 @@ public class WebController : MonoBehaviour
 
     public static string GetHeadImage(string url, string nickname)
     {
-        using (UnityWebRequest webRequest = new UnityWebRequest(url, UnityWebRequest.kHttpVerbPOST))
+        try
         {
-            Dictionary<string, string> req = new Dictionary<string, string>
+            using (UnityWebRequest webRequest = new UnityWebRequest(url, UnityWebRequest.kHttpVerbPOST))
+            {
+                Dictionary<string, string> req = new Dictionary<string, string>
             {
                 { "nickname",nickname}
             };
-            UploadHandler upload = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(req)));
-            webRequest.uploadHandler= upload;
-            webRequest.uploadHandler.contentType= "application/json";
-            DownloadHandler download = new DownloadHandlerBuffer();
-            webRequest.downloadHandler= download;
-            UnityWebRequestAsyncOperation operation = webRequest.SendWebRequest();
+                UploadHandler upload = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(req)));
+                webRequest.uploadHandler= upload;
+                webRequest.timeout = 5;
+                webRequest.uploadHandler.contentType= "application/json";
+                DownloadHandler download = new DownloadHandlerBuffer();
+                webRequest.downloadHandler= download;
+                UnityWebRequestAsyncOperation operation = webRequest.SendWebRequest();
 
-            while (!operation.isDone) { }
-            if (webRequest.result==UnityWebRequest.Result.Success)
-            {
-                string content = webRequest.downloadHandler.text;
-                if(content=="Player does not exist")
+                while (!operation.isDone) { }
+                if (webRequest.result==UnityWebRequest.Result.Success)
                 {
-                    return PlayerNotExist;
-                }
-                Dictionary<string, string> dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(content);
-                if (dict["pic"]==""||dict["pic"].Length==0)
-                {
-                    return FileNotExist;
-                }
-                if (nickname==AllMessageContainer.playerInfo.playerName)
-                {
-                    File.WriteAllBytes($"{Application.persistentDataPath}\\{nickname}.png", Convert.FromBase64String(dict["pic"]));
+                    string content = webRequest.downloadHandler.text;
+                    if (content=="Player does not exist")
+                    {
+                        return PlayerNotExist;
+                    }
+                    Dictionary<string, string> dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(content);
+                    if (dict["pic"]==""||dict["pic"].Length==0)
+                    {
+                        return FileNotExist;
+                    }
+                    if (nickname==AllMessageContainer.playerInfo.playerName)
+                    {
+                        File.WriteAllBytes($"{Application.persistentDataPath}\\{nickname}.png", Convert.FromBase64String(dict["pic"]));
+                    }
+                    else
+                    {
+                        if (!Directory.Exists($"{Application.persistentDataPath}\\searchTemp"))
+                        {
+                            Directory.CreateDirectory($"{Application.persistentDataPath}\\searchTemp");
+                        }
+                        File.WriteAllBytes($"{Application.persistentDataPath}\\SearchTemp\\{nickname}.png", Convert.FromBase64String(dict["pic"]));
+                    }
+                    return Success;
                 }
                 else
                 {
-                    if (!Directory.Exists($"{Application.persistentDataPath}\\searchTemp"))
-                    {
-                        Directory.CreateDirectory($"{Application.persistentDataPath}\\searchTemp");
-                    }
-                    File.WriteAllBytes($"{Application.persistentDataPath}\\SearchTemp\\{nickname}.png", Convert.FromBase64String(dict["pic"]));
+                    return ServerNotFound;
                 }
-                return Success;
             }
-            else
-            {
-                return ServerNotFound;
-            }
+        }
+        catch
+        {
+            return ServerNotFound;
         }
     }
 
@@ -233,52 +242,61 @@ public class WebController : MonoBehaviour
 
     public static string Post(string url, string postData)
     {
-        using (UnityWebRequest webRequest = new UnityWebRequest(url, UnityWebRequest.kHttpVerbPOST))
+        try
         {
-            UploadHandler upload = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(postData));
-            webRequest.uploadHandler = upload;
-            webRequest.uploadHandler.contentType= "application/json";
-
-            DownloadHandler downloadHandler = new DownloadHandlerBuffer();
-            webRequest.downloadHandler = downloadHandler;
-            UnityWebRequestAsyncOperation operation = webRequest.SendWebRequest();
-            
-            while(!operation.isDone) { }
-
-            if (webRequest.result==UnityWebRequest.Result.Success)
+            using (UnityWebRequest webRequest = new UnityWebRequest(url, UnityWebRequest.kHttpVerbPOST))
             {
-                switch (webRequest.downloadHandler.text)
+                UploadHandler upload = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(postData));
+                webRequest.uploadHandler = upload;
+                webRequest.uploadHandler.contentType= "application/json";
+                webRequest.timeout = 5;
+                DownloadHandler downloadHandler = new DownloadHandlerBuffer();
+                webRequest.downloadHandler = downloadHandler;
+                UnityWebRequestAsyncOperation operation = webRequest.SendWebRequest();
+
+                while (!operation.isDone) { }
+
+                if (webRequest.result==UnityWebRequest.Result.Success)
                 {
-                    case "nickname exists":
-                        return NicknameExist;
-                    case "Sign up successfully":
-                        return Success;
-                    case "Player does not exist":
-                        return PlayerNotExist;
-                    case "Wrong password":
-                        return PasswordError;
-                    case "Log in successfully":
-                        return Success;
-                    case "Upload successfully":
-                        return Success;
-                    case "Send successfully":
-                        return Success;
-                    case "Accept successfully":
-                        return Success;
-                    case "Reject successfully":
-                        return Success;
-                    case "No message":
-                        return NoMessage;
-                    case "Delete successfully":
-                        return Success;
-                    default:
-                        return webRequest.downloadHandler.text;
+                    switch (webRequest.downloadHandler.text)
+                    {
+                        case "nickname exists":
+                            return NicknameExist;
+                        case "Sign up successfully":
+                            return Success;
+                        case "Player does not exist":
+                            return PlayerNotExist;
+                        case "Wrong password":
+                            return PasswordError;
+                        case "Log in successfully":
+                            return Success;
+                        case "Upload successfully":
+                            return Success;
+                        case "Send successfully":
+                            return Success;
+                        case "Accept successfully":
+                            return Success;
+                        case "Reject successfully":
+                            return Success;
+                        case "No message":
+                            return NoMessage;
+                        case "Delete successfully":
+                            return Success;
+                        case "Update successfully":
+                            return Success;
+                        default:
+                            return webRequest.downloadHandler.text;
+                    }
+                }
+                else
+                {
+                    return ServerNotFound;
                 }
             }
-            else
-            {
-                return ServerNotFound;
-            }
+        }
+        catch
+        {
+            return ServerNotFound;
         }
     }
     private IEnumerator PostRequest(string url,string postData)
@@ -288,7 +306,7 @@ public class WebController : MonoBehaviour
             UploadHandler upload=new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(postData));
             webRequest.uploadHandler = upload;
             webRequest.uploadHandler.contentType= "application/json";
-
+            webRequest.timeout = 5;
             DownloadHandler downloadHandler = new DownloadHandlerBuffer();
             webRequest.downloadHandler = downloadHandler;
             yield return webRequest.SendWebRequest();

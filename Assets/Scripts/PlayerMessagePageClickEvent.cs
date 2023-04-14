@@ -18,6 +18,8 @@ public class PlayerMessagePageClickEvent : MonoBehaviour
     public Sprite pubImageHead;     //默认头像
     public GameObject objItem;
     GameObject objContainer;        //游戏物品容器
+    public GameObject wordListItem;
+    public GameObject rankListItem;
     //ArrayList objs;              //已经显示的物品
 
     public Sprite PerspectiveCamera;
@@ -85,6 +87,8 @@ public class PlayerMessagePageClickEvent : MonoBehaviour
             $"{AllMessageContainer.playerInfo.experience}/{AllMessageContainer.fullExp[AllMessageContainer.playerInfo.level]}";
         ShowObject();
         LoadHeadImage(false);
+        LoadWordList();
+        UpdateRank();
     }
 
     public void LoadHeadImage(bool isnew)     //加载头像
@@ -186,7 +190,7 @@ public class PlayerMessagePageClickEvent : MonoBehaviour
     {
         transform.Find("ShowHeadImage").gameObject.SetActive(false);
         string imagePath = FileBrowse.OpenWindowDialog("选择头像",
-                "Image Files (*.png, *.jpg,*.jpeg,*.bmp)\0*.png;*.jpg;*.jpeg;*.bmp\0");
+                "Image Files (*.png)\0*.png\0");
         if (imagePath==null)
         {
             return;
@@ -303,5 +307,61 @@ public class PlayerMessagePageClickEvent : MonoBehaviour
         transform.Find("Tips").gameObject.SetActive(true);
         transform.Find("Tips").Find("Contain").Find("Viewport").Find("Content").Find("Tip").gameObject
             .GetComponent<Text>().text=message;
+    }
+
+    private void LoadWordList()
+    {
+        GameObject list = transform.Find("Body").Find("WordList").Find("RankContainer").Find("Viewport")
+            .Find("Content").gameObject;
+        for(int i=0;i<list.transform.childCount;i++)
+        {
+            Destroy(list.transform.GetChild(i).gameObject);
+        }
+        var wordarr = AllMessageContainer.playerInfo.worldList.ToArray();
+        Array.Sort(wordarr, delegate (KeyValuePair<string, string> x, KeyValuePair<string, string> y)
+        {
+            return -Convert.ToInt32(x.Value).CompareTo(Convert.ToInt32(y.Value));
+        });
+        for(int i = 0; i<wordarr.Length; i++)
+        {
+            if (wordarr[i].Key =="0")
+            {
+                continue;
+            }
+            var item = Instantiate(wordListItem, list.transform);
+            item.transform.Find("HeadMessage").gameObject.GetComponent<Text>().text = (i+1).ToString();
+            item.transform.Find("Name").gameObject.GetComponent<Text>().text = wordarr[i].Key;
+            item.transform.Find("Other").gameObject.GetComponent<Text>().text = "Times:"+ wordarr[i].Value;
+        }
+    }
+
+    private void UpdateRank()
+    {
+        string res1 = WebController.Post(WebController.rootIP + API_Local.updateRank, "");
+        if(res1 == WebController.Success)
+        {
+            string res2 = WebController.Post(WebController.rootIP + API_Local.getRank, "");
+            List<string> rank = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(res2)["rank"];
+            int rk = 1;
+            GameObject list = transform.Find("Body").Find("RankWindow").Find("RankContainer")
+                .Find("Viewport").Find("Content").gameObject;
+            for(int i = 0; i<list.transform.childCount; i++)
+            {
+                Destroy(list.transform.GetChild(i).gameObject);
+            }
+            foreach(string name in rank)
+            {
+                var info = AllMessageContainer.GetFriendsInfoFromServer(name);
+                var item = Instantiate(rankListItem, list.transform);
+                item.transform.Find("HeadMessage").gameObject.GetComponent<Text>().text = rk.ToString();
+                item.transform.Find("Name").gameObject.GetComponent<Text>().text = name;
+                item.transform.Find("Other").gameObject.GetComponent<Text>().text = $"Level:{info["level"]}  Experience:{info["experience"]}";
+                rk++;
+            }
+        }
+        else
+        {
+            return;
+        }
     }
 }

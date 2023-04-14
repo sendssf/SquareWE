@@ -16,17 +16,13 @@ public class SettingsPageClickEvent : MonoBehaviour
     public GameObject Register;
     public GameObject Login;
     AsyncOperation operation;
+    string ipNew;
+    string portNew;
 
     Transform accounttrans;
     void Start()
     {
         accounttrans=transform.Find("Contain").Find("Viewport").Find("Content").Find("Account");
-        transform.Find("Contain").Find("Viewport").Find("Content")
-                .Find("TotalSound").Find("Slider").gameObject.GetComponent<Slider>().value=AllMessageContainer.settingsInfo.totalSoundValue;
-        transform.Find("Contain").Find("Viewport").Find("Content")
-               .Find("BackgroundSound").Find("Slider").gameObject.GetComponent<Slider>().value=AllMessageContainer.settingsInfo.backSoundValue;
-        transform.Find("Contain").Find("Viewport").Find("Content")
-               .Find("EffectSound").Find("Slider").gameObject.GetComponent<Slider>().value=AllMessageContainer.settingsInfo.effectSoundValue;
     }
 
     // Update is called once per frame
@@ -52,6 +48,66 @@ public class SettingsPageClickEvent : MonoBehaviour
             accounttrans.Find("Checkout").gameObject.GetComponent<Button>().interactable = false;
             accounttrans.Find("SignIn").gameObject.GetComponent<Button>().interactable= false;
         }
+    }
+
+    private void OnEnable()
+    {
+        transform.Find("Contain").Find("Viewport").Find("Content")
+                .Find("TotalSound").Find("Slider").gameObject.GetComponent<Slider>().value=AllMessageContainer.settingsInfo.totalSoundValue;
+        transform.Find("Contain").Find("Viewport").Find("Content")
+               .Find("BackgroundSound").Find("Slider").gameObject.GetComponent<Slider>().value=AllMessageContainer.settingsInfo.backSoundValue;
+        transform.Find("Contain").Find("Viewport").Find("Content")
+               .Find("EffectSound").Find("Slider").gameObject.GetComponent<Slider>().value=AllMessageContainer.settingsInfo.effectSoundValue;
+        if (AllMessageContainer.settingsInfo.totalSoundOpen)
+        {
+            transform.Find("Contain").Find("Viewport").Find("Content")
+                .Find("TotalSound").Find("OnOff").gameObject.GetComponent<Image>().sprite= AllMusicOn;
+            transform.Find("Contain").Find("Viewport").Find("Content")
+                .Find("TotalSound").Find("Slider").gameObject.GetComponent<Slider>().interactable=true;
+        }
+        else
+        {
+            transform.Find("Contain").Find("Viewport").Find("Content")
+               .Find("TotalSound").Find("OnOff").gameObject.GetComponent<Image>().sprite= AllMusicOff;
+            transform.Find("Contain").Find("Viewport").Find("Content")
+                .Find("TotalSound").Find("Slider").gameObject.GetComponent<Slider>().interactable=false;
+        }
+        if(AllMessageContainer.settingsInfo.backSoundOpen)
+        {
+            transform.Find("Contain").Find("Viewport").Find("Content")
+               .Find("BackgroundSound").Find("OnOff").gameObject.GetComponent<Image>().sprite= AllMusicOn;
+            transform.Find("Contain").Find("Viewport").Find("Content")
+               .Find("BackgroundSound").Find("Slider").gameObject.GetComponent<Slider>().interactable= true;
+        }
+        else
+        {
+            transform.Find("Contain").Find("Viewport").Find("Content")
+               .Find("BackgroundSound").Find("OnOff").gameObject.GetComponent<Image>().sprite= AllMusicOff;
+            transform.Find("Contain").Find("Viewport").Find("Content")
+               .Find("BackgroundSound").Find("Slider").gameObject.GetComponent<Slider>().interactable= false;
+        }
+        if(AllMessageContainer.settingsInfo.effectSoundOpen)
+        {
+            transform.Find("Contain").Find("Viewport").Find("Content")
+               .Find("EffectSound").Find("OnOff").gameObject.GetComponent<Image>().sprite= AllMusicOn;
+            transform.Find("Contain").Find("Viewport").Find("Content")
+               .Find("EffectSound").Find("Slider").gameObject.GetComponent<Slider>().interactable= true;
+        }
+        else
+        {
+            transform.Find("Contain").Find("Viewport").Find("Content")
+               .Find("EffectSound").Find("OnOff").gameObject.GetComponent<Image>().sprite= AllMusicOff;
+            transform.Find("Contain").Find("Viewport").Find("Content")
+               .Find("EffectSound").Find("Slider").gameObject.GetComponent<Slider>().interactable= false;
+        }
+        transform.Find("Contain").Find("Viewport").Find("Content").Find("IP").Find("OldValue").gameObject
+            .GetComponent<Text>().text = WebController.rootIP.Split("//")[1].Split(":")[0];
+        transform.Find("Contain").Find("Viewport").Find("Content").Find("IP").Find("OldPort").gameObject
+            .GetComponent<Text>().text = "Port:"+WebController.rootIP.Split(":")[2];
+        transform.Find("Contain").Find("Viewport").Find("Content").Find("IP").Find("GetIP").Find("IP")
+            .gameObject.GetComponent<Text>().text = "";
+        transform.Find("Contain").Find("Viewport").Find("Content").Find("IP").Find("GetPort").Find("Port")
+            .gameObject.GetComponent<Text>().text = "";
     }
 
     public void VolumeOnOff()   //更改总音量开关
@@ -125,6 +181,10 @@ public class SettingsPageClickEvent : MonoBehaviour
     public void SettingsOK()        //完成设置
     {
         //add something to operate the input data
+        if (ipNew!=null && ipNew.Length!=0 && portNew!=null && portNew.Length !=0)
+        {
+            WebController.rootIP = $"http://{ipNew}:{portNew}";
+        }
         AllMessageContainer.SendSettingsInfo();
         transform.gameObject.SetActive(false);
     }
@@ -169,5 +229,15 @@ public class SettingsPageClickEvent : MonoBehaviour
     public void EffectVolumeChange(float volume)
     {
         AllMessageContainer.settingsInfo.effectSoundValue=volume;
+    }
+
+    public void UpdateIP(string ip)
+    {
+        ipNew = ip;
+    }
+
+    public void UpdatePort(string port)
+    {
+        portNew = port;
     }
 }

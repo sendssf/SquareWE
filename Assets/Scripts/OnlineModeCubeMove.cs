@@ -19,8 +19,8 @@ public class OnlineModeCubeMove : MonoBehaviour
     }
 
     static Dictionary<GameObject, CubeRotateHelper> cubeRotateDict = new Dictionary<GameObject, CubeRotateHelper>();
-    static List<GameObject> cubeRotateList;
-    static List<GameObject> cubeeMoveList;
+    static List<GameObject> cubeRotateList = new List<GameObject>();
+    static List<GameObject> cubeeMoveList = new List<GameObject>();
     static Dictionary<GameObject, CubeMoveHelper> cubeMoveDict = new Dictionary<GameObject, CubeMoveHelper>();
 
     void Start()
@@ -67,8 +67,11 @@ public class OnlineModeCubeMove : MonoBehaviour
             CubeRotateHelper helper = new CubeRotateHelper();
             helper.option = option;
             helper.hasRotate = 0;
-            cubeRotateDict.Add(cube, helper);
-            cubeRotateList.Add(cube);
+            if (!cubeRotateDict.ContainsKey(cube))
+            {
+                cubeRotateDict.Add(cube, helper);
+                cubeRotateList.Add(cube);
+            }
         }
     }
 
@@ -154,8 +157,11 @@ public class OnlineModeCubeMove : MonoBehaviour
         CubeMoveHelper helper = new CubeMoveHelper();
         helper.option = option;
         helper.hasMove = 0;
-        cubeMoveDict.Add(cube, helper);
-        cubeeMoveList.Add(cube);
+        if (!cubeMoveDict.ContainsKey(cube))
+        {
+            cubeMoveDict.Add(cube, helper);
+            cubeeMoveList.Add(cube);
+        }
     }
 
     private void MoveCubeUpdate()

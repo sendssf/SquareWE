@@ -53,12 +53,18 @@ public class CustomModeClickEvent : MonoBehaviour
 
     public void GotoHome()
     {
-        StartCoroutine(loadScene("BeginUI"));
+        if (!AllMessageContainer.gameStatus.ifonline)
+        {
+            StartCoroutine(loadScene("BeginUI"));
+        }
     }
 
     public void ReturnPage()
     {
-        StartCoroutine(loadScene("ChooseModeUI"));
+        if (!AllMessageContainer.gameStatus.ifonline)
+        {
+            StartCoroutine(loadScene("ChooseModeUI"));
+        }
     }
 
     private IEnumerator loadScene(string which)
