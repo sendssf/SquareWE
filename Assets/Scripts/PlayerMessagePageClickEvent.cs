@@ -4,7 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using TreeEditor;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
@@ -191,7 +190,7 @@ public class PlayerMessagePageClickEvent : MonoBehaviour
     {
         transform.Find("ShowHeadImage").gameObject.SetActive(false);
         string imagePath = FileBrowse.OpenWindowDialog("Ñ¡ÔñÍ·Ïñ",
-                "Image Files (*.png, *.jpg,*.jpeg,*.bmp)\0*.png;*.jpg;*.jpeg;*.bmp\0");
+                "Image Files (*.png)\0*.png\0");
         if (imagePath==null)
         {
             return;

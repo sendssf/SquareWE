@@ -541,8 +541,8 @@ public class Ingradients : MonoBehaviour
     {
         var json = new Dictionary<string, string>
         {
-            {"nickname1", OnlineMode.playWith},
-            {"nickname2",AllMessageContainer.playerInfo.playerName}/////需要修改
+            {"nickname2", OnlineMode.playWith},
+            {"nickname1",AllMessageContainer.playerInfo.playerName}/////需要修改
         };
         string response = WebController.Post(WebController.rootIP + API_Local.getPackage, JsonConvert.SerializeObject(json));
         switch (response)
@@ -580,20 +580,13 @@ public class Ingradients : MonoBehaviour
                         List<GameObject> bg = new List<GameObject>();
                         foreach (string s in result)
                         {
-                            if(i == result.Length)
-                            {
-                                foreach(GameObject a in destroyList)
-                                {
-                                    Destroy(a);
-                                }
-                            }
                             if (i % 2 == 0)
                             {
                                 c = GameObject.Find("cube*" + s);
                             }
                             else
                             {
-                                if (!destroyList.Contains(c))
+                                try
                                 {
                                     c.transform.Find(s).GetComponent<Faces>().TimeUp();
                                     if (c.transform.Find(s).GetComponent<Faces>().Times() == 1)
@@ -617,8 +610,12 @@ public class Ingradients : MonoBehaviour
                                         var ps = Instantiate(father.GetComponent<Cube>().particle, father.transform);
                                         ps.transform.localPosition = Vector3.zero;
                                         ps.Play();
-                                        destroyList.Add(father);
+                                        Destroy(father);
                                     }
+                                }
+                                catch
+                                {
+
                                 }
                             }
                             i++;

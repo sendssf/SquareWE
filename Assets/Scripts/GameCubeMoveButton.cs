@@ -145,7 +145,7 @@ public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
                             break;
                         }
                     }
-                    if (canMove)
+                    if (canMove && moveCube == null)
                     {
                         moveCube=WholeCube.Slected[0].transform.parent.gameObject;
                         moveCubeType="Y+";
@@ -196,7 +196,7 @@ public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
                             break;
                         }
                     }
-                    if (canMove)
+                    if (canMove && moveCube == null)
                     {
                         moveCube=WholeCube.Slected[0].transform.parent.gameObject;
                         moveCubeType="Y-";
@@ -248,7 +248,7 @@ public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
                             break;
                         }
                     }
-                    if (canMove)
+                    if (canMove && moveCube == null)
                     {
                         moveCube=WholeCube.Slected[0].transform.parent.gameObject;
                         moveCubeType="X+";
@@ -300,7 +300,7 @@ public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
                             break;
                         }
                     }
-                    if (canMove)
+                    if (canMove && moveCube == null)
                     {
                         moveCube=WholeCube.Slected[0].transform.parent.gameObject;
                         moveCubeType="X-";
@@ -351,7 +351,7 @@ public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
                             break;
                         }
                     }
-                    if (canMove)
+                    if (canMove && moveCube == null)
                     {
                         moveCube=WholeCube.Slected[0].transform.parent.gameObject;
                         moveCubeType="Z-";
@@ -402,7 +402,7 @@ public class GameCubeMoveButton : MonoBehaviour,IPointerDownHandler
                             break;
                         }
                     }
-                    if (canMove)
+                    if (canMove && moveCube == null)
                     {
                         moveCube=WholeCube.Slected[0].transform.parent.gameObject;
                         moveCubeType="Z+";

@@ -2129,10 +2129,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 2560, y: 1440}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -4090,6 +4090,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 21300000, guid: c5b305b749b71b84da15e9ac805471fd, type: 3}
     - target: {fileID: 6713027349660462313, guid: ff531b59f4a94624fa50783412629e84, type: 3}
+      propertyPath: m_Transition
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6713027349660462313, guid: ff531b59f4a94624fa50783412629e84, type: 3}
+      propertyPath: m_Interactable
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6713027349660462313, guid: ff531b59f4a94624fa50783412629e84, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
       value: 1
       objectReference: {fileID: 0}
@@ -4667,6 +4675,14 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 2df5ddc68c4472d43b75fc1f59763079, type: 3}
+    - target: {fileID: 6713027349660462313, guid: ff531b59f4a94624fa50783412629e84, type: 3}
+      propertyPath: m_Transition
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6713027349660462313, guid: ff531b59f4a94624fa50783412629e84, type: 3}
+      propertyPath: m_Interactable
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6713027349660462313, guid: ff531b59f4a94624fa50783412629e84, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
       value: 1

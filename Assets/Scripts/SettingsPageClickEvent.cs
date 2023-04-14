@@ -181,7 +181,10 @@ public class SettingsPageClickEvent : MonoBehaviour
     public void SettingsOK()        //ÕÍ≥……Ë÷√
     {
         //add something to operate the input data
-        WebController.rootIP = $"http://{ipNew}:{portNew}";
+        if (ipNew!=null && ipNew.Length!=0 && portNew!=null && portNew.Length !=0)
+        {
+            WebController.rootIP = $"http://{ipNew}:{portNew}";
+        }
         AllMessageContainer.SendSettingsInfo();
         transform.gameObject.SetActive(false);
     }

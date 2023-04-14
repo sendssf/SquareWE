@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using UnityEngine.UI;
 using System;
+using UnityEngine.SceneManagement;
 
 public class CubeClickEvent : MonoBehaviour
 {
@@ -18,6 +19,7 @@ public class CubeClickEvent : MonoBehaviour
     private AudioClip combine;
     public static bool ifOnlineLoose = false;
     OnlineMode onlineMode;
+    AsyncOperation operation;
     void Awake()
     {
         AllMessageContainer.gameStatus.finalTry = false;
@@ -193,14 +195,23 @@ public class CubeClickEvent : MonoBehaviour
                 await VictoryFinally();
             }
         }
-        if (transform.childCount == 0 && !ifShowVictory)
+        if (Input.GetKeyDown(KeyCode.LeftAlt)|| transform.childCount == 0 && !ifShowVictory)
         {
             ifShowVictory = true;
+            if (AllMessageContainer.gameStatus.ifonline)
+            {
+                OnlineMode.Victory();
+                //OnlineMode.QuitOnlineMode();
+                AllMessageContainer.gameStatus.ifonline = false;
+                AllMessageContainer.gameStatus.ifHost = false;
+                AllMessageContainer.gameStatus.ifStartGame = false;
+            }
             await VictoryFinally();
         }
-        if (ifOnlineLoose)
+        if (ifOnlineLoose||Input.GetKeyDown(KeyCode.RightAlt))
         {
             ifOnlineLoose = false;
+            //await VictoryFinally();
             await OnlineLoose();
         }
     }
@@ -271,8 +282,22 @@ public class CubeClickEvent : MonoBehaviour
 
     async Task OnlineLoose()
     {
-        await Task.Delay(2000);
-        StartCoroutine("PlayerMessageUI");
+        //StartCoroutine(loadScene("3DOverlayer", LoadSceneMode.Additive));
+        await Task.Delay(3000);
+        StartCoroutine(loadScene("PlayerMessageUI"));
+    }
+
+    IEnumerator unloadScene(string name)
+    {
+        operation=SceneManager.UnloadSceneAsync(name);
+        yield return operation;
+    }
+
+    private IEnumerator loadScene(string which, LoadSceneMode lmd = LoadSceneMode.Single)
+    {
+        operation=SceneManager.LoadSceneAsync(which, lmd);
+        operation.allowSceneActivation = true;
+        yield return operation;
     }
 
     private void ShowError(string message)

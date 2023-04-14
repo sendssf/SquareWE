@@ -81,9 +81,8 @@ public class WebController : MonoBehaviour
     public const string NoMessage = "NoMessage";
     public const string SendFailed = "SendFailed";
     
-    public static string rootIP = "http://183.172.237.204:8080";
+    public static string rootIP = "http://183.172.236.10:8080";
     
-
     void Start()
     {
         
@@ -112,6 +111,7 @@ public class WebController : MonoBehaviour
             };
                 UploadHandler upload = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(req)));
                 webRequest.uploadHandler= upload;
+                webRequest.timeout = 5;
                 webRequest.uploadHandler.contentType= "application/json";
                 DownloadHandler download = new DownloadHandlerBuffer();
                 webRequest.downloadHandler= download;
@@ -249,7 +249,7 @@ public class WebController : MonoBehaviour
                 UploadHandler upload = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(postData));
                 webRequest.uploadHandler = upload;
                 webRequest.uploadHandler.contentType= "application/json";
-
+                webRequest.timeout = 5;
                 DownloadHandler downloadHandler = new DownloadHandlerBuffer();
                 webRequest.downloadHandler = downloadHandler;
                 UnityWebRequestAsyncOperation operation = webRequest.SendWebRequest();
@@ -306,7 +306,7 @@ public class WebController : MonoBehaviour
             UploadHandler upload=new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(postData));
             webRequest.uploadHandler = upload;
             webRequest.uploadHandler.contentType= "application/json";
-
+            webRequest.timeout = 5;
             DownloadHandler downloadHandler = new DownloadHandlerBuffer();
             webRequest.downloadHandler = downloadHandler;
             yield return webRequest.SendWebRequest();

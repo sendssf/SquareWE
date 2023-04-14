@@ -5,8 +5,6 @@ using Newtonsoft.Json;
 using System.IO;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using System.Threading.Tasks;
-using static UnityEditor.Progress;
 
 public class OnlineMode: MonoBehaviour
 {
@@ -197,7 +195,7 @@ public class OnlineMode: MonoBehaviour
 
     public static void Victory()
     {
-        WebController.Post(WebController.rootIP + API_Local.postInfo, JsonConvert.SerializeObject(new Dictionary<string, string>
+        WebController.Post(WebController.rootIP + API_Local.sendPackage, JsonConvert.SerializeObject(new Dictionary<string, string>
         {
             {"nickname1",AllMessageContainer.playerInfo.playerName },
             {"nickname2",playWith },
@@ -209,7 +207,10 @@ public class OnlineMode: MonoBehaviour
 
     public static void QuitOnlineMode()
     {
-        WebController.Post(WebController.rootIP + API_Local.postInfo, JsonConvert.SerializeObject(new Dictionary<string, string>
+        AllMessageContainer.gameStatus.ifonline = false;
+        AllMessageContainer.gameStatus.ifHost = false;
+        AllMessageContainer.gameStatus.ifStartGame = false;
+        WebController.Post(WebController.rootIP + API_Local.sendPackage, JsonConvert.SerializeObject(new Dictionary<string, string>
         {
             {"nickname1",AllMessageContainer.playerInfo.playerName },
             {"nickname2",playWith },
